@@ -74,7 +74,10 @@ Plans:
 **Goal**: Full player profile page with all available data
 **Depends on**: Phase 4
 **Research**: Unlikely (standard data fetching + display)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 06-01: Player API + detail page + PlayerCard navigation
 
 ### Phase 7: UI Polish
 **Goal**: Responsive design with smooth loading states and transitions
@@ -101,6 +104,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Player Search | 1/1 | Complete | 2026-01-28 |
 | 4. Player List View | 1/1 | Complete | 2026-01-28 |
 | 5. Filtering System | 1/1 | Complete | 2026-01-28 |
-| 6. Player Detail Page | 0/TBD | Not started | - |
+| 6. Player Detail Page | 0/1 | Not started | - |
 | 7. UI Polish | 0/TBD | Not started | - |
 | 8. Performance Optimization | 0/TBD | Not started | - |
