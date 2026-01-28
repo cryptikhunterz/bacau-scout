@@ -56,7 +56,10 @@ Plans:
 **Goal**: Grid/list view displaying name, club, position, age, market value
 **Depends on**: Phase 3
 **Research**: Unlikely (standard React components with Tailwind)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 04-01: PlayerCard + PlayerList components with grid/list toggle
 
 ### Phase 5: Filtering System
 **Goal**: Filter players by position, league, market value range, and age
