@@ -28,6 +28,16 @@ export interface SearchPlayer {
   playerId: string | null;
 }
 
+// Filter state for search filters
+export interface FilterState {
+  position: string;
+  club: string;
+  minAge: string;
+  maxAge: string;
+  minValue: string;
+  maxValue: string;
+}
+
 // Format market value for display
 export function formatMarketValue(value: string | null): string {
   if (!value) return '-';
