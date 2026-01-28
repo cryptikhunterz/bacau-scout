@@ -1,8 +1,18 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
-import { SearchPlayer } from '@/types/player';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { SearchPlayer, FilterState } from '@/types/player';
 import PlayerList, { ViewMode } from './PlayerList';
+import FilterPanel from './FilterPanel';
+
+const emptyFilters: FilterState = {
+  position: '',
+  club: '',
+  minAge: '',
+  maxAge: '',
+  minValue: '',
+  maxValue: '',
+};
 
 // Custom debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -61,17 +71,34 @@ function ViewToggle({
   );
 }
 
+// Build filter query string from FilterState (only non-empty values)
+function buildFilterParams(filters: FilterState): string {
+  const params = new URLSearchParams();
+
+  if (filters.position) params.set('position', filters.position);
+  if (filters.club) params.set('club', filters.club);
+  if (filters.minAge) params.set('minAge', filters.minAge);
+  if (filters.maxAge) params.set('maxAge', filters.maxAge);
+  if (filters.minValue) params.set('minValue', filters.minValue);
+  if (filters.maxValue) params.set('maxValue', filters.maxValue);
+
+  const queryString = params.toString();
+  return queryString ? `&${queryString}` : '';
+}
+
 export default function SearchBar() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchPlayer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
+  const [filters, setFilters] = useState<FilterState>(emptyFilters);
 
   const debouncedQuery = useDebounce(query, 300);
+  const debouncedFilters = useDebounce(filters, 300);
 
   // Fetch search results
-  const searchPlayers = useCallback(async (searchTerm: string) => {
+  const searchPlayers = useCallback(async (searchTerm: string, filterState: FilterState) => {
     if (!searchTerm || searchTerm.length < 2) {
       setResults([]);
       setHasSearched(false);
@@ -82,7 +109,8 @@ export default function SearchBar() {
     setHasSearched(true);
 
     try {
-      const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}`);
+      const filterParams = buildFilterParams(filterState);
+      const response = await fetch(`/api/search?q=${encodeURIComponent(searchTerm)}${filterParams}`);
       if (!response.ok) throw new Error('Search failed');
       const data = await response.json();
       setResults(data);
@@ -94,10 +122,21 @@ export default function SearchBar() {
     }
   }, []);
 
-  // Trigger search on debounced query change
+  // Trigger search on debounced query or filter change
   useEffect(() => {
-    searchPlayers(debouncedQuery);
-  }, [debouncedQuery, searchPlayers]);
+    searchPlayers(debouncedQuery, debouncedFilters);
+  }, [debouncedQuery, debouncedFilters, searchPlayers]);
+
+  // Extract unique positions from results (sorted alphabetically)
+  const uniquePositions = useMemo(() => {
+    const positions = new Set<string>();
+    results.forEach(player => {
+      if (player.position) {
+        positions.add(player.position);
+      }
+    });
+    return Array.from(positions).sort();
+  }, [results]);
 
   return (
     <div className="w-full max-w-4xl mx-auto">
@@ -118,6 +157,17 @@ export default function SearchBar() {
           </div>
         )}
       </div>
+
+      {/* Filter Panel - show after user has searched */}
+      {hasSearched && (
+        <div className="mt-4 max-w-2xl mx-auto">
+          <FilterPanel
+            filters={filters}
+            onChange={setFilters}
+            positions={uniquePositions}
+          />
+        </div>
+      )}
 
       {/* Results */}
       <div className="mt-4">
