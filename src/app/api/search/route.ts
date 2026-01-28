@@ -116,6 +116,29 @@ function extractAge(value: string | undefined): string | null {
   return ageMatch ? ageMatch[1] : null;
 }
 
+/**
+ * Parse market value string to numeric EUR value
+ * Handles formats: "€500K" → 500000, "€1.5M" → 1500000, "€10M" → 10000000
+ */
+function parseMarketValue(value: string | null): number | null {
+  if (!value) return null;
+
+  // Remove € symbol and whitespace
+  const cleaned = value.replace(/[€\s]/g, '').toUpperCase();
+
+  // Match number with optional decimal and K/M suffix
+  const match = cleaned.match(/^([\d.]+)(K|M)?$/);
+  if (!match) return null;
+
+  const num = parseFloat(match[1]);
+  if (isNaN(num)) return null;
+
+  const suffix = match[2];
+  if (suffix === 'K') return num * 1000;
+  if (suffix === 'M') return num * 1000000;
+  return num;
+}
+
 function extractPlayerIdFromUrl(url: string): string | null {
   const match = url.match(/spieler\/(\d+)/);
   return match ? match[1] : null;
@@ -124,6 +147,19 @@ function extractPlayerIdFromUrl(url: string): string | null {
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get('q')?.trim() || '';
+
+  // Parse filter parameters
+  const positionFilter = searchParams.get('position')?.trim() || '';
+  const clubFilter = searchParams.get('club')?.trim() || '';
+  const minAgeParam = searchParams.get('minAge');
+  const maxAgeParam = searchParams.get('maxAge');
+  const minValueParam = searchParams.get('minValue');
+  const maxValueParam = searchParams.get('maxValue');
+
+  const minAge = minAgeParam ? parseInt(minAgeParam, 10) : null;
+  const maxAge = maxAgeParam ? parseInt(maxAgeParam, 10) : null;
+  const minValue = minValueParam ? parseInt(minValueParam, 10) : null;
+  const maxValue = maxValueParam ? parseInt(maxValueParam, 10) : null;
 
   if (!query) {
     return NextResponse.json([]);
@@ -146,9 +182,57 @@ export async function GET(request: NextRequest) {
 
   // Text search: case-insensitive partial match on name
   const lowerQuery = query.toLowerCase();
-  const matches = players.filter(p =>
+  let matches = players.filter(p =>
     p.name.toLowerCase().includes(lowerQuery)
   );
+
+  // Apply filters AFTER name search (filters are AND-ed together)
+
+  // Position filter: exact match, case-insensitive
+  if (positionFilter) {
+    const lowerPosition = positionFilter.toLowerCase();
+    matches = matches.filter(p =>
+      p.position?.toLowerCase() === lowerPosition
+    );
+  }
+
+  // Club filter: partial match, case-insensitive
+  if (clubFilter) {
+    const lowerClub = clubFilter.toLowerCase();
+    matches = matches.filter(p =>
+      p.club?.toLowerCase().includes(lowerClub)
+    );
+  }
+
+  // Age filter: inclusive range
+  if (minAge !== null && !isNaN(minAge)) {
+    matches = matches.filter(p => {
+      const playerAge = p.age ? parseInt(p.age, 10) : null;
+      return playerAge !== null && playerAge >= minAge;
+    });
+  }
+
+  if (maxAge !== null && !isNaN(maxAge)) {
+    matches = matches.filter(p => {
+      const playerAge = p.age ? parseInt(p.age, 10) : null;
+      return playerAge !== null && playerAge <= maxAge;
+    });
+  }
+
+  // Market value filter: inclusive range
+  if (minValue !== null && !isNaN(minValue)) {
+    matches = matches.filter(p => {
+      const playerValue = parseMarketValue(p.marketValue);
+      return playerValue !== null && playerValue >= minValue;
+    });
+  }
+
+  if (maxValue !== null && !isNaN(maxValue)) {
+    matches = matches.filter(p => {
+      const playerValue = parseMarketValue(p.marketValue);
+      return playerValue !== null && playerValue <= maxValue;
+    });
+  }
 
   return NextResponse.json(matches);
 }
