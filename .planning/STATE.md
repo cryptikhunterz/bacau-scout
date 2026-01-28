@@ -5,14 +5,14 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Clean UX for browsing — scouts will pay for a tool that's enjoyable to use, not just functional
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 2 — Data Layer
 
 ## Current Position
 
-Phase: 1 of 8 (Foundation)
+Phase: 2 of 8 (Data Layer)
 Plan: 1 of 1 in current phase
-Status: Phase complete
-Last activity: 2026-01-28 — Completed 01-01-PLAN.md (~5 min)
+Status: Plan ready for execution
+Last activity: 2026-01-28 — Created 02-01-PLAN.md
 
 Progress: █░░░░░░░░░ 12.5%
 
