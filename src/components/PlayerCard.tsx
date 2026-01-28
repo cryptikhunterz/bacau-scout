@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { SearchPlayer, formatMarketValue } from '@/types/player';
 
 interface PlayerCardProps {
@@ -7,10 +8,18 @@ interface PlayerCardProps {
 }
 
 export default function PlayerCard({ player }: PlayerCardProps) {
+  // Build player URL: use playerId if available, otherwise encode name as fallback
+  const playerUrl = player.playerId
+    ? `/player/${player.playerId}`
+    : `/player/${encodeURIComponent(player.name)}`;
+
   return (
-    <div
-      className="p-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
-                 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
+    <Link
+      href={playerUrl}
+      className="block p-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
+                 rounded-lg hover:shadow-md transition-shadow cursor-pointer
+                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                 dark:focus:ring-offset-zinc-900"
     >
       <div className="flex justify-between items-start">
         <div>
@@ -36,6 +45,6 @@ export default function PlayerCard({ player }: PlayerCardProps) {
           )}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
