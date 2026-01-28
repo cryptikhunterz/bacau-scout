@@ -1,31 +1,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-
-// Player type for search results
-interface Player {
-  name: string;
-  position: string | null;
-  age: string | null;
-  club: string | null;
-  marketValue: string | null;
-  nationality: string[];
-  url: string | null;
-  playerId: string | null;
-}
-
-// Format market value for display
-function formatMarketValue(value: string | null): string {
-  if (!value) return '-';
-  // If already formatted (from JSON), return as-is
-  if (value.startsWith('€')) return value;
-
-  const num = parseInt(value, 10);
-  if (isNaN(num) || num === 0) return '-';
-  if (num < 1000) return `€${num}`;
-  if (num < 1000000) return `€${Math.round(num / 1000)}K`;
-  return `€${(num / 1000000).toFixed(1)}M`;
-}
+import { SearchPlayer } from '@/types/player';
+import PlayerList, { ViewMode } from './PlayerList';
 
 // Custom debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -44,11 +21,52 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+// View toggle button component
+function ViewToggle({
+  viewMode,
+  onToggle,
+}: {
+  viewMode: ViewMode;
+  onToggle: (mode: ViewMode) => void;
+}) {
+  return (
+    <div className="flex gap-1 bg-zinc-100 dark:bg-zinc-700 rounded-md p-1">
+      <button
+        onClick={() => onToggle('grid')}
+        className={`px-3 py-1 rounded text-sm font-medium transition-colors
+                    ${
+                      viewMode === 'grid'
+                        ? 'bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white shadow-sm'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+        title="Grid view"
+      >
+        <span aria-hidden="true">&#9638;</span>
+        <span className="sr-only">Grid view</span>
+      </button>
+      <button
+        onClick={() => onToggle('list')}
+        className={`px-3 py-1 rounded text-sm font-medium transition-colors
+                    ${
+                      viewMode === 'list'
+                        ? 'bg-white dark:bg-zinc-600 text-zinc-900 dark:text-white shadow-sm'
+                        : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+        title="List view"
+      >
+        <span aria-hidden="true">&#9776;</span>
+        <span className="sr-only">List view</span>
+      </button>
+    </div>
+  );
+}
+
 export default function SearchBar() {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<Player[]>([]);
+  const [results, setResults] = useState<SearchPlayer[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('grid');
 
   const debouncedQuery = useDebounce(query, 300);
 
@@ -82,9 +100,9 @@ export default function SearchBar() {
   }, [debouncedQuery, searchPlayers]);
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       {/* Search Input */}
-      <div className="relative">
+      <div className="relative max-w-2xl mx-auto">
         <input
           type="text"
           value={query}
@@ -108,42 +126,15 @@ export default function SearchBar() {
         ) : hasSearched && results.length === 0 ? (
           <p className="text-center text-zinc-500 dark:text-zinc-400">No players found</p>
         ) : results.length > 0 ? (
-          <div className="space-y-2">
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-3">
-              {results.length} player{results.length !== 1 ? 's' : ''} found
-            </p>
-            {results.map((player, index) => (
-              <div
-                key={`${player.name}-${index}`}
-                className="p-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
-                           rounded-lg hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-start">
-                  <div>
-                    <h3 className="font-bold text-lg text-zinc-900 dark:text-white">
-                      {player.name}
-                    </h3>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      {player.position || 'Position unknown'}
-                      {player.age && ` • Age ${player.age}`}
-                    </p>
-                    <p className="text-sm text-zinc-500 dark:text-zinc-500">
-                      {player.club || 'Club unknown'}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-semibold text-green-600 dark:text-green-400">
-                      {formatMarketValue(player.marketValue)}
-                    </p>
-                    {player.nationality && player.nationality.length > 0 && (
-                      <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-1">
-                        {player.nationality.slice(0, 2).join(', ')}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+          <div>
+            {/* Results header with count and view toggle */}
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {results.length} player{results.length !== 1 ? 's' : ''} found
+              </p>
+              <ViewToggle viewMode={viewMode} onToggle={setViewMode} />
+            </div>
+            <PlayerList players={results} viewMode={viewMode} />
           </div>
         ) : null}
       </div>
