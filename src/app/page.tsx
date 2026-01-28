@@ -1,22 +1,27 @@
+import SearchBar from '@/components/SearchBar';
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-zinc-50 dark:bg-black">
-      <main className="flex flex-col items-center gap-8 text-center">
-        <h1 className="text-5xl font-bold tracking-tight text-black dark:text-white">
+    <div className="min-h-screen bg-zinc-50 dark:bg-black">
+      {/* Header */}
+      <header className="py-8 text-center border-b border-zinc-200 dark:border-zinc-800">
+        <h1 className="text-4xl font-bold tracking-tight text-black dark:text-white">
           Bacau Scout
         </h1>
-        <p className="text-xl text-zinc-600 dark:text-zinc-400">
+        <p className="mt-2 text-lg text-zinc-600 dark:text-zinc-400">
           Football Scouting Tool
         </p>
-        <div className="mt-4 rounded-lg border border-zinc-200 bg-white p-6 dark:border-zinc-800 dark:bg-zinc-900">
-          <p className="text-sm text-zinc-500 dark:text-zinc-400">
-            Supabase connection will be configured
-          </p>
-          <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-500">
-            Database: fuubyhubptalxwondwov.supabase.co
-          </p>
-        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <SearchBar />
       </main>
+
+      {/* Footer */}
+      <footer className="fixed bottom-0 left-0 right-0 py-4 text-center text-sm text-zinc-400 dark:text-zinc-600 bg-zinc-50 dark:bg-black border-t border-zinc-200 dark:border-zinc-800">
+        <p>Search 750+ players from Transfermarkt data</p>
+      </footer>
     </div>
   );
 }
