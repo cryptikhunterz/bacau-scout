@@ -14,7 +14,7 @@ None
 - Integer phases (1, 2, 3): Planned milestone work
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
-- [ ] **Phase 1: Foundation** - Next.js 14 project setup with Supabase connection
+- [x] **Phase 1: Foundation** - Next.js 14 project setup with Supabase connection
 - [ ] **Phase 2: Data Layer** - Database schema design + JSON import script
 - [ ] **Phase 3: Player Search** - Search API endpoint + instant search component
 - [ ] **Phase 4: Player List View** - Grid/list view with key player info
@@ -32,7 +32,7 @@ None
 **Plans**: 1 plan
 
 Plans:
-- [ ] 01-01: Project setup with Next.js 14, Tailwind CSS, and Supabase client
+- [x] 01-01: Project setup with Next.js 14, Tailwind CSS, and Supabase client
 
 ### Phase 2: Data Layer
 **Goal**: Postgres schema with players table and working import script for JSON data
@@ -84,7 +84,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/1 | Not started | - |
+| 1. Foundation | 1/1 | Complete | 2026-01-28 |
 | 2. Data Layer | 0/TBD | Not started | - |
 | 3. Player Search | 0/TBD | Not started | - |
 | 4. Player List View | 0/TBD | Not started | - |
