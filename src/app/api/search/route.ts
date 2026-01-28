@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
   loadPlayers,
-  parseMarketValue,
   extractPlayerIdFromUrl,
   NormalizedPlayer,
 } from '@/lib/players';
@@ -32,6 +31,8 @@ function toSearchPlayer(player: NormalizedPlayer): SearchPlayer {
 }
 
 export async function GET(request: NextRequest) {
+  const startTime = performance.now();
+
   const searchParams = request.nextUrl.searchParams;
   const query = searchParams.get('q')?.trim() || '';
 
@@ -48,7 +49,18 @@ export async function GET(request: NextRequest) {
   const minValue = minValueParam ? parseInt(minValueParam, 10) : null;
   const maxValue = maxValueParam ? parseInt(maxValueParam, 10) : null;
 
+  // Count active filters for logging
+  let filterCount = 0;
+  if (positionFilter) filterCount++;
+  if (clubFilter) filterCount++;
+  if (minAge !== null && !isNaN(minAge)) filterCount++;
+  if (maxAge !== null && !isNaN(maxAge)) filterCount++;
+  if (minValue !== null && !isNaN(minValue)) filterCount++;
+  if (maxValue !== null && !isNaN(maxValue)) filterCount++;
+
   if (!query) {
+    const duration = (performance.now() - startTime).toFixed(2);
+    console.log(`[Search] query="" filters=${filterCount} results=0 time=${duration}ms`);
     return NextResponse.json([]);
   }
 
@@ -62,17 +74,21 @@ export async function GET(request: NextRequest) {
       const matches = players
         .filter(p => p.playerId === searchPlayerId)
         .map(toSearchPlayer);
+      const duration = (performance.now() - startTime).toFixed(2);
+      console.log(`[Search] query="${query.substring(0, 50)}..." filters=${filterCount} results=${matches.length} time=${duration}ms`);
       return NextResponse.json(matches);
     }
 
     // URL but no player ID found - return empty
+    const duration = (performance.now() - startTime).toFixed(2);
+    console.log(`[Search] query="${query.substring(0, 50)}..." filters=${filterCount} results=0 time=${duration}ms`);
     return NextResponse.json([]);
   }
 
-  // Text search: case-insensitive partial match on name
+  // Text search: use pre-computed nameLower for performance
   const lowerQuery = query.toLowerCase();
   let matches = players.filter(p =>
-    p.name.toLowerCase().includes(lowerQuery)
+    p.nameLower.includes(lowerQuery)
   );
 
   // Apply filters AFTER name search (filters are AND-ed together)
@@ -93,35 +109,35 @@ export async function GET(request: NextRequest) {
     );
   }
 
-  // Age filter: inclusive range
+  // Age filter: use pre-computed ageNum for performance
   if (minAge !== null && !isNaN(minAge)) {
-    matches = matches.filter(p => {
-      const playerAge = p.age ? parseInt(p.age, 10) : null;
-      return playerAge !== null && playerAge >= minAge;
-    });
+    matches = matches.filter(p =>
+      p.ageNum !== null && p.ageNum >= minAge
+    );
   }
 
   if (maxAge !== null && !isNaN(maxAge)) {
-    matches = matches.filter(p => {
-      const playerAge = p.age ? parseInt(p.age, 10) : null;
-      return playerAge !== null && playerAge <= maxAge;
-    });
+    matches = matches.filter(p =>
+      p.ageNum !== null && p.ageNum <= maxAge
+    );
   }
 
-  // Market value filter: inclusive range
+  // Market value filter: use pre-computed marketValueNum for performance
   if (minValue !== null && !isNaN(minValue)) {
-    matches = matches.filter(p => {
-      const playerValue = parseMarketValue(p.marketValue);
-      return playerValue !== null && playerValue >= minValue;
-    });
+    matches = matches.filter(p =>
+      p.marketValueNum !== null && p.marketValueNum >= minValue
+    );
   }
 
   if (maxValue !== null && !isNaN(maxValue)) {
-    matches = matches.filter(p => {
-      const playerValue = parseMarketValue(p.marketValue);
-      return playerValue !== null && playerValue <= maxValue;
-    });
+    matches = matches.filter(p =>
+      p.marketValueNum !== null && p.marketValueNum <= maxValue
+    );
   }
 
-  return NextResponse.json(matches.map(toSearchPlayer));
+  const results = matches.map(toSearchPlayer);
+  const duration = (performance.now() - startTime).toFixed(2);
+  console.log(`[Search] query="${query}" filters=${filterCount} results=${results.length} time=${duration}ms`);
+
+  return NextResponse.json(results);
 }
