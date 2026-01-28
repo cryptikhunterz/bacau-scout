@@ -15,7 +15,7 @@ None
 - Decimal phases (2.1, 2.2): Urgent insertions (marked with INSERTED)
 
 - [x] **Phase 1: Foundation** - Next.js 14 project setup with Supabase connection
-- [ ] **Phase 2: Data Layer** - Database schema design + JSON import script
+- [x] **Phase 2: Data Layer** - Database schema design + JSON import script
 - [ ] **Phase 3: Player Search** - Search API endpoint + instant search component
 - [ ] **Phase 4: Player List View** - Grid/list view with key player info
 - [ ] **Phase 5: Filtering System** - Position, league, market value, age filters
@@ -38,7 +38,10 @@ Plans:
 **Goal**: Postgres schema with players table and working import script for JSON data
 **Depends on**: Phase 1
 **Research**: Unlikely (standard Postgres schema, JSON parsing)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [x] 02-01: Database schema and import script (576 players imported)
 
 ### Phase 3: Player Search
 **Goal**: Instant search (<100ms) with real-time results as user types
@@ -85,7 +88,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 1/1 | Complete | 2026-01-28 |
-| 2. Data Layer | 0/TBD | Not started | - |
+| 2. Data Layer | 1/1 | Complete | 2026-01-28 |
 | 3. Player Search | 0/TBD | Not started | - |
 | 4. Player List View | 0/TBD | Not started | - |
 | 5. Filtering System | 0/TBD | Not started | - |
