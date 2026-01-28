@@ -65,7 +65,10 @@ Plans:
 **Goal**: Filter players by position, league, market value range, and age
 **Depends on**: Phase 4
 **Research**: Unlikely (standard query building patterns)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 05-01: Filter API + FilterPanel component + SearchBar integration
 
 ### Phase 6: Player Detail Page
 **Goal**: Full player profile page with all available data
