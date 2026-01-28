@@ -34,10 +34,16 @@ export interface NormalizedPlayer {
   url: string | null;
   playerId: string | null;
   leagueUrl: string | null;
+  // Pre-computed fields for performance
+  nameLower: string;
+  marketValueNum: number | null;
+  ageNum: number | null;
 }
 
 // Cache the players in memory
 let playersCache: NormalizedPlayer[] | null = null;
+// O(1) lookup by playerId
+let playerIdMap: Map<string, NormalizedPlayer> = new Map();
 
 export function loadPlayers(): NormalizedPlayer[] {
   if (playersCache) return playersCache;
@@ -55,6 +61,14 @@ export function loadPlayers(): NormalizedPlayer[] {
     .map(normalizePlayer)
     .filter((p): p is NormalizedPlayer => p !== null);
 
+  // Build playerIdMap for O(1) lookups
+  playerIdMap = new Map();
+  for (const player of playersCache) {
+    if (player.playerId) {
+      playerIdMap.set(player.playerId, player);
+    }
+  }
+
   console.log(`Loaded ${playersCache.length} players from JSON`);
   return playersCache;
 }
@@ -63,16 +77,23 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
   // List format: has Player array
   if (Array.isArray(raw.Player)) {
     const nat = raw['Nat.'];
+    const name = raw.Player[0] || '';
+    const age = raw.Age || null;
+    const marketValue = raw['Market value'] || null;
     return {
-      name: raw.Player[0] || '',
+      name,
       position: raw.Player[1] || null,
-      age: raw.Age || null,
+      age,
       club: raw.Club || null,
-      marketValue: raw['Market value'] || null,
+      marketValue,
       nationality: Array.isArray(nat) ? nat : nat ? [nat] : [],
       url: raw.givenUrl || null,
       playerId: null,
       leagueUrl: raw.givenUrl || null, // givenUrl is the competition URL
+      // Pre-computed fields
+      nameLower: name.toLowerCase(),
+      marketValueNum: parseMarketValue(marketValue),
+      ageNum: age ? parseInt(age, 10) : null,
     };
   }
 
@@ -81,17 +102,22 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
     const playerIdMatch = raw.url.match(/spieler\/(\d+)/);
     const nameFromUrl = extractNameFromUrl(raw.url);
     const cit = raw.Citizenship;
+    const age = extractAge(raw['Date of birth/Age']);
 
     return {
       name: nameFromUrl,
       position: raw.Position || null,
-      age: extractAge(raw['Date of birth/Age']),
+      age,
       club: raw['Current club'] || null,
       marketValue: null,
       nationality: Array.isArray(cit) ? cit : cit ? [cit] : [],
       url: raw.url,
       playerId: playerIdMatch ? playerIdMatch[1] : null,
       leagueUrl: null,
+      // Pre-computed fields
+      nameLower: nameFromUrl.toLowerCase(),
+      marketValueNum: null,
+      ageNum: age ? parseInt(age, 10) : null,
     };
   }
 
