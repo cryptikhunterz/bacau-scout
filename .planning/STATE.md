@@ -5,23 +5,23 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Clean UX for browsing — scouts will pay for a tool that's enjoyable to use, not just functional
-**Current focus:** Phase 5 — Filtering System (Complete)
+**Current focus:** Phase 6 — Player Detail Page (Complete)
 
 ## Current Position
 
-Phase: 5 of 8 (Filtering System)
+Phase: 6 of 8 (Player Detail Page)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-28 — Completed 05-01-PLAN.md (~3 min)
+Last activity: 2026-01-28 — Completed 06-01-PLAN.md (~4 min)
 
-Progress: ██████░░░░ 62%
+Progress: ███████░░░ 75%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 5
+- Total plans completed: 6
 - Average duration: 6 min
-- Total execution time: 0.5 hours
+- Total execution time: 0.6 hours
 
 **By Phase:**
 
@@ -32,10 +32,11 @@ Progress: ██████░░░░ 62%
 | 3. Player Search | 1 | 2 min | 2 min |
 | 4. Player List View | 1 | 3 min | 3 min |
 | 5. Filtering System | 1 | 3 min | 3 min |
+| 6. Player Detail Page | 1 | 4 min | 4 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min, 19 min, 2 min, 3 min, 3 min
-- Trend: Fast (avg 3 min for UI phases)
+- Last 5 plans: 19 min, 2 min, 3 min, 3 min, 4 min
+- Trend: Fast (avg 3-4 min for UI/API phases)
 
 ## Accumulated Context
 
@@ -58,6 +59,9 @@ Recent decisions affecting current work:
 - [Phase 5]: Filters debounced same 300ms as search
 - [Phase 5]: Position dropdown populated dynamically from results
 - [Phase 5]: Collapsible panel with "Active" badge
+- [Phase 6]: Shared player loading logic in src/lib/players.ts
+- [Phase 6]: Player detail uses playerId from URL, name as fallback
+- [Phase 6]: Custom not-found.tsx for player 404 pages
 
 ### Deferred Issues
 
@@ -69,6 +73,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 20:05
-Stopped at: Completed 05-01-PLAN.md (Phase 5 complete)
+Last session: 2026-01-28 20:52
+Stopped at: Completed 06-01-PLAN.md (Phase 6 complete)
 Resume file: None

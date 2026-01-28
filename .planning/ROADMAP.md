@@ -19,7 +19,7 @@ None
 - [x] **Phase 3: Player Search** - Search API endpoint + instant search component
 - [x] **Phase 4: Player List View** - Grid/list view with key player info
 - [x] **Phase 5: Filtering System** - Position, league, market value, age filters
-- [ ] **Phase 6: Player Detail Page** - Full player profile view
+- [x] **Phase 6: Player Detail Page** - Full player profile view
 - [ ] **Phase 7: UI Polish** - Responsive design, loading states, animations
 - [ ] **Phase 8: Performance Optimization** - <100ms search guarantee, indexing
 
@@ -77,7 +77,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 06-01: Player API + detail page + PlayerCard navigation
+- [x] 06-01: Player API + detail page + PlayerCard navigation
 
 ### Phase 7: UI Polish
 **Goal**: Responsive design with smooth loading states and transitions
@@ -104,6 +104,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Player Search | 1/1 | Complete | 2026-01-28 |
 | 4. Player List View | 1/1 | Complete | 2026-01-28 |
 | 5. Filtering System | 1/1 | Complete | 2026-01-28 |
-| 6. Player Detail Page | 0/1 | Not started | - |
+| 6. Player Detail Page | 1/1 | Complete | 2026-01-28 |
 | 7. UI Polish | 0/TBD | Not started | - |
 | 8. Performance Optimization | 0/TBD | Not started | - |
