@@ -1,27 +1,34 @@
 -- Players table for Bacau Scout
 -- Run this in Supabase SQL Editor: https://supabase.com/dashboard/project/fuubyhubptalxwondwov/sql/new
 
-CREATE TABLE IF NOT EXISTS players (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+-- Drop old table first
+DROP TABLE IF EXISTS players CASCADE;
+
+-- Create table matching JSON data
+CREATE TABLE players (
+  id TEXT PRIMARY KEY,
+  tm_url TEXT,
   name TEXT NOT NULL,
-  position TEXT NOT NULL,
-  age INTEGER NOT NULL,
-  club TEXT NOT NULL,
-  market_value_cents BIGINT NOT NULL,  -- Stored in cents for precision
-  market_value_display TEXT NOT NULL,   -- Original format "€2.00m" for UI
-  nationality TEXT[] NOT NULL,          -- Array for dual nationals
-  league_url TEXT,
+  position TEXT,
+  age INTEGER,
+  date_of_birth TEXT,
+  current_club TEXT,
+  market_value_raw TEXT,
+  market_value_eur BIGINT,
+  nationality TEXT[],
+  image_url TEXT,
+  raw_data JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Index for search (name, club)
-CREATE INDEX IF NOT EXISTS idx_players_name ON players USING gin (to_tsvector('simple', name));
-CREATE INDEX IF NOT EXISTS idx_players_club ON players (club);
-CREATE INDEX IF NOT EXISTS idx_players_position ON players (position);
-CREATE INDEX IF NOT EXISTS idx_players_age ON players (age);
-CREATE INDEX IF NOT EXISTS idx_players_market_value ON players (market_value_cents);
+-- Indexes
+CREATE INDEX idx_players_name ON players USING gin (to_tsvector('simple', name));
+CREATE INDEX idx_players_current_club ON players (current_club);
+CREATE INDEX idx_players_position ON players (position);
+CREATE INDEX idx_players_age ON players (age);
+CREATE INDEX idx_players_market_value ON players (market_value_eur);
 
--- Enable Row Level Security (public read for MVP)
+-- Public read access
 ALTER TABLE players ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Public read access" ON players FOR SELECT USING (true);
