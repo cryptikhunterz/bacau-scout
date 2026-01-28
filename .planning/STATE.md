@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Clean UX for browsing — scouts will pay for a tool that's enjoyable to use, not just functional
-**Current focus:** Phase 3 — Player Search (Complete)
+**Current focus:** Phase 4 — Player List View (Complete)
 
 ## Current Position
 
-Phase: 3 of 8 (Player Search)
+Phase: 4 of 8 (Player List View)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-28 — Completed 03-01-PLAN.md (~2 min)
+Last activity: 2026-01-28 — Completed 04-01-PLAN.md (~3 min)
 
-Progress: ███░░░░░░░ 37%
+Progress: █████░░░░░ 50%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 3
-- Average duration: 9 min
+- Total plans completed: 4
+- Average duration: 7 min
 - Total execution time: 0.5 hours
 
 **By Phase:**
@@ -30,10 +30,11 @@ Progress: ███░░░░░░░ 37%
 | 1. Foundation | 1 | 5 min | 5 min |
 | 2. Data Layer | 1 | 19 min | 19 min |
 | 3. Player Search | 1 | 2 min | 2 min |
+| 4. Player List View | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min, 19 min, 2 min
-- Trend: —
+- Last 5 plans: 5 min, 19 min, 2 min, 3 min
+- Trend: Stable
 
 ## Accumulated Context
 
@@ -49,6 +50,9 @@ Recent decisions affecting current work:
 - [Phase 2]: 576 players imported from 750 records (74 unknown format)
 - [Phase 3]: JSON file as data source (MVP approach, no Supabase for search)
 - [Phase 3]: 300ms debounce for search input
+- [Phase 4]: SearchPlayer type in shared types/player.ts
+- [Phase 4]: Container max-w-4xl for grid layout
+- [Phase 4]: Unicode symbols for view toggle
 
 ### Deferred Issues
 
@@ -60,6 +64,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 19:07
-Stopped at: Completed 03-01-PLAN.md (Phase 3 complete)
+Last session: 2026-01-28 19:45
+Stopped at: Completed 04-01-PLAN.md (Phase 4 complete)
 Resume file: None

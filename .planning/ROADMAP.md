@@ -17,7 +17,7 @@ None
 - [x] **Phase 1: Foundation** - Next.js 14 project setup with Supabase connection
 - [x] **Phase 2: Data Layer** - Database schema design + JSON import script
 - [x] **Phase 3: Player Search** - Search API endpoint + instant search component
-- [ ] **Phase 4: Player List View** - Grid/list view with key player info
+- [x] **Phase 4: Player List View** - Grid/list view with key player info
 - [ ] **Phase 5: Filtering System** - Position, league, market value, age filters
 - [ ] **Phase 6: Player Detail Page** - Full player profile view
 - [ ] **Phase 7: UI Polish** - Responsive design, loading states, animations
@@ -59,7 +59,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 04-01: PlayerCard + PlayerList components with grid/list toggle
+- [x] 04-01: PlayerCard + PlayerList components with grid/list toggle
 
 ### Phase 5: Filtering System
 **Goal**: Filter players by position, league, market value range, and age
@@ -96,7 +96,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Foundation | 1/1 | Complete | 2026-01-28 |
 | 2. Data Layer | 1/1 | Complete | 2026-01-28 |
 | 3. Player Search | 1/1 | Complete | 2026-01-28 |
-| 4. Player List View | 0/TBD | Not started | - |
+| 4. Player List View | 1/1 | Complete | 2026-01-28 |
 | 5. Filtering System | 0/TBD | Not started | - |
 | 6. Player Detail Page | 0/TBD | Not started | - |
 | 7. UI Polish | 0/TBD | Not started | - |
