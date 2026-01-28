@@ -5,6 +5,28 @@ import PlayerCard from './PlayerCard';
 
 export type ViewMode = 'grid' | 'list';
 
+// Animation wrapper for staggered entrance effect
+function AnimatedItem({
+  children,
+  index,
+}: {
+  children: React.ReactNode;
+  index: number;
+}) {
+  // Only animate first 10 cards for performance
+  const shouldAnimate = index < 10;
+  const delay = shouldAnimate ? index * 50 : 0;
+
+  return (
+    <div
+      className={shouldAnimate ? 'animate-fadeInUp' : ''}
+      style={shouldAnimate ? { animationDelay: `${delay}ms` } : undefined}
+    >
+      {children}
+    </div>
+  );
+}
+
 interface PlayerListProps {
   players: SearchPlayer[];
   viewMode: ViewMode;
@@ -67,7 +89,9 @@ export default function PlayerList({ players, viewMode }: PlayerListProps) {
           <span className="shrink-0 ml-4">Value</span>
         </div>
         {players.map((player, index) => (
-          <PlayerRow key={`${player.name}-${index}`} player={player} />
+          <AnimatedItem key={`${player.name}-${index}`} index={index}>
+            <PlayerRow player={player} />
+          </AnimatedItem>
         ))}
       </div>
     );
@@ -77,7 +101,9 @@ export default function PlayerList({ players, viewMode }: PlayerListProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {players.map((player, index) => (
-        <PlayerCard key={`${player.name}-${index}`} player={player} />
+        <AnimatedItem key={`${player.name}-${index}`} index={index}>
+          <PlayerCard player={player} />
+        </AnimatedItem>
       ))}
     </div>
   );
