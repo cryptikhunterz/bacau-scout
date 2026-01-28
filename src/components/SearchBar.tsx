@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SearchPlayer, FilterState } from '@/types/player';
 import PlayerList, { ViewMode } from './PlayerList';
 import FilterPanel from './FilterPanel';
+import { SkeletonCard } from './PlayerCard';
 
 const emptyFilters: FilterState = {
   position: '',
@@ -172,7 +173,11 @@ export default function SearchBar() {
       {/* Results */}
       <div className="mt-4">
         {isLoading ? (
-          <p className="text-center text-zinc-500 dark:text-zinc-400">Searching...</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
+          </div>
         ) : hasSearched && results.length === 0 ? (
           <p className="text-center text-zinc-500 dark:text-zinc-400">No players found</p>
         ) : results.length > 0 ? (

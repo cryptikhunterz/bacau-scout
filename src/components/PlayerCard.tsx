@@ -7,6 +7,33 @@ interface PlayerCardProps {
   player: SearchPlayer;
 }
 
+// Skeleton loading card that matches PlayerCard layout
+export function SkeletonCard() {
+  return (
+    <div
+      className="block p-4 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700
+                 rounded-lg"
+    >
+      <div className="flex justify-between items-start">
+        <div className="flex-1">
+          {/* Name skeleton */}
+          <div className="h-6 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse w-32 mb-2" />
+          {/* Position/age skeleton */}
+          <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse w-24 mb-1" />
+          {/* Club skeleton */}
+          <div className="h-4 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse w-28" />
+        </div>
+        <div className="text-right">
+          {/* Market value skeleton */}
+          <div className="h-5 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse w-20 mb-1" />
+          {/* Nationality skeleton */}
+          <div className="h-3 bg-zinc-200 dark:bg-zinc-700 rounded animate-pulse w-16 mt-1" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PlayerCard({ player }: PlayerCardProps) {
   // Build player URL: use playerId if available, otherwise encode name as fallback
   const playerUrl = player.playerId
