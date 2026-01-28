@@ -174,19 +174,29 @@ export function extractPlayerIdFromUrl(url: string): string | null {
 
 /**
  * Find a player by ID or name
+ * Uses O(1) Map lookup for playerId, falls back to O(n) for name search
  */
 export function findPlayerById(id: string): NormalizedPlayer | null {
+  // Ensure players are loaded (populates playerIdMap)
   const players = loadPlayers();
 
-  // First try: playerId match
-  const byId = players.find(p => p.playerId === id);
-  if (byId) return byId;
+  // First try: O(1) Map lookup by playerId
+  const fromMap = playerIdMap.get(id);
+  if (fromMap) return fromMap;
 
-  // Fallback: exact name match (URL-decoded)
+  // Fallback: exact name match (URL-decoded) - O(n), rare path
   const decodedName = decodeURIComponent(id);
   const byName = players.find(p =>
-    p.name.toLowerCase() === decodedName.toLowerCase()
+    p.nameLower === decodedName.toLowerCase()
   );
 
   return byName || null;
+}
+
+/**
+ * Get the total number of players loaded
+ */
+export function getPlayerCount(): number {
+  loadPlayers(); // Ensure players are loaded
+  return playersCache?.length ?? 0;
 }
