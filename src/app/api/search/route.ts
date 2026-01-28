@@ -1,31 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
+import {
+  loadPlayers,
+  parseMarketValue,
+  extractPlayerIdFromUrl,
+  NormalizedPlayer,
+} from '@/lib/players';
 
-// Raw player record from JSON (two possible formats)
-interface RawPlayer {
-  // List format
-  Player?: [string, string]; // [name, position]
-  Age?: string;
-  Club?: string;
-  'Market value'?: string;
-  givenUrl?: string;
-  'Nat.'?: string | string[];
-
-  // Profile format
-  url?: string;
-  type?: string;
-  'Date of birth/Age'?: string;
-  Position?: string;
-  'Current club'?: string;
-  Citizenship?: string | string[];
-  Height?: string;
-  Foot?: string;
-  'Player agent'?: string;
-}
-
-// Normalized player for response
-interface Player {
+// SearchPlayer type for API response (excludes leagueUrl for search results)
+interface SearchPlayer {
   name: string;
   position: string | null;
   age: string | null;
@@ -36,112 +18,17 @@ interface Player {
   playerId: string | null;
 }
 
-// Cache the players in memory
-let playersCache: Player[] | null = null;
-
-function loadPlayers(): Player[] {
-  if (playersCache) return playersCache;
-
-  const jsonPath = path.join(process.cwd(), 'Bacau scout prototype ', 'JSON 2.json');
-
-  if (!fs.existsSync(jsonPath)) {
-    console.error('JSON file not found:', jsonPath);
-    return [];
-  }
-
-  const rawData: RawPlayer[] = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
-
-  playersCache = rawData
-    .map(normalizePlayer)
-    .filter((p): p is Player => p !== null);
-
-  console.log(`Loaded ${playersCache.length} players from JSON`);
-  return playersCache;
-}
-
-function normalizePlayer(raw: RawPlayer): Player | null {
-  // List format: has Player array
-  if (Array.isArray(raw.Player)) {
-    const nat = raw['Nat.'];
-    return {
-      name: raw.Player[0] || '',
-      position: raw.Player[1] || null,
-      age: raw.Age || null,
-      club: raw.Club || null,
-      marketValue: raw['Market value'] || null,
-      nationality: Array.isArray(nat) ? nat : nat ? [nat] : [],
-      url: raw.givenUrl || null,
-      playerId: null,
-    };
-  }
-
-  // Profile format: has url with spieler
-  if (raw.url && raw.type === 'player') {
-    const playerIdMatch = raw.url.match(/spieler\/(\d+)/);
-    const nameFromUrl = extractNameFromUrl(raw.url);
-    const cit = raw.Citizenship;
-
-    return {
-      name: nameFromUrl,
-      position: raw.Position || null,
-      age: extractAge(raw['Date of birth/Age']),
-      club: raw['Current club'] || null,
-      marketValue: null,
-      nationality: Array.isArray(cit) ? cit : cit ? [cit] : [],
-      url: raw.url,
-      playerId: playerIdMatch ? playerIdMatch[1] : null,
-    };
-  }
-
-  // Unknown format
-  return null;
-}
-
-function extractNameFromUrl(url: string): string {
-  // URL format: https://www.transfermarkt.com/coli-saco/profil/spieler/820633
-  const match = url.match(/transfermarkt\.com\/([^/]+)\//);
-  if (match) {
-    return match[1]
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  }
-  return 'Unknown';
-}
-
-function extractAge(value: string | undefined): string | null {
-  if (!value) return null;
-  // Format: "15/05/2002 (23)"
-  const ageMatch = value.match(/\((\d+)\)/);
-  return ageMatch ? ageMatch[1] : null;
-}
-
-/**
- * Parse market value string to numeric EUR value
- * Handles formats: "€500K" → 500000, "€1.5M" → 1500000, "€10M" → 10000000
- */
-function parseMarketValue(value: string | null): number | null {
-  if (!value) return null;
-
-  // Remove € symbol and whitespace
-  const cleaned = value.replace(/[€\s]/g, '').toUpperCase();
-
-  // Match number with optional decimal and K/M suffix
-  const match = cleaned.match(/^([\d.]+)(K|M)?$/);
-  if (!match) return null;
-
-  const num = parseFloat(match[1]);
-  if (isNaN(num)) return null;
-
-  const suffix = match[2];
-  if (suffix === 'K') return num * 1000;
-  if (suffix === 'M') return num * 1000000;
-  return num;
-}
-
-function extractPlayerIdFromUrl(url: string): string | null {
-  const match = url.match(/spieler\/(\d+)/);
-  return match ? match[1] : null;
+function toSearchPlayer(player: NormalizedPlayer): SearchPlayer {
+  return {
+    name: player.name,
+    position: player.position,
+    age: player.age,
+    club: player.club,
+    marketValue: player.marketValue,
+    nationality: player.nationality,
+    url: player.url,
+    playerId: player.playerId,
+  };
 }
 
 export async function GET(request: NextRequest) {
@@ -172,7 +59,9 @@ export async function GET(request: NextRequest) {
     const searchPlayerId = extractPlayerIdFromUrl(query);
 
     if (searchPlayerId) {
-      const matches = players.filter(p => p.playerId === searchPlayerId);
+      const matches = players
+        .filter(p => p.playerId === searchPlayerId)
+        .map(toSearchPlayer);
       return NextResponse.json(matches);
     }
 
@@ -234,5 +123,5 @@ export async function GET(request: NextRequest) {
     });
   }
 
-  return NextResponse.json(matches);
+  return NextResponse.json(matches.map(toSearchPlayer));
 }
