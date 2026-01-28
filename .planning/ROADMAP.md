@@ -29,7 +29,10 @@ None
 **Goal**: Working Next.js 14 app with Tailwind CSS and Supabase client configured
 **Depends on**: Nothing (first phase)
 **Research**: Unlikely (standard Next.js + Supabase setup)
-**Plans**: TBD
+**Plans**: 1 plan
+
+Plans:
+- [ ] 01-01: Project setup with Next.js 14, Tailwind CSS, and Supabase client
 
 ### Phase 2: Data Layer
 **Goal**: Postgres schema with players table and working import script for JSON data
@@ -81,7 +84,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/1 | Not started | - |
 | 2. Data Layer | 0/TBD | Not started | - |
 | 3. Player Search | 0/TBD | Not started | - |
 | 4. Player List View | 0/TBD | Not started | - |
