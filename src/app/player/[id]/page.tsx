@@ -53,7 +53,8 @@ export default async function PlayerDetailPage({
         <Link
           href="/"
           className="inline-flex items-center text-sm text-zinc-600 dark:text-zinc-400
-                     hover:text-zinc-900 dark:hover:text-white mb-6 transition-colors"
+                     hover:text-zinc-900 dark:hover:text-white mb-6 transition-colors
+                     min-h-[44px] py-2"
         >
           <svg
             className="w-4 h-4 mr-1"
@@ -86,26 +87,26 @@ export default async function PlayerDetailPage({
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
             Player Information
           </h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4">
+            <div className="py-2">
               <p className="text-sm text-zinc-500 dark:text-zinc-500">Age</p>
               <p className="text-lg font-medium text-zinc-900 dark:text-white">
                 {player.age || '-'}
               </p>
             </div>
-            <div>
+            <div className="py-2">
               <p className="text-sm text-zinc-500 dark:text-zinc-500">Club</p>
               <p className="text-lg font-medium text-zinc-900 dark:text-white">
                 {player.club || '-'}
               </p>
             </div>
-            <div>
+            <div className="py-2">
               <p className="text-sm text-zinc-500 dark:text-zinc-500">Market Value</p>
               <p className="text-lg font-medium text-green-600 dark:text-green-400">
                 {formatMarketValue(player.marketValue)}
               </p>
             </div>
-            <div>
+            <div className="py-2">
               <p className="text-sm text-zinc-500 dark:text-zinc-500">Nationality</p>
               <p className="text-lg font-medium text-zinc-900 dark:text-white">
                 {player.nationality && player.nationality.length > 0
