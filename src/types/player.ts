@@ -16,6 +16,31 @@ export interface Player {
   updated_at?: string;
 }
 
+// Search result player type (from API)
+export interface SearchPlayer {
+  name: string;
+  position: string | null;
+  age: string | null;
+  club: string | null;
+  marketValue: string | null;
+  nationality: string[];
+  url: string | null;
+  playerId: string | null;
+}
+
+// Format market value for display
+export function formatMarketValue(value: string | null): string {
+  if (!value) return '-';
+  // If already formatted (from JSON), return as-is
+  if (value.startsWith('€')) return value;
+
+  const num = parseInt(value, 10);
+  if (isNaN(num) || num === 0) return '-';
+  if (num < 1000) return `€${num}`;
+  if (num < 1000000) return `€${Math.round(num / 1000)}K`;
+  return `€${(num / 1000000).toFixed(1)}M`;
+}
+
 // Raw JSON format from Transfermarkt scrape
 export interface RawPlayerData {
   Player: [string, string];  // [name, position]
