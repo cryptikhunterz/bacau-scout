@@ -18,7 +18,7 @@ None
 - [x] **Phase 2: Data Layer** - Database schema design + JSON import script
 - [x] **Phase 3: Player Search** - Search API endpoint + instant search component
 - [x] **Phase 4: Player List View** - Grid/list view with key player info
-- [ ] **Phase 5: Filtering System** - Position, league, market value, age filters
+- [x] **Phase 5: Filtering System** - Position, league, market value, age filters
 - [ ] **Phase 6: Player Detail Page** - Full player profile view
 - [ ] **Phase 7: UI Polish** - Responsive design, loading states, animations
 - [ ] **Phase 8: Performance Optimization** - <100ms search guarantee, indexing
@@ -68,7 +68,7 @@ Plans:
 **Plans**: 1 plan
 
 Plans:
-- [ ] 05-01: Filter API + FilterPanel component + SearchBar integration
+- [x] 05-01: Filter API + FilterPanel component + SearchBar integration
 
 ### Phase 6: Player Detail Page
 **Goal**: Full player profile page with all available data
@@ -100,7 +100,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Data Layer | 1/1 | Complete | 2026-01-28 |
 | 3. Player Search | 1/1 | Complete | 2026-01-28 |
 | 4. Player List View | 1/1 | Complete | 2026-01-28 |
-| 5. Filtering System | 0/TBD | Not started | - |
+| 5. Filtering System | 1/1 | Complete | 2026-01-28 |
 | 6. Player Detail Page | 0/TBD | Not started | - |
 | 7. UI Polish | 0/TBD | Not started | - |
 | 8. Performance Optimization | 0/TBD | Not started | - |

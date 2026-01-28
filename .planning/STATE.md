@@ -5,22 +5,22 @@
 See: .planning/PROJECT.md (updated 2026-01-28)
 
 **Core value:** Clean UX for browsing — scouts will pay for a tool that's enjoyable to use, not just functional
-**Current focus:** Phase 4 — Player List View (Complete)
+**Current focus:** Phase 5 — Filtering System (Complete)
 
 ## Current Position
 
-Phase: 4 of 8 (Player List View)
+Phase: 5 of 8 (Filtering System)
 Plan: 1 of 1 in current phase
 Status: Phase complete
-Last activity: 2026-01-28 — Completed 04-01-PLAN.md (~3 min)
+Last activity: 2026-01-28 — Completed 05-01-PLAN.md (~3 min)
 
-Progress: █████░░░░░ 50%
+Progress: ██████░░░░ 62%
 
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 4
-- Average duration: 7 min
+- Total plans completed: 5
+- Average duration: 6 min
 - Total execution time: 0.5 hours
 
 **By Phase:**
@@ -31,10 +31,11 @@ Progress: █████░░░░░ 50%
 | 2. Data Layer | 1 | 19 min | 19 min |
 | 3. Player Search | 1 | 2 min | 2 min |
 | 4. Player List View | 1 | 3 min | 3 min |
+| 5. Filtering System | 1 | 3 min | 3 min |
 
 **Recent Trend:**
-- Last 5 plans: 5 min, 19 min, 2 min, 3 min
-- Trend: Stable
+- Last 5 plans: 5 min, 19 min, 2 min, 3 min, 3 min
+- Trend: Fast (avg 3 min for UI phases)
 
 ## Accumulated Context
 
@@ -53,6 +54,10 @@ Recent decisions affecting current work:
 - [Phase 4]: SearchPlayer type in shared types/player.ts
 - [Phase 4]: Container max-w-4xl for grid layout
 - [Phase 4]: Unicode symbols for view toggle
+- [Phase 5]: Position filter exact match, club filter partial match
+- [Phase 5]: Filters debounced same 300ms as search
+- [Phase 5]: Position dropdown populated dynamically from results
+- [Phase 5]: Collapsible panel with "Active" badge
 
 ### Deferred Issues
 
@@ -64,6 +69,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-01-28 19:45
-Stopped at: Completed 04-01-PLAN.md (Phase 4 complete)
+Last session: 2026-01-28 20:05
+Stopped at: Completed 05-01-PLAN.md (Phase 5 complete)
 Resume file: None
