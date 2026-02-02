@@ -22,6 +22,7 @@ None
 - [x] **Phase 6: Player Detail Page** - Full player profile view
 - [x] **Phase 7: UI Polish** - Responsive design, loading states, animations
 - [x] **Phase 8: Performance Optimization** - <100ms search guarantee, indexing
+- [ ] **Phase 9: Scout Grading System** - Player evaluation form + grades dashboard
 
 ## Phase Details
 
@@ -97,10 +98,22 @@ Plans:
 Plans:
 - [x] 08-01: Pre-computed indexes + performance logging + Map lookup optimization
 
+### Phase 9: Scout Grading System
+**Goal**: Enable scouts to evaluate players with ratings, recommendations, and notes
+**Depends on**: Phase 6 (Player Detail Page)
+**Research**: None (localStorage for prototype)
+**Plans**: 4 plans
+
+Plans:
+- [ ] 09-01: Data model + localStorage helpers (PlayerGrade interface, CRUD functions)
+- [ ] 09-02: Grading form component (StarRating, GradingForm with all sections)
+- [ ] 09-03: Profile integration (PlayerGrading wrapper, add to player detail page)
+- [ ] 09-04: Home page transformation (GradesTable, GradesFilters, dashboard layout)
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
@@ -112,3 +125,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 6. Player Detail Page | 1/1 | Complete | 2026-01-28 |
 | 7. UI Polish | 1/1 | Complete | 2026-01-28 |
 | 8. Performance Optimization | 1/1 | Complete | 2026-01-28 |
+| 9. Scout Grading System | 0/4 | Planned | - |
