@@ -107,7 +107,7 @@ Plans:
 Plans:
 - [x] 09-01: Data model + localStorage helpers (PlayerGrade interface, CRUD functions)
 - [x] 09-02: Grading form component (StarRating, GradingForm with all sections)
-- [ ] 09-03: Profile integration (PlayerGrading wrapper, add to player detail page)
+- [x] 09-03: Profile integration (PlayerGrading wrapper, add to player detail page)
 - [ ] 09-04: Home page transformation (GradesTable, GradesFilters, dashboard layout)
 
 ## Progress
@@ -125,4 +125,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 →
 | 6. Player Detail Page | 1/1 | Complete | 2026-01-28 |
 | 7. UI Polish | 1/1 | Complete | 2026-01-28 |
 | 8. Performance Optimization | 1/1 | Complete | 2026-01-28 |
-| 9. Scout Grading System | 2/4 | In progress | - |
+| 9. Scout Grading System | 3/4 | In progress | - |
