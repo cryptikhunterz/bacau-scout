@@ -1,21 +1,31 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { formatMarketValue } from '@/types/player';
+import { formatMarketValue, PlayerStats, CareerTotals } from '@/types/player';
+import { PlayerGrading } from '@/components/PlayerGrading';
 
 interface PlayerData {
+  id: string;
   name: string;
-  position: string | null;
-  age: string | null;
-  club: string | null;
+  tmUrl: string;
+  position: string;
+  altPositions?: string[];
+  age: number;
+  nationality: string;
+  secondNationality?: string;
+  birthDate?: string;
+  birthplace?: string;
+  club: string;
+  league?: string;
   marketValue: string | null;
-  nationality: string[];
-  url: string | null;
-  playerId: string | null;
-  leagueUrl: string | null;
+  height?: string;
+  foot?: string;
+  contractUntil?: string | null;
+  shirtNumber?: string;
+  stats: PlayerStats[];
+  careerTotals?: CareerTotals | null;
 }
 
 async function getPlayer(id: string): Promise<PlayerData | null> {
-  // Use absolute URL for server-side fetch
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 
   try {
@@ -48,7 +58,7 @@ export default async function PlayerDetailPage({
 
   return (
     <main className="min-h-screen bg-zinc-50 dark:bg-zinc-900 py-8 px-4">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-3xl mx-auto">
         {/* Back button */}
         <Link
           href="/"
@@ -56,87 +66,149 @@ export default async function PlayerDetailPage({
                      hover:text-zinc-900 dark:hover:text-white mb-6 transition-colors
                      min-h-[44px] py-2"
         >
-          <svg
-            className="w-4 h-4 mr-1"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
+          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           Back to Search
         </Link>
 
         {/* Player header */}
         <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
-          <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-            {player.name}
-          </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400">
-            {player.position || 'Position unknown'}
-          </p>
-        </div>
-
-        {/* Player stats grid */}
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-            Player Information
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-4">
-            <div className="py-2">
-              <p className="text-sm text-zinc-500 dark:text-zinc-500">Age</p>
-              <p className="text-lg font-medium text-zinc-900 dark:text-white">
-                {player.age || '-'}
+          <div className="flex justify-between items-start">
+            <div>
+              <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-1">
+                {player.name}
+              </h1>
+              <p className="text-lg text-zinc-600 dark:text-zinc-400">
+                {player.position}
               </p>
+              {player.altPositions && player.altPositions.length > 0 && (
+                <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                  Also: {player.altPositions.join(', ')}
+                </p>
+              )}
             </div>
-            <div className="py-2">
-              <p className="text-sm text-zinc-500 dark:text-zinc-500">Club</p>
-              <p className="text-lg font-medium text-zinc-900 dark:text-white">
-                {player.club || '-'}
-              </p>
-            </div>
-            <div className="py-2">
-              <p className="text-sm text-zinc-500 dark:text-zinc-500">Market Value</p>
-              <p className="text-lg font-medium text-green-600 dark:text-green-400">
+            <div className="text-right">
+              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                 {formatMarketValue(player.marketValue)}
               </p>
-            </div>
-            <div className="py-2">
-              <p className="text-sm text-zinc-500 dark:text-zinc-500">Nationality</p>
-              <p className="text-lg font-medium text-zinc-900 dark:text-white">
-                {player.nationality && player.nationality.length > 0
-                  ? player.nationality.join(', ')
-                  : '-'}
+              <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                Market Value
               </p>
             </div>
           </div>
         </div>
 
+        {/* Player info grid */}
+        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+            Player Information
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <InfoItem label="Age" value={player.age?.toString()} />
+            <InfoItem label="Club" value={player.club} />
+            <InfoItem label="League" value={player.league} />
+            <InfoItem label="Nationality" value={player.nationality} />
+            {player.secondNationality && (
+              <InfoItem label="2nd Nationality" value={player.secondNationality} />
+            )}
+            <InfoItem label="Birth Date" value={player.birthDate} />
+            {player.birthplace && <InfoItem label="Birthplace" value={player.birthplace} />}
+            {player.height && <InfoItem label="Height" value={player.height} />}
+            {player.foot && <InfoItem label="Foot" value={player.foot} />}
+            {player.contractUntil && player.contractUntil !== '-' && (
+              <InfoItem label="Contract Until" value={player.contractUntil} />
+            )}
+          </div>
+        </div>
+
+        {/* Career totals */}
+        {player.careerTotals && (
+          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+              Career Totals
+            </h2>
+            <div className="grid grid-cols-4 gap-4 text-center">
+              <StatBox label="Matches" value={player.careerTotals.matches} />
+              <StatBox label="Goals" value={player.careerTotals.goals} highlight />
+              <StatBox label="Assists" value={player.careerTotals.assists} />
+              <StatBox label="Minutes" value={player.careerTotals.minutes} />
+            </div>
+          </div>
+        )}
+
+        {/* Season stats table */}
+        {player.stats && player.stats.length > 0 && (
+          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
+            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+              Performance by Season
+            </h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-zinc-200 dark:border-zinc-700">
+                    <th className="text-left py-2 text-zinc-600 dark:text-zinc-400 font-medium">Season</th>
+                    <th className="text-left py-2 text-zinc-600 dark:text-zinc-400 font-medium">Competition</th>
+                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Apps</th>
+                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Goals</th>
+                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Assists</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {player.stats.slice(0, 10).map((stat, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b border-zinc-100 dark:border-zinc-800 last:border-0"
+                    >
+                      <td className="py-2 text-zinc-900 dark:text-white">{stat.season}</td>
+                      <td className="py-2 text-zinc-600 dark:text-zinc-400">{stat.competition}</td>
+                      <td className="py-2 text-center text-zinc-900 dark:text-white">{stat.matches}</td>
+                      <td className="py-2 text-center font-medium text-green-600 dark:text-green-400">
+                        {stat.goals}
+                      </td>
+                      <td className="py-2 text-center text-zinc-600 dark:text-zinc-400">
+                        {stat.assists ?? '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {player.stats.length > 10 && (
+              <p className="text-xs text-zinc-500 mt-2">
+                Showing 10 of {player.stats.length} entries
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Scout Evaluation */}
+        <div className="mb-6">
+          <PlayerGrading
+            player={{
+              id: player.id,
+              name: player.name,
+              position: player.position,
+              club: player.club,
+            }}
+          />
+        </div>
+
         {/* External links */}
-        {player.url && (
+        {player.tmUrl && (
           <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
               External Links
             </h2>
             <a
-              href={player.url}
+              href={player.tmUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center text-blue-600 dark:text-blue-400
                        hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
             >
               View on Transfermarkt
-              <svg
-                className="w-4 h-4 ml-1"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+              <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -149,5 +221,38 @@ export default async function PlayerDetailPage({
         )}
       </div>
     </main>
+  );
+}
+
+function InfoItem({ label, value }: { label: string; value?: string | null }) {
+  if (!value) return null;
+  return (
+    <div className="py-1">
+      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
+      <p className="text-sm font-medium text-zinc-900 dark:text-white">{value}</p>
+    </div>
+  );
+}
+
+function StatBox({
+  label,
+  value,
+  highlight = false,
+}: {
+  label: string;
+  value: number;
+  highlight?: boolean;
+}) {
+  return (
+    <div className="py-2">
+      <p
+        className={`text-2xl font-bold ${
+          highlight ? 'text-green-600 dark:text-green-400' : 'text-zinc-900 dark:text-white'
+        }`}
+      >
+        {value}
+      </p>
+      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
+    </div>
   );
 }
