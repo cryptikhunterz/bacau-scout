@@ -79,6 +79,7 @@ export interface NormalizedPlayer {
   assists: number | null;
   // Pre-computed fields for performance
   nameLower: string;
+  nameSearch: string; // Stripped of diacritics for search
   marketValueNum: number | null;
   ageNum: number | null;
 }
@@ -122,6 +123,14 @@ let playersCache: NormalizedPlayer[] | null = null;
 let rawPlayersCache: RawPlayer[] | null = null;
 let playerIdMap: Map<string, NormalizedPlayer> = new Map();
 let rawPlayerIdMap: Map<string, RawPlayer> = new Map();
+
+/**
+ * Strip diacritics/accents from string for search matching
+ * e.g., "Târnovanu" -> "tarnovanu", "Müller" -> "muller"
+ */
+function stripDiacritics(str: string): string {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
 
 function loadRawPlayers(): RawPlayer[] {
   if (rawPlayersCache) return rawPlayersCache;
@@ -199,6 +208,7 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
       goals: raw.goals || raw.career_stats?.total_goals || null,
       assists: raw.assists || raw.career_stats?.total_assists || null,
       nameLower: name.toLowerCase(),
+      nameSearch: stripDiacritics(name),
       marketValueNum: parseMarketValue(marketValue),
       ageNum: age ? parseInt(age, 10) : null,
     };
@@ -227,6 +237,7 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
       goals: null,
       assists: null,
       nameLower: name.toLowerCase(),
+      nameSearch: stripDiacritics(name),
       marketValueNum: parseMarketValue(marketValue),
       ageNum: age ? parseInt(age, 10) : null,
     };

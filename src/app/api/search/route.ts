@@ -85,10 +85,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
-  // Text search: use pre-computed nameLower for performance
-  const lowerQuery = query.toLowerCase();
+  // Text search: use pre-computed nameSearch (diacritics stripped) for performance
+  const searchQuery = query.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   let matches = players.filter(p =>
-    p.nameLower.includes(lowerQuery)
+    p.nameSearch.includes(searchQuery)
   );
 
   // Apply filters AFTER name search (filters are AND-ed together)
