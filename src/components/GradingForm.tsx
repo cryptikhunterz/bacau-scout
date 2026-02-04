@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { StarRating } from './StarRating';
 import {
   saveGrade,
   PlayerGrade,
-  CATEGORY_LABELS,
+  RATING_LABELS,
+  METRIC_CATEGORIES,
+  getRatingColor,
+  AVAILABLE_TAGS,
   Status,
   Recommendation,
   ScoutingLevel,
-  PlayerCategory,
+  MetricRating,
 } from '@/lib/grades';
 
 interface GradingFormProps {
@@ -23,8 +25,58 @@ interface GradingFormProps {
   onSave: () => void;
 }
 
+// FM-style rating badge colors
+function getFMColor(value: number): string {
+  if (value >= 7) return 'bg-green-500 text-white';
+  if (value >= 5) return 'bg-yellow-500 text-black';
+  if (value >= 3) return 'bg-orange-500 text-white';
+  return 'bg-red-600 text-white';
+}
+
+// Rating selector component with FM-style badge
+function RatingSelect({
+  label,
+  value,
+  onChange,
+}: {
+  label: string;
+  value: MetricRating;
+  onChange: (val: MetricRating) => void;
+}) {
+  return (
+    <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-700/50 last:border-0">
+      <span className="text-sm text-zinc-300">
+        {label}
+      </span>
+      <div className="flex items-center gap-2">
+        {/* FM-style colored badge */}
+        <span className={`inline-flex items-center justify-center w-8 h-8 rounded font-bold text-sm ${getFMColor(value)}`}>
+          {value}
+        </span>
+        {/* Increment/decrement buttons */}
+        <div className="flex flex-col">
+          <button
+            type="button"
+            onClick={() => value < 8 && onChange((value + 1) as MetricRating)}
+            className="px-1.5 py-0 text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+          >
+            ▲
+          </button>
+          <button
+            type="button"
+            onClick={() => value > 1 && onChange((value - 1) as MetricRating)}
+            className="px-1.5 py-0 text-xs text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
+          >
+            ▼
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function GradingForm({ player, existingGrade, onSave }: GradingFormProps) {
-  // Form state - initialize from existing grade or defaults
+  // Status & Recommendation
   const [status, setStatus] = useState<Status>(existingGrade?.status || 'FM');
   const [recommendation, setRecommendation] = useState<Recommendation>(
     existingGrade?.recommendation || 'Monitor'
@@ -32,33 +84,71 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [scoutingLevel, setScoutingLevel] = useState<ScoutingLevel>(
     existingGrade?.scoutingLevel || 'Basic'
   );
-  const [playerCategory, setPlayerCategory] = useState<PlayerCategory>(
-    existingGrade?.playerCategory || 5
+
+  // I. Technical Proficiency
+  const [dribblingBallControl, setDribblingBallControl] = useState<MetricRating>(
+    existingGrade?.dribblingBallControl || 4
   );
-  const [abilityRating, setAbilityRating] = useState<number>(
-    existingGrade?.abilityRating || 3
+  const [oneVsOneDribbling, setOneVsOneDribbling] = useState<MetricRating>(
+    existingGrade?.oneVsOneDribbling || 4
   );
-  const [potentialRating, setPotentialRating] = useState<number>(
-    existingGrade?.potentialRating || 3
+  const [passingRangeCreation, setPassingRangeCreation] = useState<MetricRating>(
+    existingGrade?.passingRangeCreation || 4
   );
-  const [technicalRating, setTechnicalRating] = useState<number>(
-    existingGrade?.technicalRating || 3
+  const [crossingDelivery, setCrossingDelivery] = useState<MetricRating>(
+    existingGrade?.crossingDelivery || 4
   );
-  const [tacticalRating, setTacticalRating] = useState<number>(
-    existingGrade?.tacticalRating || 3
+
+  // II. Athletic & Physical Profile
+  const [accelerationPace, setAccelerationPace] = useState<MetricRating>(
+    existingGrade?.accelerationPace || 4
   );
-  const [physicalRating, setPhysicalRating] = useState<number>(
-    existingGrade?.physicalRating || 3
+  const [workRateStamina, setWorkRateStamina] = useState<MetricRating>(
+    existingGrade?.workRateStamina || 4
   );
-  const [mentalRating, setMentalRating] = useState<number>(
-    existingGrade?.mentalRating || 3
+  const [physicalDuelingAerial, setPhysicalDuelingAerial] = useState<MetricRating>(
+    existingGrade?.physicalDuelingAerial || 4
   );
+
+  // III. Attacking Output & Efficiency
+  const [goalContribution, setGoalContribution] = useState<MetricRating>(
+    existingGrade?.goalContribution || 4
+  );
+  const [carryingProgression, setCarryingProgression] = useState<MetricRating>(
+    existingGrade?.carryingProgression || 4
+  );
+  const [finishingShotPlacement, setFinishingShotPlacement] = useState<MetricRating>(
+    existingGrade?.finishingShotPlacement || 4
+  );
+
+  // IV. Tactical IQ & Character
+  const [positionalIntelligence, setPositionalIntelligence] = useState<MetricRating>(
+    existingGrade?.positionalIntelligence || 4
+  );
+  const [defensivePressingIntensity, setDefensivePressingIntensity] = useState<MetricRating>(
+    existingGrade?.defensivePressingIntensity || 4
+  );
+  const [oneVsOneDuels, setOneVsOneDuels] = useState<MetricRating>(
+    existingGrade?.oneVsOneDuels || 4
+  );
+
+  // Tags
+  const [strengths, setStrengths] = useState<string[]>(existingGrade?.strengths || []);
+  const [weaknesses, setWeaknesses] = useState<string[]>(existingGrade?.weaknesses || []);
+
+  // Notes & Optional
   const [notes, setNotes] = useState<string>(existingGrade?.notes || '');
-  const [transferFee, setTransferFee] = useState<string>(
-    existingGrade?.transferFee || ''
-  );
+  const [transferFee, setTransferFee] = useState<string>(existingGrade?.transferFee || '');
   const [salary, setSalary] = useState<string>(existingGrade?.salary || '');
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const toggleTag = (tag: string, list: string[], setList: (tags: string[]) => void) => {
+    if (list.includes(tag)) {
+      setList(list.filter(t => t !== tag));
+    } else {
+      setList([...list, tag]);
+    }
+  };
 
   const handleSave = () => {
     const grade: PlayerGrade = {
@@ -70,13 +160,21 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       status,
       recommendation,
       scoutingLevel,
-      playerCategory,
-      abilityRating,
-      potentialRating,
-      technicalRating,
-      tacticalRating,
-      physicalRating,
-      mentalRating,
+      dribblingBallControl,
+      oneVsOneDribbling,
+      passingRangeCreation,
+      crossingDelivery,
+      accelerationPace,
+      workRateStamina,
+      physicalDuelingAerial,
+      goalContribution,
+      carryingProgression,
+      finishingShotPlacement,
+      positionalIntelligence,
+      defensivePressingIntensity,
+      oneVsOneDuels,
+      strengths,
+      weaknesses,
       notes,
       transferFee: transferFee || undefined,
       salary: salary || undefined,
@@ -88,7 +186,6 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
     onSave();
   };
 
-  // Recommendation button colors
   const recButtonClass = (rec: Recommendation) => {
     const base = 'px-4 py-2 rounded text-sm font-medium transition-colors';
     if (recommendation === rec) {
@@ -101,163 +198,169 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
           return `${base} bg-red-600 text-white`;
       }
     }
-    return `${base} bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-300 dark:hover:bg-zinc-600`;
+    return `${base} bg-zinc-700 text-zinc-300 hover:bg-zinc-600`;
   };
-
-  // Generate ability rating options (1.0 to 5.0 in 0.5 increments)
-  const abilityOptions = [];
-  for (let i = 1; i <= 5; i += 0.5) {
-    abilityOptions.push(i);
-  }
 
   return (
     <div className="space-y-6">
-      {/* Section 1: Status & Recommendation */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Status & Recommendation
-        </h3>
+      {/* Rating Scale Reference */}
+      <div className="p-3 bg-zinc-900 rounded-lg">
+        <p className="text-xs font-medium text-zinc-500 mb-2">Rating Scale (1-8)</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 text-xs">
+          {Object.entries(RATING_LABELS).map(([num, label]) => (
+            <div key={num} className="text-zinc-400">
+              <span className="font-medium">{num}</span> = {label}
+            </div>
+          ))}
+        </div>
+      </div>
 
-        <div className="flex flex-wrap gap-4">
-          {/* Status dropdown */}
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1">Status</label>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as Status)}
-              className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
-            >
-              <option value="FM">FM (First Team)</option>
-              <option value="U23">U23</option>
-              <option value="LOAN">LOAN</option>
-              <option value="WATCH">WATCH</option>
-            </select>
-          </div>
-
-          {/* Scouting Level dropdown */}
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1">
-              Scouting Level
-            </label>
-            <select
-              value={scoutingLevel}
-              onChange={(e) => setScoutingLevel(e.target.value as ScoutingLevel)}
-              className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
-            >
-              <option value="Basic">Basic</option>
-              <option value="Impressive">Impressive</option>
-              <option value="Data only">Data only</option>
-            </select>
-          </div>
+      {/* Status */}
+      <div className="flex flex-wrap gap-4">
+        <div>
+          <label className="block text-xs text-zinc-500 mb-1">Status</label>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as Status)}
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm"
+          >
+            <option value="FM">FM (First Team)</option>
+            <option value="U23">U23</option>
+            <option value="LOAN">LOAN</option>
+            <option value="WATCH">WATCH</option>
+          </select>
         </div>
 
-        {/* Recommendation buttons */}
         <div>
-          <label className="block text-xs text-zinc-500 mb-2">
-            Recommendation
-          </label>
-          <div className="flex gap-2">
-            {(['Sign', 'Monitor', 'Discard'] as Recommendation[]).map((rec) => (
+          <label className="block text-xs text-zinc-500 mb-1">Scouting Level</label>
+          <select
+            value={scoutingLevel}
+            onChange={(e) => setScoutingLevel(e.target.value as ScoutingLevel)}
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm"
+          >
+            <option value="Basic">Basic</option>
+            <option value="Impressive">Impressive</option>
+            <option value="Data only">Data only</option>
+          </select>
+        </div>
+      </div>
+
+      {/* I. Technical Proficiency */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          {METRIC_CATEGORIES.technical.title}
+        </h3>
+        <RatingSelect label="Dribbling & Ball Control" value={dribblingBallControl} onChange={setDribblingBallControl} />
+        <RatingSelect label="1v1 Dribbling" value={oneVsOneDribbling} onChange={setOneVsOneDribbling} />
+        <RatingSelect label="Passing Range (Creation)" value={passingRangeCreation} onChange={setPassingRangeCreation} />
+        <RatingSelect label="Crossing & Delivery" value={crossingDelivery} onChange={setCrossingDelivery} />
+      </div>
+
+      {/* II. Athletic & Physical Profile */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          {METRIC_CATEGORIES.athletic.title}
+        </h3>
+        <RatingSelect label="Acceleration & Pace" value={accelerationPace} onChange={setAccelerationPace} />
+        <RatingSelect label="Work Rate & Stamina" value={workRateStamina} onChange={setWorkRateStamina} />
+        <RatingSelect label="Physical Dueling & Aerial" value={physicalDuelingAerial} onChange={setPhysicalDuelingAerial} />
+      </div>
+
+      {/* III. Attacking Output & Efficiency */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          {METRIC_CATEGORIES.attacking.title}
+        </h3>
+        <RatingSelect label="Goal Contribution (xG + xA)" value={goalContribution} onChange={setGoalContribution} />
+        <RatingSelect label="Carrying & Progression" value={carryingProgression} onChange={setCarryingProgression} />
+        <RatingSelect label="Finishing & Shot Placement" value={finishingShotPlacement} onChange={setFinishingShotPlacement} />
+      </div>
+
+      {/* IV. Tactical IQ & Character */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          {METRIC_CATEGORIES.tactical.title}
+        </h3>
+        <RatingSelect label="Positional Intelligence (Off-Ball)" value={positionalIntelligence} onChange={setPositionalIntelligence} />
+        <RatingSelect label="Defensive Pressing Intensity" value={defensivePressingIntensity} onChange={setDefensivePressingIntensity} />
+        <RatingSelect label="1v1 Duels" value={oneVsOneDuels} onChange={setOneVsOneDuels} />
+      </div>
+
+      {/* Tags */}
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          Tags
+        </h3>
+        
+        {/* Strengths */}
+        <div>
+          <label className="block text-xs text-zinc-500 mb-2">Strengths</label>
+          <div className="flex flex-wrap gap-2">
+            {AVAILABLE_TAGS.map((tag) => (
               <button
-                key={rec}
+                key={`str-${tag}`}
                 type="button"
-                onClick={() => setRecommendation(rec)}
-                className={recButtonClass(rec)}
+                onClick={() => toggleTag(tag, strengths, setStrengths)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  strengths.includes(tag)
+                    ? 'bg-green-600 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
               >
-                {rec}
+                {tag}
               </button>
             ))}
           </div>
+          {strengths.length > 0 && (
+            <p className="text-xs text-green-600 mt-2">Selected: {strengths.join(', ')}</p>
+          )}
+        </div>
+
+        {/* Weaknesses */}
+        <div>
+          <label className="block text-xs text-zinc-500 mb-2">Weaknesses</label>
+          <div className="flex flex-wrap gap-2">
+            {AVAILABLE_TAGS.map((tag) => (
+              <button
+                key={`wk-${tag}`}
+                type="button"
+                onClick={() => toggleTag(tag, weaknesses, setWeaknesses)}
+                className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                  weaknesses.includes(tag)
+                    ? 'bg-red-600 text-white'
+                    : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          {weaknesses.length > 0 && (
+            <p className="text-xs text-red-600 mt-2">Selected: {weaknesses.join(', ')}</p>
+          )}
         </div>
       </div>
 
-      {/* Section 2: Player Category */}
-      <div>
-        <label className="block text-xs text-zinc-500 mb-1">
-          Player Category
-        </label>
-        <select
-          value={playerCategory}
-          onChange={(e) => setPlayerCategory(Number(e.target.value) as PlayerCategory)}
-          className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm w-full max-w-xs"
-        >
-          {([1, 2, 3, 4, 5, 6, 7, 8] as PlayerCategory[]).map((cat) => (
-            <option key={cat} value={cat}>
-              {cat} - {CATEGORY_LABELS[cat]}
-            </option>
+      {/* Verdict */}
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+          Verdict
+        </h3>
+        <div className="flex gap-3">
+          {(['Sign', 'Monitor', 'Discard'] as Recommendation[]).map((rec) => (
+            <button
+              key={rec}
+              type="button"
+              onClick={() => setRecommendation(rec)}
+              className={recButtonClass(rec)}
+            >
+              {rec}
+            </button>
           ))}
-        </select>
-      </div>
-
-      {/* Section 3: Ability Ratings */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Ability Ratings
-        </h3>
-        <div className="flex flex-wrap gap-4">
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1">
-              Current Ability
-            </label>
-            <select
-              value={abilityRating}
-              onChange={(e) => setAbilityRating(Number(e.target.value))}
-              className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
-            >
-              {abilityOptions.map((val) => (
-                <option key={val} value={val}>
-                  {val.toFixed(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label className="block text-xs text-zinc-500 mb-1">Potential</label>
-            <select
-              value={potentialRating}
-              onChange={(e) => setPotentialRating(Number(e.target.value))}
-              className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
-            >
-              {abilityOptions.map((val) => (
-                <option key={val} value={val}>
-                  {val.toFixed(1)}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
       </div>
 
-      {/* Section 4: Star Ratings */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-          Skill Ratings
-        </h3>
-        <div className="space-y-2">
-          <StarRating
-            label="Technical"
-            value={technicalRating}
-            onChange={setTechnicalRating}
-          />
-          <StarRating
-            label="Tactical"
-            value={tacticalRating}
-            onChange={setTacticalRating}
-          />
-          <StarRating
-            label="Physical"
-            value={physicalRating}
-            onChange={setPhysicalRating}
-          />
-          <StarRating
-            label="Mental"
-            value={mentalRating}
-            onChange={setMentalRating}
-          />
-        </div>
-      </div>
-
-      {/* Section 5: Notes */}
+      {/* Notes */}
       <div>
         <label className="block text-xs text-zinc-500 mb-1">Notes</label>
         <textarea
@@ -265,22 +368,20 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Scout observations, concerns, strengths..."
           rows={3}
-          className="w-full px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm resize-none"
+          className="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm resize-none"
         />
       </div>
 
-      {/* Section 6: Optional fields */}
+      {/* Optional fields */}
       <div className="flex flex-wrap gap-4">
         <div>
-          <label className="block text-xs text-zinc-500 mb-1">
-            Transfer Fee (est.)
-          </label>
+          <label className="block text-xs text-zinc-500 mb-1">Transfer Fee (est.)</label>
           <input
             type="text"
             value={transferFee}
             onChange={(e) => setTransferFee(e.target.value)}
             placeholder="€500k - €1M"
-            className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm"
           />
         </div>
         <div>
@@ -290,7 +391,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
             value={salary}
             onChange={(e) => setSalary(e.target.value)}
             placeholder="€3k/month"
-            className="px-3 py-2 rounded border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-sm"
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm"
           />
         </div>
       </div>

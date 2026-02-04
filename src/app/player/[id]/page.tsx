@@ -57,13 +57,13 @@ export default async function PlayerDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-zinc-50 dark:bg-zinc-900 py-8 px-4">
+    <main className="min-h-screen bg-zinc-900 py-8 px-4">
       <div className="max-w-3xl mx-auto">
         {/* Back button */}
         <Link
           href="/"
-          className="inline-flex items-center text-sm text-zinc-600 dark:text-zinc-400
-                     hover:text-zinc-900 dark:hover:text-white mb-6 transition-colors
+          className="inline-flex items-center text-sm text-zinc-400
+                     hover:text-white mb-6 transition-colors
                      min-h-[44px] py-2"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,26 +73,26 @@ export default async function PlayerDetailPage({
         </Link>
 
         {/* Player header */}
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
+        <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-1">
+              <h1 className="text-2xl font-bold text-white mb-1">
                 {player.name}
               </h1>
-              <p className="text-lg text-zinc-600 dark:text-zinc-400">
+              <p className="text-lg text-zinc-400">
                 {player.position}
               </p>
               {player.altPositions && player.altPositions.length > 0 && (
-                <p className="text-sm text-zinc-500 dark:text-zinc-500">
+                <p className="text-sm text-zinc-500">
                   Also: {player.altPositions.join(', ')}
                 </p>
               )}
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-green-600 dark:text-green-400">
+              <p className="text-2xl font-bold text-green-400">
                 {formatMarketValue(player.marketValue)}
               </p>
-              <p className="text-sm text-zinc-500 dark:text-zinc-500">
+              <p className="text-sm text-zinc-500">
                 Market Value
               </p>
             </div>
@@ -100,8 +100,8 @@ export default async function PlayerDetailPage({
         </div>
 
         {/* Player info grid */}
-        <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+        <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-4">
             Player Information
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
@@ -124,9 +124,9 @@ export default async function PlayerDetailPage({
 
         {/* Stats from Transfermarkt profile */}
         {player.careerTotals && (
-          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-              Stats
+          <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
+            <h2 className="text-lg font-semibold text-white mb-4">
+              2025/26 Stats
             </h2>
             <div className="grid grid-cols-3 gap-4 text-center">
               <StatBox label="Matches" value={player.careerTotals.matches} />
@@ -138,18 +138,18 @@ export default async function PlayerDetailPage({
 
         {/* Competition breakdown - disabled, data is unreliable */}
         {false && player.stats && player.stats.length > 0 && (
-          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+          <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
+            <h2 className="text-lg font-semibold text-white mb-4">
               By Competition
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                    <th className="text-left py-2 text-zinc-600 dark:text-zinc-400 font-medium">Competition</th>
-                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Apps</th>
-                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Goals</th>
-                    <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Assists</th>
+                  <tr className="border-b border-zinc-700">
+                    <th className="text-left py-2 text-zinc-400 font-medium">Competition</th>
+                    <th className="text-center py-2 text-zinc-400 font-medium">Apps</th>
+                    <th className="text-center py-2 text-zinc-400 font-medium">Goals</th>
+                    <th className="text-center py-2 text-zinc-400 font-medium">Assists</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -158,12 +158,12 @@ export default async function PlayerDetailPage({
                       key={idx}
                       className="border-b border-zinc-100 dark:border-zinc-800 last:border-0"
                     >
-                      <td className="py-2 text-zinc-600 dark:text-zinc-400">{stat.competition}</td>
-                      <td className="py-2 text-center text-zinc-900 dark:text-white">{stat.matches}</td>
-                      <td className="py-2 text-center font-medium text-green-600 dark:text-green-400">
+                      <td className="py-2 text-zinc-400">{stat.competition}</td>
+                      <td className="py-2 text-center text-white">{stat.matches}</td>
+                      <td className="py-2 text-center font-medium text-green-400">
                         {stat.goals}
                       </td>
-                      <td className="py-2 text-center text-zinc-600 dark:text-zinc-400">
+                      <td className="py-2 text-center text-zinc-400">
                         {stat.assists ?? '-'}
                       </td>
                     </tr>
@@ -193,16 +193,16 @@ export default async function PlayerDetailPage({
 
         {/* External links */}
         {player.tmUrl && (
-          <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6">
-            <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
+          <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6">
+            <h2 className="text-lg font-semibold text-white mb-4">
               External Links
             </h2>
             <a
               href={player.tmUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-blue-600 dark:text-blue-400
-                       hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+              className="inline-flex items-center text-blue-400
+                       hover:text-blue-300 transition-colors"
             >
               View on Transfermarkt
               <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,8 +225,8 @@ function InfoItem({ label, value }: { label: string; value?: string | null }) {
   if (!value) return null;
   return (
     <div className="py-1">
-      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
-      <p className="text-sm font-medium text-zinc-900 dark:text-white">{value}</p>
+      <p className="text-xs text-zinc-500">{label}</p>
+      <p className="text-sm font-medium text-white">{value}</p>
     </div>
   );
 }
@@ -244,12 +244,12 @@ function StatBox({
     <div className="py-2">
       <p
         className={`text-2xl font-bold ${
-          highlight ? 'text-green-600 dark:text-green-400' : 'text-zinc-900 dark:text-white'
+          highlight ? 'text-green-400' : 'text-white'
         }`}
       >
         {value}
       </p>
-      <p className="text-xs text-zinc-500 dark:text-zinc-500">{label}</p>
+      <p className="text-xs text-zinc-500">{label}</p>
     </div>
   );
 }
