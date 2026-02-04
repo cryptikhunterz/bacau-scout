@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model ScoutingReport {
+  id            String   @id @default(cuid())
+  playerId      String
+  
+  // Technical Proficiency (1-8)
+  ballControl   Int?
+  passing       Int?
+  dribbling     Int?
+  finishing     Int?
+  
+  // Athletic & Physical (1-8)
+  pace          Int?
+  stamina       Int?
+  strength      Int?
+  
+  // Attacking Output (1-8)
+  positioning   Int?
+  movement      Int?
+  creativity    Int?
+  
+  // Tactical IQ (1-8)
+  decisionMaking Int?
+  workRate      Int?
+  discipline    Int?
+  
+  // Recommendation
+  recommendation String?  // "sign" | "monitor" | "discard"
+  
+  // Strengths and Weaknesses (JSON arrays)
+  strengths     String[] @default([])
+  weaknesses    String[] @default([])
+  
+  // Notes
+  notes         String?
+  
+  // Metadata
+  scoutName     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@unique([playerId])
+  @@index([playerId])
+  @@index([recommendation])
+}

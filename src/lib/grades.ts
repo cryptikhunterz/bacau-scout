@@ -128,30 +128,159 @@ export const METRIC_CATEGORIES = {
   }
 };
 
-// localStorage key for grades storage
-const STORAGE_KEY = "bacau-scout-grades-v2";
+// API-based grade functions
 
 /**
- * Get all grades from localStorage
+ * Get all grades from database
  */
+export async function getAllGradesAsync(): Promise<PlayerGrade[]> {
+  try {
+    const response = await fetch('/api/grades');
+    if (!response.ok) throw new Error('Failed to fetch grades');
+    const gradesMap = await response.json();
+    
+    // Convert from map to array format
+    return Object.entries(gradesMap).map(([playerId, data]: [string, any]) => ({
+      playerId,
+      playerName: data.playerName || '',
+      position: data.position || '',
+      club: data.club || '',
+      gradedAt: data.updatedAt || new Date().toISOString(),
+      status: data.status || 'WATCH',
+      recommendation: data.recommendation || 'Monitor',
+      scoutingLevel: data.scoutingLevel || 'Basic',
+      dribblingBallControl: data.metrics?.ballControl || 0,
+      oneVsOneDribbling: data.metrics?.dribbling || 0,
+      passingRangeCreation: data.metrics?.passing || 0,
+      crossingDelivery: data.metrics?.creativity || 0,
+      accelerationPace: data.metrics?.pace || 0,
+      workRateStamina: data.metrics?.stamina || 0,
+      physicalDuelingAerial: data.metrics?.strength || 0,
+      goalContribution: data.metrics?.finishing || 0,
+      carryingProgression: data.metrics?.movement || 0,
+      finishingShotPlacement: data.metrics?.positioning || 0,
+      positionalIntelligence: data.metrics?.decisionMaking || 0,
+      defensivePressingIntensity: data.metrics?.workRate || 0,
+      oneVsOneDuels: data.metrics?.discipline || 0,
+      strengths: data.strengths || [],
+      weaknesses: data.weaknesses || [],
+      notes: data.notes || '',
+    }));
+  } catch (error) {
+    console.error('Failed to fetch grades:', error);
+    return [];
+  }
+}
+
+/**
+ * Get a single grade by player ID
+ */
+export async function getGradeAsync(playerId: string): Promise<PlayerGrade | null> {
+  try {
+    const response = await fetch(`/api/grades/${playerId}`);
+    if (!response.ok) throw new Error('Failed to fetch grade');
+    const data = await response.json();
+    if (!data) return null;
+    
+    return {
+      playerId,
+      playerName: data.playerName || '',
+      position: data.position || '',
+      club: data.club || '',
+      gradedAt: data.updatedAt || new Date().toISOString(),
+      status: data.status || 'WATCH',
+      recommendation: data.recommendation || 'Monitor',
+      scoutingLevel: data.scoutingLevel || 'Basic',
+      dribblingBallControl: data.metrics?.ballControl || 0,
+      oneVsOneDribbling: data.metrics?.dribbling || 0,
+      passingRangeCreation: data.metrics?.passing || 0,
+      crossingDelivery: data.metrics?.creativity || 0,
+      accelerationPace: data.metrics?.pace || 0,
+      workRateStamina: data.metrics?.stamina || 0,
+      physicalDuelingAerial: data.metrics?.strength || 0,
+      goalContribution: data.metrics?.finishing || 0,
+      carryingProgression: data.metrics?.movement || 0,
+      finishingShotPlacement: data.metrics?.positioning || 0,
+      positionalIntelligence: data.metrics?.decisionMaking || 0,
+      defensivePressingIntensity: data.metrics?.workRate || 0,
+      oneVsOneDuels: data.metrics?.discipline || 0,
+      strengths: data.strengths || [],
+      weaknesses: data.weaknesses || [],
+      notes: data.notes || '',
+    };
+  } catch (error) {
+    console.error('Failed to fetch grade:', error);
+    return null;
+  }
+}
+
+/**
+ * Save or update a player grade
+ */
+export async function saveGradeAsync(grade: PlayerGrade): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/grades/${grade.playerId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        metrics: {
+          ballControl: grade.dribblingBallControl,
+          passing: grade.passingRangeCreation,
+          dribbling: grade.oneVsOneDribbling,
+          finishing: grade.goalContribution,
+          pace: grade.accelerationPace,
+          stamina: grade.workRateStamina,
+          strength: grade.physicalDuelingAerial,
+          positioning: grade.finishingShotPlacement,
+          movement: grade.carryingProgression,
+          creativity: grade.crossingDelivery,
+          decisionMaking: grade.positionalIntelligence,
+          workRate: grade.defensivePressingIntensity,
+          discipline: grade.oneVsOneDuels,
+        },
+        recommendation: grade.recommendation?.toLowerCase(),
+        strengths: grade.strengths,
+        weaknesses: grade.weaknesses,
+        notes: grade.notes,
+        scoutName: grade.scoutingLevel,
+      }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Failed to save grade:', error);
+    return false;
+  }
+}
+
+/**
+ * Delete a player grade
+ */
+export async function deleteGradeAsync(playerId: string): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/grades/${playerId}`, { method: 'DELETE' });
+    return response.ok;
+  } catch (error) {
+    console.error('Failed to delete grade:', error);
+    return false;
+  }
+}
+
+// Legacy localStorage functions (for backward compatibility during transition)
+const STORAGE_KEY = "bacau-scout-grades-v2";
+
 export function getAllGrades(): PlayerGrade[] {
   if (typeof window === 'undefined') return [];
   const data = localStorage.getItem(STORAGE_KEY);
   return data ? JSON.parse(data) : [];
 }
 
-/**
- * Get a single grade by player ID
- */
 export function getGrade(playerId: string): PlayerGrade | null {
   const grades = getAllGrades();
   return grades.find(g => g.playerId === playerId) || null;
 }
 
-/**
- * Save or update a player grade
- */
 export function saveGrade(grade: PlayerGrade): void {
+  // Save to both localStorage and database
   const grades = getAllGrades();
   const existingIndex = grades.findIndex(g => g.playerId === grade.playerId);
 
@@ -162,14 +291,17 @@ export function saveGrade(grade: PlayerGrade): void {
   }
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grades));
+  
+  // Also save to database
+  saveGradeAsync(grade).catch(console.error);
 }
 
-/**
- * Delete a player grade
- */
 export function deleteGrade(playerId: string): void {
   const grades = getAllGrades().filter(g => g.playerId !== playerId);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grades));
+  
+  // Also delete from database
+  deleteGradeAsync(playerId).catch(console.error);
 }
 
 /**
