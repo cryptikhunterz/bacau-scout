@@ -137,7 +137,7 @@ export default async function PlayerDetailPage({
         )}
 
         {/* Competition breakdown - disabled, data is unreliable */}
-        {false && player.stats && player.stats.length > 0 && (
+        {false && player?.stats && player.stats.length > 0 && (
           <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
             <h2 className="text-lg font-semibold text-white mb-4">
               By Competition
