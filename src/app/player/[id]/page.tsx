@@ -136,48 +136,7 @@ export default async function PlayerDetailPage({
           </div>
         )}
 
-        {/* Competition breakdown - disabled, data is unreliable */}
-        {false && player?.stats && player?.stats?.length > 0 && (
-          <div className="bg-zinc-800 rounded-lg shadow-sm border border-zinc-700 p-6 mb-6">
-            <h2 className="text-lg font-semibold text-white mb-4">
-              By Competition
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-zinc-700">
-                    <th className="text-left py-2 text-zinc-400 font-medium">Competition</th>
-                    <th className="text-center py-2 text-zinc-400 font-medium">Apps</th>
-                    <th className="text-center py-2 text-zinc-400 font-medium">Goals</th>
-                    <th className="text-center py-2 text-zinc-400 font-medium">Assists</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {player.stats.filter(s => s.matches > 0).slice(0, 10).map((stat, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-b border-zinc-100 dark:border-zinc-800 last:border-0"
-                    >
-                      <td className="py-2 text-zinc-400">{stat.competition}</td>
-                      <td className="py-2 text-center text-white">{stat.matches}</td>
-                      <td className="py-2 text-center font-medium text-green-400">
-                        {stat.goals}
-                      </td>
-                      <td className="py-2 text-center text-zinc-400">
-                        {stat.assists ?? '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            {player.stats.filter(s => s.matches > 0).length > 10 && (
-              <p className="text-xs text-zinc-500 mt-2">
-                Showing top 10 competitions
-              </p>
-            )}
-          </div>
-        )}
+        {/* Competition breakdown removed - data was unreliable */}
 
         {/* Scout Evaluation */}
         <div className="mb-6">
