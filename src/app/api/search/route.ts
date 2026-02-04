@@ -66,8 +66,8 @@ export async function GET(request: NextRequest) {
 
   const players = loadPlayers();
 
-  // Check if query is a Transfermarkt URL
-  if (query.includes('transfermarkt.com') && query.includes('spieler')) {
+  // Check if query is a Transfermarkt URL (any domain: .com, .es, .de, .pt, .co.uk, etc.)
+  if (query.includes('transfermarkt') && query.includes('spieler')) {
     const searchPlayerId = extractPlayerIdFromUrl(query);
 
     if (searchPlayerId) {

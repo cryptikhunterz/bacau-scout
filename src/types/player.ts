@@ -60,3 +60,24 @@ export interface RawPlayerData {
   givenUrl: string;
   "Nat.": string | string[];
 }
+
+// Player stats by season
+export interface PlayerStats {
+  season: string;
+  competition: string;
+  club: string;
+  matches: number;
+  appearances: number;
+  goals: number;
+  assists: number;
+  minutes: number;
+}
+
+// Career totals
+export interface CareerTotals {
+  matches: number;
+  appearances: number;
+  goals: number;
+  assists: number;
+  minutes: number;
+}

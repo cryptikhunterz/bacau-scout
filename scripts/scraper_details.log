@@ -1,0 +1,3572 @@
+/Users/majorwinters/Library/Python/3.9/lib/python/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+Loaded 700 players
+
+Starting detail scraper at 2026-02-02 16:42:25.780163
+
+[1/700] Darius Olaru
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/darius-olaru/profil/spieler/395800
+  ✓ Got details
+
+[2/700] Daniel Bîrligea
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/daniel-birligea/profil/spieler/468192
+  ✓ Got details
+
+[3/700] Ștefan Târnovanu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-tarnovanu/profil/spieler/568544
+  ✓ Got details
+
+[4/700] Ștefan Baiaram
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-baiaram/profil/spieler/686232
+  ✓ Got details
+
+[5/700] Siyabonga Ngezana
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/siyabonga-ngezana/profil/spieler/445610
+  ✓ Got details
+
+[6/700] Alexandru Dobre
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alexandru-dobre/profil/spieler/365770
+  ✓ Got details
+
+[7/700] Alexandru Cicâldău
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alexandru-cicaldau/profil/spieler/295810
+  ✓ Got details
+
+[8/700] Andrei Borza
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrei-borza/profil/spieler/723826
+  ✓ Got details
+
+[9/700] Claudiu Petrila
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/claudiu-petrila/profil/spieler/623424
+  ✓ Got details
+
+[10/700] Joyskim Dawa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joyskim-dawa/profil/spieler/569743
+  ✓ Got details
+
+  Saved progress: 10 players
+
+[11/700] David Miculescu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-miculescu/profil/spieler/614800
+  ✓ Got details
+
+[12/700] Cătălin Cîrjan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/catalin-cirjan/profil/spieler/575219
+  ✓ Got details
+
+[13/700] Meriton Korenica
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/meriton-korenica/profil/spieler/412024
+  ✓ Got details
+
+[14/700] Florin Tănase
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/florin-tanase/profil/spieler/314329
+  ✓ Got details
+
+[15/700] Tobias Christensen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tobias-christensen/profil/spieler/370894
+  ✓ Got details
+
+[16/700] Vladimir Screciu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vladimir-screciu/profil/spieler/418219
+  ✓ Got details
+
+[17/700] Olimpiu Moruțan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/olimpiu-morutan/profil/spieler/429551
+  ✓ Got details
+
+[18/700] Andrei Cordea
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrei-cordea/profil/spieler/435712
+  ✓ Got details
+
+[19/700] Kader Keita
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/abdul-kader-keita/profil/spieler/33366
+  ✓ Got details
+
+[20/700] Oleksandr Romanchuk
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oleksandr-romanchuk/profil/spieler/59893
+  ✓ Got details
+
+  Saved progress: 20 players
+
+[21/700] Matei Ilie
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matei-ilie/profil/spieler/615930
+  ✓ Got details
+
+[22/700] Raul Opruț
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/raul-oprut/profil/spieler/393806
+  ✓ Got details
+
+[23/700] Anzor Mekvabishvili
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anzor-mekvabishvili/profil/spieler/502671
+  ✓ Got details
+
+[24/700] Lars Kramer
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lars-kramer/profil/spieler/410897
+  ✓ Got details
+
+[25/700] Cristian Manea
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cristian-manea/profil/spieler/271284
+  ✓ Got details
+
+[26/700] Ștefan Ștefanovici
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-stefanovici/profil/spieler/608463
+  ✓ Got details
+
+[27/700] Antoniu Manolache
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/antoniu-manolache/profil/spieler/418218
+  ✓ Got details
+
+[28/700] Lovro Cvek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lovro-cvek/profil/spieler/317467
+  ✓ Got details
+
+[29/700] Denis Haruț
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/denis-harut/profil/spieler/412641
+  ✓ Got details
+
+[30/700] Codruț Sandu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/codrut-sandu/profil/spieler/937038
+  ✓ Got details
+
+  Saved progress: 30 players
+
+[31/700] Valentin Robu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/valentin-robu/profil/spieler/645491
+  ✓ Got details
+
+[32/700] Adrian Frănculescu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adrian-franculescu/profil/spieler/858488
+  ✓ Got details
+
+[33/700] Nicolae Păun
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nicolae-paun/profil/spieler/860352
+  ✓ Got details
+
+[34/700] Rareș Ispas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rares-ispas/profil/spieler/634317
+  ✓ Got details
+
+[35/700] Robert Silaghi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/robert-silaghi/profil/spieler/823719
+  ✓ Got details
+
+[36/700] Mihai Bălașa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mihai-balasa/profil/spieler/236940
+  ✓ Got details
+
+[37/700] Moses Mawa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/moses-mawa/profil/spieler/433833
+  ✓ Got details
+
+[38/700] Bogdan Oteliță
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bogdan-otelita/profil/spieler/813000
+  ✓ Got details
+
+[39/700] Andrei Lascu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrei-lascu/profil/spieler/916298
+  ✓ Got details
+
+[40/700] Carlo Casap
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/carlo-casap/profil/spieler/340981
+  ✓ Got details
+
+  Saved progress: 40 players
+
+[41/700] Nicolae Pîrvulescu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nicolae-pirvulescu/profil/spieler/530415
+  ✓ Got details
+
+[42/700] Vladan Vidakovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vladan-vidakovic/profil/spieler/376453
+  ✓ Got details
+
+[43/700] Nicolae Carnat
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nicolae-carnat/profil/spieler/341140
+  ✓ Got details
+
+[44/700] Dimitri Oberlin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dimitri-oberlin/profil/spieler/212718
+  ✓ Got details
+
+[45/700] Cristian Măgerușan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cristian-magerusan/profil/spieler/567196
+  ✓ Got details
+
+[46/700] Ricardo Pădurariu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ricardo-padurariu/profil/spieler/992848
+  ✓ Got details
+
+[47/700] Nicolas Popescu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nicolas-popescu/profil/spieler/608447
+  ✓ Got details
+
+[48/700] Ion Cărăruș
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ion-cararus/profil/spieler/463339
+  ✓ Got details
+
+[49/700] Abel Popa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/abel-popa/profil/spieler/870953
+  ✓ Got details
+
+[50/700] Albert Stahl
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/albert-stahl/profil/spieler/478022
+  ✓ Got details
+
+  Saved progress: 50 players
+
+[51/700] Toni Fruk
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/toni-fruk/profil/spieler/432758
+  ✓ Got details
+
+[52/700] Ismaël Bennacer
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ismael-bennacer/profil/spieler/351816
+  ✓ Got details
+
+[53/700] Rokas Pukstas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rokas-pukstas/profil/spieler/887816
+  ✓ Got details
+
+[54/700] Adriano Jagusic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adriano-jagusic/profil/spieler/1024285
+  ✓ Got details
+
+[55/700] Niko Sigur
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niko-sigur/profil/spieler/1045375
+  ✓ Got details
+
+[56/700] Dominik Livakovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dominik-livakovic/profil/spieler/205927
+  ✓ Got details
+
+[57/700] Scott McKenna
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/scott-mckenna/profil/spieler/255906
+  ✓ Got details
+
+[58/700] Dion Beljo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dion-beljo/profil/spieler/618350
+  ✓ Got details
+
+[59/700] Niko Jankovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niko-jankovic/profil/spieler/403760
+  ✓ Got details
+
+[60/700] Raúl Torrente
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/raul-torrente/profil/spieler/631222
+  ✓ Got details
+
+  Saved progress: 60 players
+
+[61/700] Marko Livaja
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-livaja/profil/spieler/95438
+  ✓ Got details
+
+[62/700] Bruno Durdov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bruno-durdov/profil/spieler/1172620
+  ✓ Got details
+
+[63/700] Simun Hrgovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/simun-hrgovic/profil/spieler/921553
+  ✓ Got details
+
+[64/700] Anton Matkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anton-matkovic/profil/spieler/1121427
+  ✓ Got details
+
+[65/700] Luka Stojkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-stojkovic/profil/spieler/665266
+  ✓ Got details
+
+[66/700] Stjepan Radeljic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stjepan-radeljic/profil/spieler/384568
+  ✓ Got details
+
+[67/700] Tiago Dantas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rui-silva/profil/spieler/234811
+  ✓ Got details
+
+[68/700] Samuele Vignato
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/samuele-vignato/profil/spieler/650966
+  ✓ Got details
+
+[69/700] Nail Omerovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nail-omerovic/profil/spieler/797824
+  ✓ Got details
+
+[70/700] Matteo Pérez Vinlöf
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-perez-vinlof/profil/spieler/920283
+  ✓ Got details
+
+  Saved progress: 70 players
+
+[71/700] Ronaël Pierre-Gabriel
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ronael-pierre-gabriel/profil/spieler/410185
+  ✓ Got details
+
+[72/700] Arbër Hoxha
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/arber-hoxha/profil/spieler/458367
+  ✓ Got details
+
+[73/700] Niko Galesic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niko-galesic/profil/spieler/528835
+  ✓ Got details
+
+[74/700] Gabriel Vidovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gabriel-vidovic/profil/spieler/604327
+  ✓ Got details
+
+[75/700] Sergi Domínguez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sergi-dominguez/profil/spieler/741258
+  ✓ Got details
+
+[76/700] Niko Gajzler
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niko-gajzler/profil/spieler/927843
+  ✓ Got details
+
+[77/700] Ante Matic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ante-matic/profil/spieler/388129
+  ✓ Got details
+
+[78/700] Bruno Burcul
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bruno-burcul/profil/spieler/927847
+  ✓ Got details
+
+[79/700] Duje Usalj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/duje-usalj/profil/spieler/927835
+  ✓ Got details
+
+[80/700] Fran Svraka
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/fran-svraka/profil/spieler/1048805
+  ✓ Got details
+
+  Saved progress: 80 players
+
+[81/700] Nick Ocvirek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nick-ocvirek/profil/spieler/937809
+  ✓ Got details
+
+[82/700] Ivan Cvetko
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-cvetkovic/profil/spieler/17190
+  ✓ Got details
+
+[83/700] Marko Zuljevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-zuljevic/profil/spieler/318767
+  ✓ Got details
+
+[84/700] Dimitar Trajkov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dimitar-trajkovski/profil/spieler/510627
+  ✓ Got details
+
+[85/700] Mateo Bacic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mateo-bacic/profil/spieler/1173841
+  ✓ Got details
+
+[86/700] Luka Miletic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-miletic/profil/spieler/166716
+  ✓ Got details
+
+[87/700] Karlo Stapic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karlo-stapic/profil/spieler/740761
+  ✓ Got details
+
+[88/700] Petar Antolkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/petar-antolkovic/profil/spieler/1067136
+  ✓ Got details
+
+[89/700] Marko Galic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-galic/profil/spieler/800072
+  ✓ Got details
+
+[90/700] Ivan Saranic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-saranic/profil/spieler/665274
+  ✓ Got details
+
+  Saved progress: 90 players
+
+[91/700] Bruno Brajkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bruno-brajkovic/profil/spieler/807003
+  ✓ Got details
+
+[92/700] Antonio Galesic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/antonio-galesic/profil/spieler/927837
+  ✓ Got details
+
+[93/700] Roko Zilic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/roko-zilic/profil/spieler/1443344
+  ✓ Got details
+
+[94/700] Duje Korac
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/duje-korac/profil/spieler/1045531
+  ✓ Got details
+
+[95/700] Ivan Milicevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-milicevic/profil/spieler/49947
+  ✓ Got details
+
+[96/700] Kresimir Luetic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kresimir-luetic/profil/spieler/424181
+  ✓ Got details
+
+[97/700] Domagoj Djurkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/domagoj-djurkovic/profil/spieler/927214
+  ✓ Got details
+
+[98/700] Ivan Dominic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-dominic/profil/spieler/899072
+  ✓ Got details
+
+[99/700] Josip Balic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/josip-balic/profil/spieler/238313
+  ✓ Got details
+
+[100/700] Kristijan Lovric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kristijan-lovric/profil/spieler/294401
+  ✓ Got details
+
+  Saved progress: 100 players
+
+[101/700] Vasilije Kostov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vasilije-kostov/profil/spieler/1073632
+  ✓ Got details
+
+[102/700] Tomás Händel
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tomas-handel/profil/spieler/645588
+  ✓ Got details
+
+[103/700] Timi Max Elsnik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/timi-max-elsnik/profil/spieler/320854
+  ✓ Got details
+
+[104/700] Ognjen Ugresic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ognjen-ugresic/profil/spieler/895606
+  ✓ Got details
+
+[105/700] Young-woo Seol
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/young-woo-seol/profil/spieler/639414
+  ✓ Got details
+
+[106/700] Bruno Duarte
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bruno-duarte/profil/spieler/598629
+  ✓ Got details
+
+[107/700] Nair Tiknizyan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nair-tiknizyan/profil/spieler/461701
+  ✓ Got details
+
+[108/700] Nikola Simic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikola-simic/profil/spieler/1011580
+  ✓ Got details
+
+[109/700] Rade Krunic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rade-krunic/profil/spieler/259953
+  ✓ Got details
+
+[110/700] Milan Vukotic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milan-vukotic/profil/spieler/624353
+  ✓ Got details
+
+  Saved progress: 110 players
+
+[111/700] Vasilije Novicic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vasilije-novicic/profil/spieler/1169455
+  ✓ Got details
+
+[112/700] Milson
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/edmilson/profil/spieler/5343
+  ✓ Got details
+
+[113/700] Mirko Ivanic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mirko-ivanic/profil/spieler/233129
+  ✓ Got details
+
+[114/700] Vanja Dragojevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vanja-dragojevic/profil/spieler/944289
+  ✓ Got details
+
+[115/700] Milan Roganovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milan-roganovic/profil/spieler/944581
+  ✓ Got details
+
+[116/700] Sasa Zdjelar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sasa-zdjelar/profil/spieler/171072
+  ✓ Got details
+
+[117/700] Andrej Kostic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrej-kostic/profil/spieler/987672
+  ✓ Got details
+
+[118/700] Njegos Petrovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/njegos-petrovic/profil/spieler/376588
+  ✓ Got details
+
+[119/700] Nemanja Trifunovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nemanja-trifunovic/profil/spieler/848660
+  ✓ Got details
+
+[120/700] Adem Avdic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adem-avdic/profil/spieler/952771
+  ✓ Got details
+
+  Saved progress: 120 players
+
+[121/700] Rodrigão
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rodrigao/profil/spieler/510782
+  ✓ Got details
+
+[122/700] Aleksa Cvetkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksa-cvetkovic/profil/spieler/944536
+  ✓ Got details
+
+[123/700] Omri Glazer
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/omri-glazer/profil/spieler/347268
+  ✓ Got details
+
+[124/700] Nemanja Radonjic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nemanja-radonjic/profil/spieler/245078
+  ✓ Got details
+
+[125/700] Milos Veljkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milos-veljkovic/profil/spieler/202228
+  ✓ Got details
+
+[127/700] Luka Zaric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-zaric/profil/spieler/1073633
+  ✓ Got details
+
+[128/700] Aleksa Damjanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksa-damjanovic/profil/spieler/1073625
+  ✓ Got details
+
+[129/700] Veljko Jocic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/veljko-jocic/profil/spieler/1043935
+  ✓ Got details
+
+[130/700] Filip Vasiljevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/filip-vasiljevic/profil/spieler/563938
+  ✓ Got details
+
+[131/700] Mitar Ergelas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mitar-ergelas/profil/spieler/615640
+  ✓ Got details
+
+  Saved progress: 130 players
+
+[132/700] Luka Pejovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-pejovic/profil/spieler/49056
+  ✓ Got details
+
+[133/700] Andrej Pivas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrej-pivas/profil/spieler/940732
+  ✓ Got details
+
+[134/700] Milan Kolarevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milan-kolarevic/profil/spieler/1045282
+  ✓ Got details
+
+[135/700] Savo Radanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/savo-radanovic/profil/spieler/1141848
+  ✓ Got details
+
+[136/700] Filip Halabrin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/filip-halabrin/profil/spieler/1163079
+  ✓ Got details
+
+[137/700] Nenad Kocovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nenad-kocovic/profil/spieler/332281
+  ✓ Got details
+
+[138/700] Slobodan Sladojevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/slobodan-sladojevic/profil/spieler/874108
+  ✓ Got details
+
+[139/700] Marko Mitrovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-mitrovic/profil/spieler/36935
+  ✓ Got details
+
+[140/700] Bozidar Blagojevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bozidar-blagojevic/profil/spieler/846228
+  ✓ Got details
+
+[141/700] Sinisa Popovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sinisa-popovic/profil/spieler/895096
+  ✓ Got details
+
+  Saved progress: 140 players
+
+[142/700] Vukasin Braunovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vukasin-braunovic/profil/spieler/845542
+  ✓ Got details
+
+[143/700] Ognjen Dimitric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ognjen-dimitric/profil/spieler/687330
+  ✓ Got details
+
+[144/700] Nikola Jovanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikola-jovanovic/profil/spieler/183345
+  ✓ Got details
+
+[145/700] Vukasin Jovanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vukasin-jovanovic/profil/spieler/264140
+  ✓ Got details
+
+[146/700] Stefan Golubovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-golubovic/profil/spieler/431146
+  ✓ Got details
+
+[147/700] Ognjen Ilic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ognjen-ilic/profil/spieler/439464
+  ✓ Got details
+
+[148/700] Bojan Balaz
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bojan-balaz/profil/spieler/574661
+  ✓ Got details
+
+[149/700] Dimitrije Tabakovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dimitrije-tabakovic/profil/spieler/698541
+  ✓ Got details
+
+[150/700] Stefan Ilic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-ilic/profil/spieler/343960
+  ✓ Got details
+
+[151/700] Freddy Álvarez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/freddy-alvarez/profil/spieler/309857
+  ✓ Got details
+
+  Saved progress: 150 players
+
+[152/700] Sherif Kallaku
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sherif-kallaku/profil/spieler/466815
+  ✓ Got details
+
+[153/700] Arbenit Xhemajli
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/arbenit-xhemajli/profil/spieler/354155
+  ✓ Got details
+
+[154/700] Mario Dajsinani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mario-dajsinani/profil/spieler/342476
+  ✓ Got details
+
+[155/700] Patrik Myslovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/patrik-myslovic/profil/spieler/344323
+  ✓ Got details
+
+[156/700] Fernando Medeiros
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/fernando-medeiros/profil/spieler/411661
+  ✓ Got details
+
+[157/700] Luciano Squadrone
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luciano-squadrone/profil/spieler/830310
+  ✓ Got details
+
+[158/700] Kevin Dodaj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kevin-dodaj/profil/spieler/1165233
+  ✓ Got details
+
+[159/700] Rowan Human
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rowan-human/profil/spieler/735117
+  ✓ Got details
+
+[160/700] Dejvi Bregu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dejvi-bregu/profil/spieler/226258
+  ✓ Got details
+
+[161/700] Visar Bekaj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/visar-bekaj/profil/spieler/458353
+  ✓ Got details
+
+  Saved progress: 160 players
+
+[162/700] Bernard Berisha
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bernard-berisha/profil/spieler/240226
+  ✓ Got details
+
+[163/700] Martin Janacek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-janacek/profil/spieler/488869
+  ✓ Got details
+
+[164/700] Sigitas Olberkis
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sigitas-olberkis/profil/spieler/323611
+  ✓ Got details
+
+[165/700] Alessandro Albanese
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alessandro-albanese/profil/spieler/407347
+  ✓ Got details
+
+[166/700] Esat Mala
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/esat-mala/profil/spieler/574492
+  ✓ Got details
+
+[167/700] Laorent Shabani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/laorent-shabani/profil/spieler/381979
+  ✓ Got details
+
+[168/700] Marcelino Preka
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marcelino-preka/profil/spieler/726112
+  ✓ Got details
+
+[169/700] Heiderber Ramírez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/heiderber-ramirez/profil/spieler/721630
+  ✓ Got details
+
+[170/700] Naser Aliji
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/naser-aliji/profil/spieler/172982
+  ✓ Got details
+
+[171/700] Altin Kryeziu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/altin-kryeziu/profil/spieler/637117
+  ✓ Got details
+
+  Saved progress: 170 players
+
+[172/700] Zamiq Aliyev
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/zamiq-aliyev/profil/spieler/547721
+  ✓ Got details
+
+[173/700] Anton Kresic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anton-kresic/profil/spieler/226080
+  ✓ Got details
+
+[174/700] Eljon Sota
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/eljon-sota/profil/spieler/486872
+  ✓ Got details
+
+[175/700] Basilio Ndong
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/basilio-ndong/profil/spieler/567143
+  ✓ Got details
+
+[176/700] Jonathan Dresaj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jonathan-dresaj/profil/spieler/502659
+  ✓ Got details
+
+[177/700] Nemanja Belakovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nemanja-belakovic/profil/spieler/348119
+  ✓ Got details
+
+[178/700] Nemanja Nikolic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nemanja-nikolics/profil/spieler/102281
+  ✓ Got details
+
+[179/700] Marko Simun
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-simunovic/profil/spieler/470196
+  ✓ Got details
+
+[180/700] Milos Milovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milos-milovic/profil/spieler/267093
+  ✓ Got details
+
+[181/700] Ilya Serikov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ilya-serikov/profil/spieler/331715
+  ✓ Got details
+
+  Saved progress: 180 players
+
+[182/700] Marko Milickovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-milickovic/profil/spieler/464374
+  ✓ Got details
+
+[183/700] Robert Gjelaj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/robert-gjelaj/profil/spieler/889811
+  ✓ Got details
+
+[184/700] Velimir Ljutica
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/velimir-ljutica/profil/spieler/1056229
+  ✓ Got details
+
+[185/700] Ibrahima Ndiaye
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ibrahima-ndiaye/profil/spieler/176570
+  ✓ Got details
+
+[186/700] Stefan Ficovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-ficovic/profil/spieler/525991
+  ✓ Got details
+
+[187/700] Marko Kordic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-kordic/profil/spieler/214787
+  ✓ Got details
+
+[188/700] Savo Arambasic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/savo-arambasic/profil/spieler/677552
+  ✓ Got details
+
+[189/700] Boris Kopitovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/boris-kopitovic/profil/spieler/226945
+  ✓ Got details
+
+[190/700] Jovan Cadjenovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jovan-cadjenovic/profil/spieler/267090
+  ✓ Got details
+
+[191/700] Anto Babic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anto-babic/profil/spieler/502023
+  ✓ Got details
+
+  Saved progress: 190 players
+
+[192/700] Adnan Basic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adnan-basic/profil/spieler/317758
+  ✓ Got details
+
+[193/700] Milos Drincic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/milos-drincic/profil/spieler/390079
+  ✓ Got details
+
+[194/700] Stefan Hajdin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefan-hajdin/profil/spieler/525995
+  ✓ Got details
+
+[195/700] Nikola Janjic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikola-janjic/profil/spieler/624347
+  ✓ Got details
+
+[196/700] Balsa Sekulic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/balsa-sekulic/profil/spieler/455594
+  ✓ Got details
+
+[197/700] Djordje Maksimovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/djordje-maksimovic/profil/spieler/531846
+  ✓ Got details
+
+[198/700] Andrija Raznatovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrija-raznatovic/profil/spieler/650460
+  ✓ Got details
+
+[199/700] Zarko Popovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/zarko-popovic/profil/spieler/454807
+  ✓ Got details
+
+[200/700] Andrija Kaludjerovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrija-kaludjerovic/profil/spieler/36829
+  ✓ Got details
+
+[201/700] Svit Seslar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/svit-seslar/profil/spieler/603368
+  ✓ Got details
+
+  Saved progress: 200 players
+
+[202/700] Óscar Zambrano
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oscar-zambrano/profil/spieler/893658
+  ✓ Got details
+
+[203/700] Dimitar Mitrovski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dimitar-mitrovski/profil/spieler/386794
+  ✓ Got details
+
+[204/700] Nikita Iosifov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikita-iosifov/profil/spieler/614464
+  ✓ Got details
+
+[205/700] Matevz Vidovsek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matevz-vidovsek/profil/spieler/371863
+  ✓ Got details
+
+[206/700] Benjamin Tetteh
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/benjamin-tetteh/profil/spieler/306382
+  ✓ Got details
+
+[207/700] Karol Borys
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karol-borys/profil/spieler/890272
+  ✓ Got details
+
+[208/700] David Pejičić
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-pejicic/profil/spieler/1009633
+  ✓ Got details
+
+[209/700] Kelvin Ofori
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kelvin-ofori/profil/spieler/687035
+  ✓ Got details
+
+[210/700] Mihael Zaper
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mihael-zaper/profil/spieler/434557
+  ✓ Got details
+
+[211/700] Zan Karnicnik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/zan-karnicnik/profil/spieler/507403
+  ✓ Got details
+
+  Saved progress: 210 players
+
+[212/700] Artemijus Tutyskinas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/artemijus-tutyskinas/profil/spieler/647701
+  ✓ Got details
+
+[213/700] Jan Repas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jan-repas/profil/spieler/245083
+  ✓ Got details
+
+[214/700] Pijus Sirvys
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/pijus-sirvys/profil/spieler/427821
+  ✓ Got details
+
+[215/700] Tio Cipot
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tio-cipot/profil/spieler/795431
+  ✓ Got details
+
+[216/700] Armandas Kucys
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/armandas-kucys/profil/spieler/668433
+  ✓ Got details
+
+[217/700] Martin Pecar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-pecar/profil/spieler/506936
+  ✓ Got details
+
+[218/700] Diga
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/perdigao/profil/spieler/54021
+  ✓ Got details
+
+[219/700] Sheyi Ojo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sheyi-ojo/profil/spieler/236510
+  ✓ Got details
+
+[220/700] Ziga Repas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ziga-repas/profil/spieler/546686
+  ✓ Got details
+
+[221/700] Dino Kojic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dino-kojic/profil/spieler/1170753
+  ✓ Got details
+
+  Saved progress: 220 players
+
+[222/700] Isaac Matondo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/isaac-matondo/profil/spieler/485964
+  ✓ Got details
+
+[223/700] Vénuste Baboula
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/venuste-baboula/profil/spieler/976775
+  ✓ Got details
+
+[224/700] Ahmet Muhamedbegovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ahmet-muhamedbegovic/profil/spieler/271323
+  ✓ Got details
+
+[225/700] Zan Luk Leban
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/zan-luk-leban/profil/spieler/605757
+  ✓ Got details
+
+[226/700] Toni Vinogradac
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/toni-vinogradac/profil/spieler/801755
+  ✓ Got details
+
+[227/700] Bujazid Hegic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bujazid-hegic/profil/spieler/747954
+  ✓ Got details
+
+[228/700] Hanus Sørensen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/hanus-sorensen/profil/spieler/470503
+  ✓ Got details
+
+[229/700] Josip Ivan Zorica
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/josip-ivan-zorica/profil/spieler/720946
+  ✓ Got details
+
+[230/700] Noel Keresztes
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/noel-keresztes/profil/spieler/648896
+  ✓ Got details
+
+[231/700] Luka Kambic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-kambic/profil/spieler/390849
+  ✓ Got details
+
+  Saved progress: 230 players
+
+[232/700] Divine Igwe Ikenna
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/divine-igwe-ikenna/profil/spieler/1160419
+  ✓ Got details
+
+[233/700] Murat Bajraj
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/murat-bajraj/profil/spieler/977990
+  ✓ Got details
+
+[234/700] Oliver Kregar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oliver-kregar/profil/spieler/543700
+  ✓ Got details
+
+[235/700] Marko Brkic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-brkic/profil/spieler/476045
+  ✓ Got details
+
+[236/700] Matevz Matko
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matevz-matko/profil/spieler/546684
+  ✓ Got details
+
+[237/700] Nikola Jovicevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikola-jovicevic/profil/spieler/432409
+  ✓ Got details
+
+[238/700] Rok Pirtovsek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rok-pirtovsek/profil/spieler/539765
+  ✓ Got details
+
+[239/700] Federico Rose
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/federico-rose/profil/spieler/1263376
+  ✓ Got details
+
+[240/700] Tin Levanic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tin-levanic/profil/spieler/982838
+  ✓ Got details
+
+[241/700] Amadej Marosa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/amadej-marosa/profil/spieler/262699
+  ✓ Got details
+
+  Saved progress: 240 players
+
+[242/700] Enej Marsetic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/enej-marsetic/profil/spieler/714059
+  ✓ Got details
+
+[243/700] Luka Hunjet
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-hunjet/profil/spieler/1170783
+  ✓ Got details
+
+[244/700] Tom Kljun
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tom-kljun/profil/spieler/722380
+  ✓ Got details
+
+[245/700] Leon Marinic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/leon-marinic/profil/spieler/351795
+  ✓ Got details
+
+[246/700] Anej Dukaric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anej-dukaric/profil/spieler/1170778
+  ✓ Got details
+
+[247/700] Aleks Ristic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleks-ristic/profil/spieler/940213
+  ✓ Got details
+
+[248/700] Nejc Pusnik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nejc-pusnik/profil/spieler/390848
+  ✓ Got details
+
+[249/700] Niki Radovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niki-radovic/profil/spieler/1001014
+  ✓ Got details
+
+[250/700] Gasper Cerne
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gasper-cerne/profil/spieler/722379
+  ✓ Got details
+
+[251/700] David Vukovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-vukovic/profil/spieler/687426
+  ✓ Got details
+
+  Saved progress: 250 players
+
+[252/700] Madzid Sosic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/madzid-sosic/profil/spieler/622431
+  ✓ Got details
+
+[253/700] Matej Sakota
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matej-sakota/profil/spieler/651773
+  ✓ Got details
+
+[254/700] Agon Elezi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/agon-elezi/profil/spieler/505324
+  ✓ Got details
+
+[255/700] Mihael Mlinaric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mihael-mlinaric/profil/spieler/697080
+  ✓ Got details
+
+[256/700] Igor Savic
+  Searching...
+    Search error: HTTPSConnectionPool(host='www.transfermarkt.com', port=443): Read timed out. (read timeout=30)
+  Not found, skipping
+
+[257/700] Damir Hrelja
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/damir-hrelja/profil/spieler/693480
+  ✓ Got details
+
+[258/700] Gojko Cimirot
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gojko-cimirot/profil/spieler/150482
+  ✓ Got details
+
+[259/700] Amar Beganovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/amar-beganovic/profil/spieler/376098
+  ✓ Got details
+
+[260/700] Nermin Mujkic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nermin-mujkic/profil/spieler/651762
+  ✓ Got details
+
+[261/700] Mario Cuze
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mario-cuze/profil/spieler/376445
+  ✓ Got details
+
+[262/700] Stefano Surdanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefano-surdanovic/profil/spieler/307697
+  ✓ Got details
+
+  Saved progress: 260 players
+
+[263/700] Viktor Rogan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/viktor-rogan/profil/spieler/615600
+  ✓ Got details
+
+[264/700] Jurich Carolina
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jurich-carolina/profil/spieler/338031
+  ✓ Got details
+
+[265/700] Sandi Ogrinec
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sandi-ogrinec/profil/spieler/320858
+  ✓ Got details
+
+[266/700] Aleksa Pejic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksa-pejic/profil/spieler/542995
+  ✓ Got details
+
+[267/700] Vedad Muftic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vedad-muftic/profil/spieler/539907
+  ✓ Got details
+
+[268/700] Ivan Banic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-banic/profil/spieler/160467
+  ✓ Got details
+
+[269/700] Renato Gojkovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/renato-gojkovic/profil/spieler/238058
+  ✓ Got details
+
+[270/700] Duje Dujmovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/duje-dujmovic/profil/spieler/895531
+  ✓ Got details
+
+[271/700] Karlo Abramovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karlo-abramovic/profil/spieler/701391
+  ✓ Got details
+
+[272/700] Marijan Cavar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marijan-cavar/profil/spieler/419255
+  ✓ Got details
+
+  Saved progress: 270 players
+
+[273/700] Adem Ljajic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adem-ljajic/profil/spieler/69374
+  ✓ Got details
+
+[274/700] Mico Kuzmanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mico-kuzmanovic/profil/spieler/267056
+  ✓ Got details
+
+[275/700] Dominik Dogan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dominik-dogan/profil/spieler/635142
+  ✓ Got details
+
+[276/700] Luka Topalović
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/luka-topalovic/profil/spieler/991744
+  ✓ Got details
+
+[277/700] Matteo Cocchi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-cocchi/profil/spieler/988987
+  ✓ Got details
+
+[278/700] Thomas Berenbruch
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/thomas-berenbruch/profil/spieler/930780
+  ✓ Got details
+
+[279/700] Ismaël Konaté
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ismael-konate/profil/spieler/936745
+  ✓ Got details
+
+[280/700] Issiaka Kamate
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/issiaka-kamate/profil/spieler/885623
+  ✓ Got details
+
+[281/700] Matteo Spinaccè
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-spinacce/profil/spieler/930768
+  ✓ Got details
+
+[282/700] Christos Alexiou
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/christos-alexiou/profil/spieler/898812
+  ✓ Got details
+
+  Saved progress: 280 players
+
+[283/700] Richi Agbonifo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/richi-agbonifo/profil/spieler/980346
+  ✓ Got details
+
+[284/700] Alessio Vacca
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alessio-vaccaro/profil/spieler/354619
+  ✓ Got details
+
+[285/700] Mattia Mosconi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mattia-mosconi/profil/spieler/1008570
+  ✓ Got details
+
+[286/700] Gabriele Re Cecconi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gabriele-re-cecconi/profil/spieler/1054322
+  ✓ Got details
+
+[287/700] Christian Corradi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/christian-corradi/profil/spieler/936183
+  ✓ Got details
+
+[288/700] Riccardo Gagno
+  Searching...
+    Search error: HTTPSConnectionPool(host='www.transfermarkt.com', port=443): Read timed out.
+  Not found, skipping
+
+[289/700] Francesco Stante
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/francesco-stante/profil/spieler/819033
+  ✓ Got details
+
+[290/700] Giacomo Gabbiani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giacomo-gabbiani/profil/spieler/897668
+  ✓ Got details
+
+[291/700] Giuseppe Cuomo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giuseppe-cuomo/profil/spieler/365565
+  ✓ Got details
+
+[292/700] Maxime Leverbe
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/maxime-leverbe/profil/spieler/451310
+  ✓ Got details
+
+[293/700] Mike Aidoo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mike-aidoo/profil/spieler/892101
+  ✓ Got details
+
+  Saved progress: 290 players
+
+[294/700] Niccolò Zanellato
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/niccolo-zanellato/profil/spieler/343945
+  ✓ Got details
+
+[295/700] Giuseppe Prestia
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giuseppe-prestia/profil/spieler/163187
+  ✓ Got details
+
+[296/700] Iwo Kaczmarski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/iwo-kaczmarski/profil/spieler/555056
+  ✓ Got details
+
+[297/700] Thomas Sandon
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/thomas-sandon/profil/spieler/818134
+  ✓ Got details
+
+[298/700] David Stückler
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-stuckler/profil/spieler/896362
+  ✓ Got details
+
+[299/700] Leonardo Bovo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/leonardo-bovo/profil/spieler/884228
+  ✓ Got details
+
+[300/700] Simone Cinquegrano
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/simone-cinquegrano/profil/spieler/919669
+  ✓ Got details
+
+[301/700] Lorenzo Tosto
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lorenzo-tosto/profil/spieler/942814
+  ✓ Got details
+
+[302/700] Giacomo Faticanti
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giacomo-faticanti/profil/spieler/651002
+  ✓ Got details
+
+[303/700] Javier Gil
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/javier-gil/profil/spieler/1160260
+  ✓ Got details
+
+  Saved progress: 300 players
+
+[304/700] Louis Buffon
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/louis-buffon/profil/spieler/1191069
+  ✓ Got details
+
+[305/700] Emiliano Pattarello
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/emiliano-pattarello/profil/spieler/387060
+  ✓ Got details
+
+[306/700] Jacopo Seghetti
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jacopo-seghetti/profil/spieler/935777
+  ✓ Got details
+
+[307/700] Filippo Pagnucco
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/filippo-pagnucco/profil/spieler/978442
+  ✓ Got details
+
+[308/700] Mattia Aramu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mattia-aramu/profil/spieler/200188
+  ✓ Got details
+
+[309/700] Augusto Owusu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/augusto-owusu/profil/spieler/925845
+  ✓ Got details
+
+[310/700] Lorenzo Anghelè
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lorenzo-anghele/profil/spieler/925848
+  ✓ Got details
+
+[311/700] Leonardo Cerri
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/leonardo-cerri/profil/spieler/672830
+  ✓ Got details
+
+[312/700] Adin Licina
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adin-licina/profil/spieler/960943
+  ✓ Got details
+
+[313/700] Kevin Martins
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kevin-martins/profil/spieler/724069
+  ✓ Got details
+
+  Saved progress: 310 players
+
+[314/700] Alessandro Arena
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alessandro-arena/profil/spieler/678645
+  ✓ Got details
+
+[315/700] Gabriele Gori
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gabriele-gori/profil/spieler/315859
+  ✓ Got details
+
+[316/700] Jeremy Mbambi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jeremy-mbambi/profil/spieler/1231354
+  ✓ Got details
+
+[317/700] Tommaso Milanese
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tommaso-milanese/profil/spieler/538569
+  ✓ Got details
+
+[318/700] David Puczka
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-puczka/profil/spieler/715894
+  ✓ Got details
+
+[319/700] Cristiano Bani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cristiano-bani/profil/spieler/391057
+  ✓ Got details
+
+[320/700] Nicolas Viola
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/valentin-viola/profil/spieler/150568
+  ✓ Got details
+
+[321/700] Camillo Tavernelli
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/camillo-tavernelli/profil/spieler/410655
+  ✓ Got details
+
+[322/700] Francesco Donati
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/francesco-donati/profil/spieler/525660
+  ✓ Got details
+
+[323/700] Matteo Cortesi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-cortesi/profil/spieler/336636
+  ✓ Got details
+
+  Saved progress: 320 players
+
+[324/700] Cristian Spini
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cristian-spini/profil/spieler/538936
+  ✓ Got details
+
+[325/700] Stefano Turco
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stefano-turco/profil/spieler/925842
+  ✓ Got details
+
+[326/700] Dominic Vavassori
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dominic-vavassori/profil/spieler/936739
+  ✓ Got details
+
+[327/700] Albert Navarro
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/albert-navarro/profil/spieler/962154
+  ✓ Got details
+
+[328/700] Alberto Manzoni
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alberto-manzoni/profil/spieler/936755
+  ✓ Got details
+
+[329/700] Paolo Vismara
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/paolo-vismara/profil/spieler/650256
+  ✓ Got details
+
+[330/700] Simone Panada
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/simone-panada/profil/spieler/487836
+  ✓ Got details
+
+[331/700] Aldo Florenzi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aldo-florenzi/profil/spieler/619326
+  ✓ Got details
+
+[332/700] Marco Delle Monache
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marco-delle-monache/profil/spieler/899543
+  ✓ Got details
+
+[333/700] Sergej Levak
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sergej-levak/profil/spieler/892165
+  ✓ Got details
+
+  Saved progress: 330 players
+
+[334/700] Relja Obric
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/relja-obric/profil/spieler/940553
+  ✓ Got details
+
+[335/700] Lorenzo Riccio
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lorenzo-riccio/profil/spieler/954265
+  ✓ Got details
+
+[336/700] Moustapha Cissé
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/moustapha-cisse/profil/spieler/988862
+  ✓ Got details
+
+[337/700] Javison Idele
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/javison-idele/profil/spieler/1170813
+  ✓ Got details
+
+[338/700] Federico Steffanoni
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/federico-steffanoni/profil/spieler/1178213
+  ✓ Got details
+
+[339/700] Mirko Antonucci
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mirko-antonucci/profil/spieler/315852
+  ✓ Got details
+
+[340/700] Facundo Lescano
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/facundo-lescano/profil/spieler/256008
+  ✓ Got details
+
+[341/700] Borna Knezovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/borna-knezovic/profil/spieler/1028399
+  ✓ Got details
+
+[342/700] Yuri Rocchetti
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/yuri-rocchetti/profil/spieler/667627
+  ✓ Got details
+
+[343/700] Giovanni Bruzzaniti
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giovanni-bruzzaniti/profil/spieler/420460
+  ✓ Got details
+
+  Saved progress: 340 players
+
+[344/700] Federico Cassa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/federico-cassa/profil/spieler/1048147
+  ✓ Got details
+
+[345/700] Shady Oukhadda
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/shady-oukhadda/profil/spieler/393487
+  ✓ Got details
+
+[346/700] Giulio Misitano
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giulio-misitano/profil/spieler/928046
+  ✓ Got details
+
+[347/700] Andrea Ferraris
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrea-ferraris/profil/spieler/708079
+  ✓ Got details
+
+[348/700] Jaime Báez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jaime-baez/profil/spieler/238654
+  ✓ Got details
+
+[349/700] Davide Lamesta
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/davide-lamesta/profil/spieler/689090
+  ✓ Got details
+
+[350/700] Emanuele Cicerelli
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/emanuele-cicerelli/profil/spieler/265320
+  ✓ Got details
+
+[351/700] Tomás Pérez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tomas-perez/profil/spieler/1152154
+  ✓ Got details
+
+[352/700] José Neto
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jose-neto/profil/spieler/245319
+  ✓ Got details
+
+[353/700] Salvador Blopa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/salvador-blopa/profil/spieler/1294105
+  ✓ Got details
+
+  Saved progress: 350 players
+
+[354/700] Eduardo Felicíssimo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/eduardo-felicissimo/profil/spieler/1081566
+  ✓ Got details
+
+[355/700] André Clóvis
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andre-clovis/profil/spieler/564890
+  ✓ Got details
+
+[356/700] Diogo Prioste
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/diogo-prioste/profil/spieler/670718
+  ✓ Got details
+
+[357/700] Kauê
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kaue/profil/spieler/834467
+  ✓ Got details
+
+[358/700] Gonçalo Oliveira
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/goncalo-oliveira/profil/spieler/1078918
+  ✓ Got details
+
+[359/700] Rafael Nel
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rafael-nel/profil/spieler/1057523
+  ✓ Got details
+
+[360/700] Anhá Cande
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anha-cande/profil/spieler/1108856
+  ✓ Got details
+
+[361/700] Javi Vázquez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/javi-vazquez/profil/spieler/461866
+  ✓ Got details
+
+[362/700] Yann Karamoh
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/yann-karamoh/profil/spieler/324804
+  ✓ Got details
+
+[363/700] Joshua Wynder
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joshua-wynder/profil/spieler/866086
+  ✓ Got details
+
+  Saved progress: 360 players
+
+[364/700] Álvaro Zamora
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alvaro-zamora/profil/spieler/731899
+  ✓ Got details
+
+[365/700] Bruno Rodrigues
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bruno-rodrigues/profil/spieler/406766
+  ✓ Got details
+
+[366/700] Nuno Félix
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nuno-felix/profil/spieler/858251
+  ✓ Got details
+
+[367/700] Manuel Mendonça
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/manuel-mendonca/profil/spieler/1010120
+  ✓ Got details
+
+[368/700] Diego Callai
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/diego-callai/profil/spieler/848875
+  ✓ Got details
+
+[369/700] Gonçalo Sousa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/goncalo-sousa/profil/spieler/1050215
+  ✓ Got details
+
+[370/700] João Moreira
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joao-moreira/profil/spieler/929866
+  ✓ Got details
+
+[371/700] Manu Pozo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/manu-pozo/profil/spieler/635881
+  ✓ Got details
+
+[372/700] Léo Azevedo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/leo-azevedo/profil/spieler/1082639
+  ✓ Got details
+
+[373/700] Gonçalo Moreira
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/goncalo-moreira/profil/spieler/1061744
+  ✓ Got details
+
+  Saved progress: 370 players
+
+[374/700] Flávio Gonçalves
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/flavio-goncalves/profil/spieler/1294120
+  ✓ Got details
+
+[375/700] Anthony Correia
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anthony-correia/profil/spieler/478357
+  ✓ Got details
+
+[376/700] Stredair Appuah
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stredair-appuah/profil/spieler/1004618
+  ✓ Got details
+
+[377/700] Sofyane Bouzamoucha
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sofyane-bouzamoucha/profil/spieler/786497
+  ✓ Got details
+
+[378/700] Elson Mendes
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nelson-meireles/profil/spieler/1191465
+  ✓ Got details
+
+[379/700] Kenny Rocha Santos
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kenny-rocha-santos/profil/spieler/476527
+  ✓ Got details
+
+[380/700] Anthony Mandréa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anthony-mandrea/profil/spieler/290559
+  ✓ Got details
+
+[381/700] Ylan El Hadary
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ylan-el-hadary/profil/spieler/1146314
+  ✓ Got details
+
+[382/700] Dieudonné Gaucho Debohi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dieudonne-gaucho-debohi/profil/spieler/868793
+  ✓ Got details
+
+[383/700] Mohamed Hafid
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mohamed-hafid/profil/spieler/678985
+  ✓ Got details
+
+  Saved progress: 380 players
+
+[384/700] Jordan Morel
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jordan-morel/profil/spieler/904663
+  ✓ Got details
+
+[385/700] Florent Sanchez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/florent-sanchez/profil/spieler/607225
+  ✓ Got details
+
+[386/700] Karim Chaban
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karim-chaban/profil/spieler/592409
+  ✓ Got details
+
+[387/700] Benjamin Gomel
+  Searching...
+  Not found, skipping
+
+[388/700] Aymen Boutoutaou
+  Searching...
+  Not found, skipping
+
+[389/700] Alexandre Pierre
+  Searching...
+  Not found, skipping
+
+[390/700] Esteban Mouton
+  Searching...
+  Not found, skipping
+
+[391/700] Ahmed Diomandé
+  Searching...
+  Not found, skipping
+
+[392/700] Souleymane Sagnan
+  Searching...
+  Not found, skipping
+
+[393/700] Ismail Diallo
+  Searching...
+  Not found, skipping
+
+[394/700] Samir Ben Brahim
+  Searching...
+  Not found, skipping
+
+[395/700] Soumaïla Traoré
+  Searching...
+  Not found, skipping
+
+[396/700] Ryan Tchato
+  Searching...
+  Not found, skipping
+
+[397/700] Kapit Djoco
+  Searching...
+  Not found, skipping
+
+[398/700] Idrissa Seydi
+  Searching...
+  Not found, skipping
+
+[399/700] Enzo Mayilla
+  Searching...
+  Not found, skipping
+
+[400/700] Mabrouk Rouaï
+  Searching...
+  Not found, skipping
+
+[401/700] Yoram Zague
+  Searching...
+  Not found, skipping
+
+[402/700] Thierry Ambrose
+  Searching...
+  Not found, skipping
+
+[403/700] Elie Mbavu
+  Searching...
+  Not found, skipping
+
+[404/700] Ilyes Ziani
+  Searching...
+  Not found, skipping
+
+[405/700] Beau Reus
+  Searching...
+  Not found, skipping
+
+[406/700] Nilton
+  Searching...
+  Not found, skipping
+
+[407/700] Kikas
+  Searching...
+  Not found, skipping
+
+[408/700] August De Wannemacker
+  Searching...
+  Not found, skipping
+
+[409/700] Lucca Brughmans
+  Searching...
+  Not found, skipping
+
+[410/700] Mohamed Salah
+  Searching...
+  Not found, skipping
+
+[411/700] Enzo Sternal
+  Searching...
+  Not found, skipping
+
+[412/700] Joshua Nga Kana
+  Searching...
+  Not found, skipping
+
+[413/700] Tom Reyners
+  Searching...
+  Not found, skipping
+
+[414/700] Nunzio Engwanda
+  Searching...
+  Not found, skipping
+
+[415/700] Ken Masui
+  Searching...
+  Not found, skipping
+
+[416/700] Marko Ilic
+  Searching...
+  Not found, skipping
+
+[417/700] Manoël Verhaeghe
+  Searching...
+  Not found, skipping
+
+[418/700] Cassius Mailula
+  Searching...
+  Not found, skipping
+
+[419/700] Sam De Grand
+  Searching...
+  Not found, skipping
+
+[420/700] Jesse Bisiwu
+  Searching...
+  Not found, skipping
+
+[421/700] Anas Haj Mohamed
+  Searching...
+  Not found, skipping
+
+[422/700] Boris Lambert
+  Searching...
+  Not found, skipping
+
+[423/700] Matthew Anderson
+  Searching...
+  Not found, skipping
+
+[424/700] Léandro Rousseau
+  Searching...
+  Not found, skipping
+
+[425/700] James Ndjeungoue
+  Searching...
+  Not found, skipping
+
+[426/700] Jonatan Braut Brunes
+  Searching...
+  Not found, skipping
+
+[427/700] Tomas Bobcek
+  Searching...
+  Not found, skipping
+
+[428/700] Marcel Regula
+  Searching...
+  Not found, skipping
+
+[429/700] Osman Bukari
+  Searching...
+  Not found, skipping
+
+[430/700] Slawomir Abramowicz
+  Searching...
+  Not found, skipping
+
+[431/700] Kacper Trelowski
+  Searching...
+  Not found, skipping
+
+[432/700] Afimico Pululu
+  Searching...
+  Not found, skipping
+
+[433/700] Antoni Kozubal
+  Searching...
+  Not found, skipping
+
+[434/700] Emil Kornvig
+  Searching...
+  Not found, skipping
+
+[435/700] Juljan Shehu
+  Searching...
+  Not found, skipping
+
+[436/700] Patrik Hellebrand
+  Searching...
+  Not found, skipping
+
+[437/700] Luis Palma
+  Searching...
+  Not found, skipping
+
+[438/700] Kacper Urbański
+  Searching...
+  Not found, skipping
+
+[439/700] Camilo Mena
+  Searching...
+  Not found, skipping
+
+[440/700] Andi Zeqiri
+  Searching...
+  Not found, skipping
+
+[441/700] Stelios Andreou
+  Searching...
+  Not found, skipping
+
+[442/700] Tomasz Pieńko
+  Searching...
+  Not found, skipping
+
+[443/700] Dominik Sarapata
+  Searching...
+  Not found, skipping
+
+[444/700] Mauro Perkovic
+  Searching...
+  Not found, skipping
+
+[445/700] Josh Wilson-Esbrand
+  Searching...
+  Not found, skipping
+
+[446/700] Bartosz Mrozek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bartosz-mrozek/profil/spieler/345452
+  ✓ Got details
+
+[447/700] Sam Greenwood
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sam-greenwood/profil/spieler/532178
+  ✓ Got details
+
+[448/700] Michal Gurgul
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/michal-gurgul/profil/spieler/991779
+  ✓ Got details
+
+[449/700] Stratos Svarnas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stratos-svarnas/profil/spieler/318257
+  ✓ Got details
+
+[450/700] Steve Kapuadi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/steve-kapuadi/profil/spieler/679709
+  ✓ Got details
+
+[451/700] Aleksandar Djermanovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksandar-djermanovic/profil/spieler/831597
+  ✓ Got details
+
+[452/700] Nikola Knezevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikola-knezevic/profil/spieler/706511
+  ✓ Got details
+
+  Saved progress: 390 players
+
+[453/700] Maciej Kuziemka
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/maciej-kuziemka/profil/spieler/901070
+  ✓ Got details
+
+[454/700] Ángel Rodado
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/angel-rodado/profil/spieler/440332
+  ✓ Got details
+
+[455/700] Mikkel Maigaard
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mikkel-maigaard/profil/spieler/265545
+  ✓ Got details
+
+[456/700] Ivan Lucic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ivan-lucic/profil/spieler/164145
+  ✓ Got details
+
+[457/700] Kacper Duda
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kacper-duda/profil/spieler/555067
+  ✓ Got details
+
+[458/700] Michał Synoś
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/michal-synos/profil/spieler/1118867
+  ✓ Got details
+
+[459/700] Erdal Rakip
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/erdal-rakip/profil/spieler/230746
+  ✓ Got details
+
+[460/700] Paulinho
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/paulinho/profil/spieler/57229
+  ✓ Got details
+
+[461/700] Jakub Adkonis
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakub-adkonis/profil/spieler/1073754
+  ✓ Got details
+
+[462/700] Mateusz Szczepaniak
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mateusz-szczepaniak/profil/spieler/1073744
+  ✓ Got details
+
+  Saved progress: 400 players
+
+[463/700] Bastien Toma
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bastien-toma/profil/spieler/390179
+  ✓ Got details
+
+[464/700] Jasper Löffelsend
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jasper-loffelsend/profil/spieler/443391
+  ✓ Got details
+
+[465/700] Petar Pusic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/petar-pusic/profil/spieler/390169
+  ✓ Got details
+
+[466/700] Adrian Liber
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adrian-liber/profil/spieler/570238
+  ✓ Got details
+
+[467/700] Hajdin Salihu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/hajdin-salihu/profil/spieler/256942
+  ✓ Got details
+
+[468/700] Lamine Ba
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mohamed-bayo/profil/spieler/594991
+  ✓ Got details
+
+[469/700] Aleksander Bobek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksander-bobek/profil/spieler/795231
+  ✓ Got details
+
+[470/700] Jakub Krzyżanowski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakub-krzyzanowski/profil/spieler/888643
+  ✓ Got details
+
+[471/700] Łukasz Zjawiński
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukasz-zjawinski/profil/spieler/401608
+  ✓ Got details
+
+[472/700] Piotr Samiec-Talar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/piotr-samiec-talar/profil/spieler/598448
+  ✓ Got details
+
+  Saved progress: 410 players
+
+[473/700] Rafał Adamski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rafal-adamski/profil/spieler/549982
+  ✓ Got details
+
+[474/700] Antoni Mikulko
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/antoni-mikulko/profil/spieler/826506
+  ✓ Got details
+
+[475/700] Kamil Cybulski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kamil-cybulski/profil/spieler/1233348
+  ✓ Got details
+
+[476/700] Mads Bidstrup
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mads-bidstrup/profil/spieler/462832
+  ✓ Got details
+
+[477/700] Joane Gadou
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joane-gadou/profil/spieler/1075577
+  ✓ Got details
+
+[478/700] Karim Konaté
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karim-konate/profil/spieler/847278
+  ✓ Got details
+
+[479/700] Kerim Alajbegovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kerim-alajbegovic/profil/spieler/929994
+  ✓ Got details
+
+[480/700] Maurits Kjaergaard
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/maurits-kjaergaard/profil/spieler/610405
+  ✓ Got details
+
+[481/700] Edmund Baidoo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/edmund-baidoo/profil/spieler/1236853
+  ✓ Got details
+
+[482/700] Soumaïla Diabaté
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/soumaila-diabate/profil/spieler/1089004
+  ✓ Got details
+
+  Saved progress: 420 players
+
+[483/700] Yorbe Vertessen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/yorbe-vertessen/profil/spieler/409517
+    Error fetching profile: ('Connection aborted.', TimeoutError(60, 'Operation timed out'))
+  ✗ No details, keeping basic
+
+[484/700] Otar Kiteishvili
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/otar-kiteishvili/profil/spieler/352596
+  ✓ Got details
+
+[485/700] Modou Kéba Cissé
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/modou-keba-cisse/profil/spieler/1282860
+  ✓ Got details
+
+[486/700] Moussa Yeo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/moussa-yeo/profil/spieler/1041861
+  ✓ Got details
+
+[487/700] Clement Bischoff
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/clement-bischoff/profil/spieler/953893
+  ✓ Got details
+
+[488/700] Dejan Zukic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dejan-zukic/profil/spieler/528022
+  ✓ Got details
+
+[489/700] Nikolaus Wurmbrand
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikolaus-wurmbrand/profil/spieler/803052
+  ✓ Got details
+
+[490/700] Sota Kitano
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sota-kitano/profil/spieler/671114
+  ✓ Got details
+
+[491/700] Romeo Amane
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/romeo-amane/profil/spieler/961937
+  ✓ Got details
+
+[492/700] Serge-Philippe Raux-Yao
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/serge-philippe-raux-yao/profil/spieler/683891
+  ✓ Got details
+
+  Saved progress: 430 players
+
+[493/700] Jannik Schuster
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jannik-schuster/profil/spieler/915418
+  ✓ Got details
+
+[494/700] Aleksa Terzic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleksa-terzic/profil/spieler/404260
+  ✓ Got details
+
+[495/700] Jon Gorenc Stankovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jon-gorenc-stankovic/profil/spieler/245034
+  ✓ Got details
+
+[496/700] Tobias Gulliksen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tobias-gulliksen/profil/spieler/619657
+  ✓ Got details
+
+[497/700] Frans Krätzig
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/frans-kratzig/profil/spieler/604320
+  ✓ Got details
+
+[498/700] Filip Rózga
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/filip-rozga/profil/spieler/974365
+  ✓ Got details
+
+[499/700] Tim Drexler
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tim-drexler/profil/spieler/822958
+  ✓ Got details
+
+[500/700] Mamady Diambou
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mamady-diambou/profil/spieler/671593
+  ✓ Got details
+
+[501/700] Douglas Mendes
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/douglas-mendes/profil/spieler/921863
+  ✓ Got details
+
+[502/700] Johannes Moser
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/johannes-moser/profil/spieler/1078649
+  ✓ Got details
+
+  Saved progress: 440 players
+
+[503/700] Oliver Lukic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oliver-lukic/profil/spieler/915896
+  ✓ Got details
+
+[504/700] Sanel Saljic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sanel-saljic/profil/spieler/803967
+  ✓ Got details
+
+[505/700] Philipp Maybach
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/philipp-maybach/profil/spieler/1048618
+  ✓ Got details
+
+[506/700] Ifeanyi Ndukwe
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ifeanyi-ndukwe/profil/spieler/1167696
+  ✓ Got details
+
+[507/700] Dejan Radonjic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dejan-radonjic/profil/spieler/67856
+  ✓ Got details
+
+[508/700] Konstantin Aleksa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/konstantin-aleksa/profil/spieler/960458
+  ✓ Got details
+
+[509/700] Aboubacar Camara
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aboubacar-camara/profil/spieler/806170
+  ✓ Got details
+
+[510/700] Daniel Sumbu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/daniel-sumbu/profil/spieler/1162537
+  ✓ Got details
+
+[511/700] Oghenetejiri Adejenughure
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oghenetejiri-adejenughure/profil/spieler/915407
+  ✓ Got details
+
+[512/700] Alexander Schmidt
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alexander-schmidt/profil/spieler/307939
+  ✓ Got details
+
+  Saved progress: 450 players
+
+[513/700] Lukas Malicsek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-malicsek/profil/spieler/354061
+  ✓ Got details
+
+[514/700] Asumah Abubakar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/asumah-abubakar/profil/spieler/408438
+  ✓ Got details
+
+[515/700] Marc Stendera
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marc-stendera/profil/spieler/160943
+  ✓ Got details
+
+[516/700] Lassina Traoré
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lassina-traore/profil/spieler/551695
+  ✓ Got details
+
+[517/700] Leomend Krasniqi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/leomend-krasniqi/profil/spieler/525045
+  ✓ Got details
+
+[518/700] Matija Horvat
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matija-horvat/profil/spieler/338855
+  ✓ Got details
+
+[519/700] Matteo Meisl
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-meisl/profil/spieler/346855
+  ✓ Got details
+
+[520/700] Riquelme
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/juan-roman-riquelme/profil/spieler/3854
+  ✓ Got details
+
+[521/700] Jakob Pokorny
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakob-pokorny/profil/spieler/1078651
+  ✓ Got details
+
+[522/700] Valentin Zabransky
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/valentin-zabransky/profil/spieler/960455
+  ✓ Got details
+
+  Saved progress: 460 players
+
+[523/700] Elione Fernandes Neto
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/elione-fernandes-neto/profil/spieler/934519
+  ✓ Got details
+
+[524/700] Marc Striednig
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marc-striednig/profil/spieler/915419
+  ✓ Got details
+
+[525/700] Jakob Brandtner
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakob-brandtner/profil/spieler/915412
+  ✓ Got details
+
+[526/700] David Moses
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-moses/profil/spieler/1001305
+  ✓ Got details
+
+[527/700] Igoh Ogbu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/igoh-ogbu/profil/spieler/567738
+  ✓ Got details
+
+[528/700] Lukas Provod
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-provod/profil/spieler/292779
+  ✓ Got details
+
+[529/700] Oscar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oscar/profil/spieler/85314
+  ✓ Got details
+
+[530/700] Michal Sadílek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/michal-sadilek/profil/spieler/321204
+  ✓ Got details
+
+[531/700] Albion Rrahmani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/albion-rrahmani/profil/spieler/903706
+  ✓ Got details
+
+[532/700] David Zima
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-zima/profil/spieler/544149
+  ✓ Got details
+
+  Saved progress: 470 players
+
+[533/700] Stepan Chaloupek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stepan-chaloupek/profil/spieler/944827
+  ✓ Got details
+
+[534/700] Lukas Haraslin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-haraslin/profil/spieler/239941
+  ✓ Got details
+
+[535/700] Kaan Kairinen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kaan-kairinen/profil/spieler/322989
+  ✓ Got details
+
+[536/700] Lukas Cerv
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-cerv/profil/spieler/611049
+  ✓ Got details
+
+[537/700] Sampson Dweh
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sampson-dweh/profil/spieler/686806
+  ✓ Got details
+
+[538/700] Tomas Vlcek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tomas-vlcek/profil/spieler/534568
+  ✓ Got details
+
+[539/700] Vasil Kusej
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vasil-kusej/profil/spieler/396235
+  ✓ Got details
+
+[540/700] Muhammed Cham
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/muhammed-cham/profil/spieler/422281
+  ✓ Got details
+
+[541/700] Andrew Irving
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andrew-irving/profil/spieler/430310
+  ✓ Got details
+
+[542/700] Emmanuel Uchenna
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/emmanuel-uchenna/profil/spieler/1118150
+  ✓ Got details
+
+  Saved progress: 480 players
+
+[543/700] David Jurásek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-jurasek/profil/spieler/500054
+  ✓ Got details
+
+[544/700] David Doudera
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/david-doudera/profil/spieler/493758
+  ✓ Got details
+
+[545/700] Sivert Mannsverk
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sivert-mannsverk/profil/spieler/510310
+  ✓ Got details
+
+[546/700] Matej Rynes
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matej-rynes/profil/spieler/539197
+  ✓ Got details
+
+[547/700] Oliver Sonne
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oliver-sonne/profil/spieler/541628
+  ✓ Got details
+
+[548/700] Patrik Vydra
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/patrik-vydra/profil/spieler/655300
+  ✓ Got details
+
+[549/700] John Mercado
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/john-mercado/profil/spieler/659804
+  ✓ Got details
+
+[550/700] Mojmír Chytil
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mojmir-chytil/profil/spieler/405855
+  ✓ Got details
+
+[551/700] Jakub Pira
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakub-pira/profil/spieler/1167425
+  ✓ Got details
+
+[552/700] Marek Havran
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marek-havran/profil/spieler/765077
+  ✓ Got details
+
+  Saved progress: 490 players
+
+[553/700] Ondrej Penxa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ondrej-penxa/profil/spieler/1013797
+  ✓ Got details
+
+[554/700] Bartosz Szywala
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bartosz-szywala/profil/spieler/1209569
+  ✓ Got details
+
+[555/700] Abdullahi Bewene
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/abdullahi-bewene/profil/spieler/1118054
+  ✓ Got details
+
+[556/700] Karel Belzik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karel-belzik/profil/spieler/1078213
+  ✓ Got details
+
+[557/700] Lukas Vorlicky
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-vorlicky/profil/spieler/552059
+  ✓ Got details
+
+[558/700] Dominik Plechaty
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/dominik-plechaty/profil/spieler/456146
+  ✓ Got details
+
+[559/700] Samuel Pikolon
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/samuel-pikolon/profil/spieler/765097
+  ✓ Got details
+
+[560/700] Roman Mokrovics
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/roman-mokrovics/profil/spieler/765105
+  ✓ Got details
+
+[561/700] Daniel Samek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/daniel-samek/profil/spieler/671542
+  ✓ Got details
+
+[562/700] Lukas Moudry
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-moudry/profil/spieler/1013793
+  ✓ Got details
+
+  Saved progress: 500 players
+
+[563/700] Elias Pitak
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/elias-pitak/profil/spieler/991036
+  ✓ Got details
+
+[564/700] Oliver Velich
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oliver-velich/profil/spieler/685302
+  ✓ Got details
+
+[565/700] Jakub Klima
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakub-klima/profil/spieler/539698
+  ✓ Got details
+
+[566/700] Jiri Micek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jiri-micek/profil/spieler/1013792
+  ✓ Got details
+
+[567/700] Lukas Penxa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lukas-penxa/profil/spieler/951217
+  ✓ Got details
+
+[568/700] Aleks Bozhev
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aleks-bozhev/profil/spieler/895473
+  ✓ Got details
+
+[569/700] Martin Kovar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-kovarik/profil/spieler/558474
+  ✓ Got details
+
+[570/700] Martin Gjorgievski
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-gjorgievski/profil/spieler/898137
+  ✓ Got details
+
+[571/700] Bienvenue Kanakimana
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/bienvenue-kanakimana/profil/spieler/649272
+  ✓ Got details
+
+[572/700] Jakub Selnar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jakub-selnar/profil/spieler/572241
+  ✓ Got details
+
+  Saved progress: 510 players
+
+[573/700] Adam Hrdina
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/adam-hrdina/profil/spieler/726664
+  ✓ Got details
+
+[574/700] Martin Rymarenko
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-rymarenko/profil/spieler/418754
+  ✓ Got details
+
+[575/700] Tadeas Vachousek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tadeas-vachousek/profil/spieler/751680
+  ✓ Got details
+
+[576/700] Ismaël Baouf
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ismael-baouf/profil/spieler/961050
+  ✓ Got details
+
+[577/700] Sol Sidibé
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sol-sidibe/profil/spieler/962019
+  ✓ Got details
+
+[578/700] Sydney Osazuwa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sydney-osazuwa/profil/spieler/1214320
+  ✓ Got details
+
+[579/700] Devin Haen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/devin-haen/profil/spieler/704771
+  ✓ Got details
+
+[580/700] Joeri Heerkens
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joeri-heerkens/profil/spieler/923667
+  ✓ Got details
+
+[581/700] Jari Vlak
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jari-vlak/profil/spieler/374213
+  ✓ Got details
+
+[582/700] Matteo Waem
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matteo-waem/profil/spieler/719382
+  ✓ Got details
+
+  Saved progress: 520 players
+
+[583/700] Noah Fernandez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/noah-fernandez/profil/spieler/1095107
+  ✓ Got details
+
+[584/700] Thomas Didillon-Hödl
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/thomas-didillon-hodl/profil/spieler/182891
+  ✓ Got details
+
+[585/700] Abdellah Ouazane
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/abdellah-ouazane/profil/spieler/1194905
+  ✓ Got details
+
+[586/700] Don-Angelo Konadu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/don-angelo-konadu/profil/spieler/981693
+  ✓ Got details
+
+[587/700] Stéphano Carrillo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/stephano-carrillo/profil/spieler/955224
+  ✓ Got details
+
+[588/700] Byron Burgering
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/byron-burgering/profil/spieler/692771
+  ✓ Got details
+
+[589/700] Oscar Sjöstrand
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oscar-sjostrand/profil/spieler/1126111
+  ✓ Got details
+
+[590/700] Do-young Yoon
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/do-young-yoon/profil/spieler/1015959
+  ✓ Got details
+
+[591/700] Gerald Alders
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gerald-alders/profil/spieler/891854
+  ✓ Got details
+
+[592/700] Lucas Jetten
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lucas-jetten/profil/spieler/987355
+  ✓ Got details
+
+  Saved progress: 530 players
+
+[593/700] Remco Balk
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/remco-balk/profil/spieler/412940
+  ✓ Got details
+
+[594/700] Julian Rijkhoff
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/julian-rijkhoff/profil/spieler/720799
+  ✓ Got details
+
+[595/700] Ichem Ferrah
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ichem-ferrah/profil/spieler/1083024
+  ✓ Got details
+
+[596/700] Juho Kilo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/juho-kilo/profil/spieler/538642
+  ✓ Got details
+
+[597/700] Joshua Nisbet
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joshua-nisbet/profil/spieler/603863
+  ✓ Got details
+
+[598/700] Raffael Behounek
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/raffael-behounek/profil/spieler/321095
+  ✓ Got details
+
+[599/700] Jamal Amofa
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jamal-amofa/profil/spieler/289651
+  ✓ Got details
+
+[600/700] Junior Kadile
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/junior-kadile/profil/spieler/585958
+  ✓ Got details
+
+[601/700] Till Cissokho
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/till-cissokho/profil/spieler/395228
+  ✓ Got details
+
+[602/700] Otto Ruoppi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/otto-ruoppi/profil/spieler/901877
+  ✓ Got details
+
+  Saved progress: 540 players
+
+[603/700] Kasper Paananen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kasper-paananen/profil/spieler/613189
+  ✓ Got details
+
+[604/700] Johannes Kreidl
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/johannes-kreidl/profil/spieler/223783
+  ✓ Got details
+
+[605/700] Mohamed Toure
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mohamed-toure/profil/spieler/742770
+  ✓ Got details
+
+[606/700] Oiva Jukkola
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oiva-jukkola/profil/spieler/674212
+  ✓ Got details
+
+[607/700] Teemu Pukki
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/teemu-pukki/profil/spieler/46972
+  ✓ Got details
+
+[608/700] Lucas Lingman
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lucas-lingman/profil/spieler/322994
+  ✓ Got details
+
+[609/700] Ville Tikkanen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ville-tikkanen/profil/spieler/482004
+  ✓ Got details
+
+[610/700] Benji Michel
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/benji-michel/profil/spieler/627183
+  ✓ Got details
+
+[611/700] Marius Söderbäck
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marius-soderback/profil/spieler/909689
+  ✓ Got details
+
+[612/700] Matias Rale
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matias-rale/profil/spieler/488764
+  ✓ Got details
+
+  Saved progress: 550 players
+
+[613/700] Anton Popovitch
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anton-popovitch/profil/spieler/354407
+  ✓ Got details
+
+[614/700] Loic Essomba
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/loic-essomba/profil/spieler/1040825
+  ✓ Got details
+
+[615/700] Alexander Ring
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alexander-ring/profil/spieler/82113
+  ✓ Got details
+
+[616/700] Jardell Kanga
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/jardell-kanga/profil/spieler/896597
+  ✓ Got details
+
+[617/700] Roope Paunio
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/roope-paunio/profil/spieler/563840
+  ✓ Got details
+
+[618/700] Joona Veteli
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joona-veteli/profil/spieler/226330
+  ✓ Got details
+
+[619/700] Mihailo Bogicevic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mihailo-bogicevic/profil/spieler/526869
+  ✓ Got details
+
+[620/700] Miska Ylitolva
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/miska-ylitolva/profil/spieler/716894
+  ✓ Got details
+
+[621/700] Valentín Gasc
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/valentin-gasc/profil/spieler/491703
+  ✓ Got details
+
+[622/700] Clinton Antwi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/clinton-antwi/profil/spieler/587302
+  ✓ Got details
+
+  Saved progress: 560 players
+
+[623/700] Kaius Simojoki
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kaius-simojoki/profil/spieler/1015336
+  ✓ Got details
+
+[624/700] Kelvin Pires
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/kelvin-pires/profil/spieler/662119
+  ✓ Got details
+
+[625/700] Samuel Chukwudi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/samuel-chukwudi/profil/spieler/617790
+  ✓ Got details
+
+[626/700] Gratas Sirgėdas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gratas-sirgedas/profil/spieler/214284
+  ✓ Got details
+
+[627/700] Amine Benchaib
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/amine-benchaib/profil/spieler/503855
+  ✓ Got details
+
+[628/700] Daniel Romanovskij
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/daniel-romanovskij/profil/spieler/229320
+  ✓ Got details
+
+[629/700] Abdel Kader Njoya
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/abdel-kader-njoya/profil/spieler/1236397
+  ✓ Got details
+
+[630/700] Aldayr Hernández
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aldayr-hernandez/profil/spieler/352564
+  ✓ Got details
+
+[631/700] Joris Moutachy
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joris-moutachy/profil/spieler/558714
+  ✓ Got details
+
+[632/700] Rokas Rasimavičius
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rokas-rasimavicius/profil/spieler/454666
+  ✓ Got details
+
+  Saved progress: 570 players
+
+[633/700] Giedrius Matulevičius
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/giedrius-matulevicius/profil/spieler/263246
+  ✓ Got details
+
+[634/700] Saba Mamatsashvili
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/saba-mamatsashvili/profil/spieler/714252
+  ✓ Got details
+
+[635/700] Domantas Antanavičius
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/domantas-antanavicius/profil/spieler/373226
+  ✓ Got details
+
+[636/700] Gustas Baliutavičius
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gustas-baliutavicius/profil/spieler/874591
+  ✓ Got details
+
+[637/700] Matas Ramanauskas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/matas-ramanauskas/profil/spieler/422805
+  ✓ Got details
+
+[638/700] Ovidijus Verbickas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ovidijus-verbickas/profil/spieler/190520
+  ✓ Got details
+
+[639/700] Klaudijus Upstas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/klaudijus-upstas/profil/spieler/230649
+  ✓ Got details
+
+[640/700] Vincentas Šarkauskas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/vincentas-sarkauskas/profil/spieler/457347
+  ✓ Got details
+
+[641/700] Žygimantas Baltrūnas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/zygimantas-baltrunas/profil/spieler/518381
+  ✓ Got details
+
+[642/700] Aaron Olugbogi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/aaron-olugbogi/profil/spieler/882962
+  ✓ Got details
+
+  Saved progress: 580 players
+
+[643/700] Tomas Švedkauskas
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tomas-svedkauskas/profil/spieler/206844
+  ✓ Got details
+
+[644/700] Deividas Mikelionis
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/deividas-mikelionis/profil/spieler/279580
+  ✓ Got details
+
+[645/700] Damjan Pavlovic
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/damjan-pavlovic/profil/spieler/409511
+  ✓ Got details
+
+[646/700] Motiejus Burba
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/motiejus-burba/profil/spieler/582227
+  ✓ Got details
+
+[647/700] Benny
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/benjamin-henrichs/profil/spieler/202591
+  ✓ Got details
+
+[648/700] Marko Mandić
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/marko-mandic/profil/spieler/585794
+  ✓ Got details
+
+[649/700] Gabrielius Micevičius
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/gabrielius-micevicius/profil/spieler/668431
+  ✓ Got details
+
+[650/700] Ariagner Smith
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ariagner-smith/profil/spieler/367160
+  ✓ Got details
+
+[651/700] Rommi Siht
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rommi-siht/profil/spieler/899390
+  ✓ Got details
+
+[652/700] Oskar Hoim
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/oskar-hoim/profil/spieler/779023
+  ✓ Got details
+
+  Saved progress: 590 players
+
+[653/700] Karl Andre Vallner
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karl-andre-vallner/profil/spieler/117401
+  ✓ Got details
+
+[654/700] João Pedro
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joao-neves/profil/spieler/670681
+  ✓ Got details
+
+[655/700] Rauno Sappinen
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rauno-sappinen/profil/spieler/199000
+  ✓ Got details
+
+[656/700] Markus Poom
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/markus-poom/profil/spieler/322683
+  ✓ Got details
+
+[657/700] Rasmus Peetson
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rasmus-peetson/profil/spieler/260786
+  ✓ Got details
+
+[658/700] Modou Tambedou
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/modou-tambedou/profil/spieler/1035048
+  ✓ Got details
+
+[659/700] Martin Miller
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/martin-miller/profil/spieler/242152
+  ✓ Got details
+
+[660/700] Ebrima Jarju
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ebrima-jarju/profil/spieler/972351
+  ✓ Got details
+
+[661/700] Edgar Tur
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/edgar-tur/profil/spieler/225003
+  ✓ Got details
+
+[662/700] Evert Grünvald
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/evert-grunvald/profil/spieler/402119
+  ✓ Got details
+
+  Saved progress: 600 players
+
+[663/700] Danil Kuraksin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/danil-kuraksin/profil/spieler/488301
+  ✓ Got details
+
+[664/700] Sander Tovstik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sander-tovstik/profil/spieler/944806
+  ✓ Got details
+
+[665/700] Andero Kaares
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andero-kaares/profil/spieler/1239308
+  ✓ Got details
+
+[666/700] Joseph Saliste
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/joseph-saliste/profil/spieler/193418
+  ✓ Got details
+
+[667/700] Tanel Tammik
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tanel-tammik/profil/spieler/493032
+  ✓ Got details
+
+[668/700] Mark Maksimkin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mark-maksimkin/profil/spieler/576084
+  ✓ Got details
+
+[669/700] Mattias Männilaan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mattias-mannilaan/profil/spieler/363613
+  ✓ Got details
+
+[670/700] Nikita Ivanov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nikita-ivanovs/profil/spieler/229311
+  ✓ Got details
+
+[671/700] Michael Lilander
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/michael-lilander/profil/spieler/276575
+  ✓ Got details
+
+[672/700] Henri Välja
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/henri-valja/profil/spieler/363582
+  ✓ Got details
+
+  Saved progress: 610 players
+
+[673/700] Karel Eerme
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/karel-eerme/profil/spieler/574222
+  ✓ Got details
+
+[674/700] Tristan Teeväli
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/tristan-teevali/profil/spieler/488300
+  ✓ Got details
+
+[675/700] Robert Veering
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/robert-veering/profil/spieler/898490
+  ✓ Got details
+
+[676/700] Cavan Sullivan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cavan-sullivan/profil/spieler/1009732
+  ✓ Got details
+
+[677/700] Rodolfo Aloko
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rodolfo-aloko/profil/spieler/1111922
+  ✓ Got details
+
+[678/700] Lazar Kalicanin
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/lazar-kalicanin/profil/spieler/698550
+  ✓ Got details
+
+[679/700] Cauã Paixão
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/caua-paixao/profil/spieler/1083960
+  ✓ Got details
+
+[680/700] Andrew Rick
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/andy-rickard/profil/spieler/677601
+  ✓ Got details
+
+[681/700] Rafael Uzcátegui
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rafael-uzcategui/profil/spieler/888031
+  ✓ Got details
+
+[682/700] Max Floriani
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/max-floriani/profil/spieler/1356043
+  ✓ Got details
+
+  Saved progress: 620 players
+
+[683/700] Xavi Gnaulati
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/xavi-gnaulati/profil/spieler/881085
+  ✓ Got details
+
+[684/700] Ernesto Gómez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/ricardo-gomez/profil/spieler/54082
+  ✓ Got details
+
+[685/700] Markus Anderson
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/markus-anderson/profil/spieler/1128158
+  ✓ Got details
+
+[686/700] Mathías Vásquez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/mathias-vasquez/profil/spieler/1241531
+  ✓ Got details
+
+[687/700] Cesar Ruvalcaba
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cesar-ruvalcaba/profil/spieler/1381733
+  ✓ Got details
+
+[688/700] Shaoziyang Liu
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/shaoziyang-liu/profil/spieler/966946
+  ✓ Got details
+
+[689/700] Rickson van Hees
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/rickson-van-hees/profil/spieler/613449
+  ✓ Got details
+
+[690/700] Alex Monis
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/alex-monis/profil/spieler/724442
+  ✓ Got details
+
+[691/700] Chris Rindov
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/chris-rindov/profil/spieler/1113057
+  ✓ Got details
+
+[692/700] Steven Sserwadda
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/steven-sserwadda/profil/spieler/568840
+  ✓ Got details
+
+  Saved progress: 630 players
+
+[693/700] Cameron Dunbar
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/cameron-dunbar/profil/spieler/692091
+  ✓ Got details
+
+[694/700] Anthony Sorenson
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/anthony-sorenson/profil/spieler/797971
+  ✓ Got details
+
+[695/700] Benjamin Barjolo
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/benjamin-barjolo/profil/spieler/1177579
+  ✓ Got details
+
+[696/700] Nelson Rodríguez
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nelson-rodriguez/profil/spieler/1020338
+  ✓ Got details
+
+[697/700] Barnabás Tanyi
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/barnabas-tanyi/profil/spieler/875623
+  ✓ Got details
+
+[698/700] Myles Morgan
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/myles-morgan/profil/spieler/1145685
+  ✓ Got details
+
+[699/700] Nate Worth
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/nate-worth/profil/spieler/993581
+  ✓ Got details
+
+[700/700] Sam Williams
+  Searching...
+  Fetching profile: https://www.transfermarkt.com/sam-williamson/profil/spieler/61630
+  ✓ Got details
+
+============================================================
+DONE! 638 players with details
+============================================================

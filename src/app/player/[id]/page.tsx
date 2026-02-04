@@ -122,32 +122,30 @@ export default async function PlayerDetailPage({
           </div>
         </div>
 
-        {/* Career totals */}
+        {/* Stats from Transfermarkt profile */}
         {player.careerTotals && (
           <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-              Career Totals
+              Stats
             </h2>
-            <div className="grid grid-cols-4 gap-4 text-center">
+            <div className="grid grid-cols-3 gap-4 text-center">
               <StatBox label="Matches" value={player.careerTotals.matches} />
               <StatBox label="Goals" value={player.careerTotals.goals} highlight />
               <StatBox label="Assists" value={player.careerTotals.assists} />
-              <StatBox label="Minutes" value={player.careerTotals.minutes} />
             </div>
           </div>
         )}
 
-        {/* Season stats table */}
-        {player.stats && player.stats.length > 0 && (
+        {/* Competition breakdown - disabled, data is unreliable */}
+        {false && player.stats && player.stats.length > 0 && (
           <div className="bg-white dark:bg-zinc-800 rounded-lg shadow-sm border border-zinc-200 dark:border-zinc-700 p-6 mb-6">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-4">
-              Performance by Season
+              By Competition
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-zinc-200 dark:border-zinc-700">
-                    <th className="text-left py-2 text-zinc-600 dark:text-zinc-400 font-medium">Season</th>
                     <th className="text-left py-2 text-zinc-600 dark:text-zinc-400 font-medium">Competition</th>
                     <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Apps</th>
                     <th className="text-center py-2 text-zinc-600 dark:text-zinc-400 font-medium">Goals</th>
@@ -155,12 +153,11 @@ export default async function PlayerDetailPage({
                   </tr>
                 </thead>
                 <tbody>
-                  {player.stats.slice(0, 10).map((stat, idx) => (
+                  {player.stats.filter(s => s.matches > 0).slice(0, 10).map((stat, idx) => (
                     <tr
                       key={idx}
                       className="border-b border-zinc-100 dark:border-zinc-800 last:border-0"
                     >
-                      <td className="py-2 text-zinc-900 dark:text-white">{stat.season}</td>
                       <td className="py-2 text-zinc-600 dark:text-zinc-400">{stat.competition}</td>
                       <td className="py-2 text-center text-zinc-900 dark:text-white">{stat.matches}</td>
                       <td className="py-2 text-center font-medium text-green-600 dark:text-green-400">
@@ -174,9 +171,9 @@ export default async function PlayerDetailPage({
                 </tbody>
               </table>
             </div>
-            {player.stats.length > 10 && (
+            {player.stats.filter(s => s.matches > 0).length > 10 && (
               <p className="text-xs text-zinc-500 mt-2">
-                Showing 10 of {player.stats.length} entries
+                Showing top 10 competitions
               </p>
             )}
           </div>

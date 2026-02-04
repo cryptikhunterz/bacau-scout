@@ -1,0 +1,40 @@
+
+> bacau-scout@0.1.0 dev
+> next dev
+
+▲ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://192.168.68.117:3000
+
+✓ Starting...
+✓ Ready in 258ms
+Loaded 15969 players from JSON
+[Search] query="https://www.transfermarkt.es/stefan-tarnovanu/prof..." filters=0 results=1 time=20.47ms
+ GET /api/search?q=https://www.transfermarkt.es/stefan-tarnovanu/profil/spieler/568544 200 in 117ms (compile: 87ms, render: 30ms)
+ GET / 200 in 144ms (compile: 92ms, render: 52ms)
+⚠ Cross origin request detected from 192.168.68.117 to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+[Search] query="http://transfermarkt.es/stefan-tarnovanu/profil/sp..." filters=0 results=1 time=2.06ms
+ GET /api/search?q=http%3A%2F%2Ftransfermarkt.es%2Fstefan-tarnovanu%2Fprofil%2Fspieler%2F568544 200 in 15ms (compile: 6ms, render: 10ms)
+[Player] id="568544" found=true time=0.04ms
+ GET /api/player/568544 200 in 432ms (compile: 428ms, render: 3ms)
+ GET /player/568544 200 in 817ms (compile: 370ms, render: 447ms)
+ GET / 200 in 46ms (compile: 7ms, render: 38ms)
+[Search] query="http://transfermarkt.es/stefan-tarnovanu/profil/sp..." filters=0 results=1 time=2.39ms
+ GET /api/search?q=http%3A%2F%2Ftransfermarkt.es%2Fstefan-tarnovanu%2Fprofil%2Fspieler%2F568544 200 in 15ms (compile: 5ms, render: 10ms)
+[Player] id="568544" found=true time=0.02ms
+ GET /api/player/568544 200 in 5ms (compile: 3ms, render: 2ms)
+ GET /player/568544 200 in 46ms (compile: 10ms, render: 36ms)
+ GET / 200 in 50ms (compile: 10ms, render: 39ms)
+[Search] query="https://www.transfermarkt.es/universitatea-craiova/startseite/verein/40812" filters=0 results=0 time=2.61ms
+ GET /api/search?q=https%3A%2F%2Fwww.transfermarkt.es%2Funiversitatea-craiova%2Fstartseite%2Fverein%2F40812 200 in 16ms (compile: 6ms, render: 10ms)
+ GET / 200 in 41ms (compile: 4ms, render: 37ms)
+[Search] query="https://www.transfermarkt.es/universitatea-craiova/startseite/verein/40812" filters=0 results=0 time=2.60ms
+ GET /api/search?q=https%3A%2F%2Fwww.transfermarkt.es%2Funiversitatea-craiova%2Fstartseite%2Fverein%2F40812 200 in 13ms (compile: 4ms, render: 9ms)
+ GET / 200 in 42ms (compile: 6ms, render: 35ms)
+[Search] query="https://www.transfermarkt.es/dejan-iliev/profil/sp..." filters=0 results=1 time=2.43ms
+ GET /api/search?q=https%3A%2F%2Fwww.transfermarkt.es%2Fdejan-iliev%2Fprofil%2Fspieler%2F205757 200 in 13ms (compile: 4ms, render: 9ms)
+[Player] id="205757" found=true time=0.03ms
+ GET /api/player/205757 200 in 7ms (compile: 4ms, render: 3ms)
+ GET /player/205757 200 in 53ms (compile: 11ms, render: 42ms)
+[?25h

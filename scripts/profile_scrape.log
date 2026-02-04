@@ -1,0 +1,26 @@
+============================================================
+FULL PROFILE SCRAPER
+============================================================
+Total players: 15969
+Already completed: 50
+Remaining: 15919
+============================================================
+[19/15969] Nana Antwi... /Users/majorwinters/.openclaw/workspace/projects/bacau-scout/scripts/scrape_profiles.py:109: DeprecationWarning: The 'text' argument to find()-type methods is deprecated. Use 'string' instead.
+  height_span = soup2.find('span', text=re.compile(r'Height:', re.I))
+/Users/majorwinters/.openclaw/workspace/projects/bacau-scout/scripts/scrape_profiles.py:116: DeprecationWarning: The 'text' argument to find()-type methods is deprecated. Use 'string' instead.
+  foot_span = soup2.find('span', text=re.compile(r'Foot:', re.I))
+✓ apps:20 goals:2 assists:0
+[20/15969] Valentin Crețu... ✓ apps:23 goals:3 assists:0
+[22/15969] Baba Alhassan... ✓ apps:28 goals:5 assists:0
+[28/15969] Andrei Pandele... ✓ apps:8 goals:0 assists:0
+[55/15969] Denis Ciobotariu... ✓ apps:17 goals:0 assists:0
+[56/15969] Cristian Ignat... ✓ apps:2 goals:2 assists:0
+[57/15969] Paul Iacob... ✓ apps:19 goals:2 assists:1
+[58/15969] Filip Blazek... ✓ apps:13 goals:2 assists:0
+[59/15969] Cristian Săpunaru... ✓ apps:585 goals:69 assists:7
+[60/15969] Andrei Borza... ✓ apps:14 goals:3 assists:0
+[61/15969] Robert Bădescu... ✓ apps:9 goals:5 assists:0
+[62/15969] Patrick Popa... ✓ apps:0 goals:0 assists:0
+[63/15969] Cristian Manea... ✓ apps:20 goals:6 assists:0
+[64/15969] Răzvan Onea... ✓ apps:16 goals:5 assists:0
+[65/15969] Christopher Braun... ✓ apps:18 goals:5 assists:0
