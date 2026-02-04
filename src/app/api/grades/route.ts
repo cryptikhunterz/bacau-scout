@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { PrismaClient } from '@prisma/client'
+
+// Force dynamic - don't try to connect at build time
+export const dynamic = 'force-dynamic'
+
+const prisma = new PrismaClient()
 
 // GET all grades (for dashboard)
 export async function GET() {
