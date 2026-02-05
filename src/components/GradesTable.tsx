@@ -2,39 +2,39 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlayerGrade, getRatingColor } from '@/lib/grades';
+import { PlayerGrade, getAttributeColor, getPotentialColor } from '@/lib/grades';
 
 interface GradesTableProps {
   grades: PlayerGrade[];
 }
 
-type SortKey = 'playerName' | 'position' | 'club' | 'recommendation' | 'gradedAt' | 'technical' | 'athletic' | 'attacking' | 'tactical';
+type SortKey = 'playerName' | 'position' | 'club' | 'verdict' | 'gradedAt' | 'physical' | 'technique' | 'tactic' | 'ability' | 'potential';
 
-// Calculate category averages
-function getTechnicalAvg(g: PlayerGrade): number {
-  const vals = [g.dribblingBallControl, g.oneVsOneDribbling, g.passingRangeCreation, g.crossingDelivery].filter(v => v > 0);
+// Calculate category averages (1-5 scale)
+function getPhysicalAvg(g: PlayerGrade): number {
+  const vals = [g.physStrength, g.physSpeed, g.physAgility, g.physCoordination].filter(v => v && v > 0);
   return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 0;
 }
 
-function getAthleticAvg(g: PlayerGrade): number {
-  const vals = [g.accelerationPace, g.workRateStamina, g.physicalDuelingAerial].filter(v => v > 0);
+function getTechniqueAvg(g: PlayerGrade): number {
+  const vals = [g.techControl, g.techShortPasses, g.techLongPasses, g.techAerial,
+    g.techCrossing, g.techFinishing, g.techDribbling, g.techOneVsOneOffense, g.techOneVsOneDefense].filter(v => v && v > 0);
   return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 0;
 }
 
-function getAttackingAvg(g: PlayerGrade): number {
-  const vals = [g.goalContribution, g.carryingProgression, g.finishingShotPlacement].filter(v => v > 0);
+function getTacticAvg(g: PlayerGrade): number {
+  const vals = [g.tacPositioning, g.tacTransition, g.tacDecisions, g.tacAnticipations, g.tacDuels, g.tacSetPieces].filter(v => v && v > 0);
   return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 0;
 }
 
-function getTacticalAvg(g: PlayerGrade): number {
-  const vals = [g.positionalIntelligence, g.defensivePressingIntensity, g.oneVsOneDuels].filter(v => v > 0);
-  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 0;
-}
-
-function getOverallAvg(g: PlayerGrade): number {
-  const avgs = [getTechnicalAvg(g), getAthleticAvg(g), getAttackingAvg(g), getTacticalAvg(g)].filter(v => v > 0);
-  return avgs.length ? Math.round(avgs.reduce((a, b) => a + b, 0) / avgs.length * 10) / 10 : 0;
-}
+// Verdict badge colors
+const verdictColors: Record<string, string> = {
+  'Sign': 'bg-green-600 text-white',
+  'Observe': 'bg-blue-600 text-white',
+  'Monitor': 'bg-yellow-500 text-black',
+  'Not a priority': 'bg-zinc-600 text-white',
+  'Out of reach': 'bg-red-600 text-white',
+};
 
 export function GradesTable({ grades }: GradesTableProps) {
   const router = useRouter();
@@ -53,47 +53,19 @@ export function GradesTable({ grades }: GradesTableProps) {
   const sorted = [...grades].sort((a, b) => {
     let aVal: string | number;
     let bVal: string | number;
-    
+
     switch (sortKey) {
-      case 'technical':
-        aVal = getTechnicalAvg(a);
-        bVal = getTechnicalAvg(b);
-        break;
-      case 'athletic':
-        aVal = getAthleticAvg(a);
-        bVal = getAthleticAvg(b);
-        break;
-      case 'attacking':
-        aVal = getAttackingAvg(a);
-        bVal = getAttackingAvg(b);
-        break;
-      case 'tactical':
-        aVal = getTacticalAvg(a);
-        bVal = getTacticalAvg(b);
-        break;
-      default:
-        aVal = a[sortKey] ?? '';
-        bVal = b[sortKey] ?? '';
+      case 'physical': aVal = getPhysicalAvg(a); bVal = getPhysicalAvg(b); break;
+      case 'technique': aVal = getTechniqueAvg(a); bVal = getTechniqueAvg(b); break;
+      case 'tactic': aVal = getTacticAvg(a); bVal = getTacticAvg(b); break;
+      case 'ability': aVal = a.ability || 3; bVal = b.ability || 3; break;
+      case 'potential': aVal = a.potential || 4; bVal = b.potential || 4; break;
+      default: aVal = a[sortKey] ?? ''; bVal = b[sortKey] ?? '';
     }
-    
+
     const cmp = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
     return sortDir === 'asc' ? cmp : -cmp;
   });
-
-  // Recommendation badge colors
-  const recColors: Record<string, string> = {
-    Sign: 'bg-green-600 text-white',
-    Monitor: 'bg-yellow-600 text-white',
-    Discard: 'bg-red-600 text-white',
-  };
-
-  // Rating badge color
-  const getRatingBadgeColor = (rating: number): string => {
-    if (rating <= 2) return 'bg-red-600 text-white';
-    if (rating <= 4) return 'bg-orange-600 text-white';
-    if (rating <= 6) return 'bg-yellow-600 text-white';
-    return 'bg-green-600 text-white';
-  };
 
   return (
     <div className="overflow-x-auto">
@@ -103,96 +75,67 @@ export function GradesTable({ grades }: GradesTableProps) {
             <SortHeader label="Player" sortKey="playerName" current={sortKey} dir={sortDir} onClick={handleSort} />
             <SortHeader label="Pos" sortKey="position" current={sortKey} dir={sortDir} onClick={handleSort} />
             <SortHeader label="Club" sortKey="club" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <SortHeader label="Rec" sortKey="recommendation" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <th className="text-center py-2 px-2 text-zinc-400 font-medium">Overall</th>
-            <SortHeader label="Tech" sortKey="technical" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <SortHeader label="Athl" sortKey="athletic" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <SortHeader label="Att" sortKey="attacking" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <SortHeader label="Tact" sortKey="tactical" current={sortKey} dir={sortDir} onClick={handleSort} />
-            <th className="text-left py-2 px-2 text-zinc-400 font-medium">Strengths</th>
-            <th className="text-left py-2 px-2 text-zinc-400 font-medium">Weaknesses</th>
+            <SortHeader label="Verdict" sortKey="verdict" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <SortHeader label="ABL" sortKey="ability" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <SortHeader label="POT" sortKey="potential" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <SortHeader label="PHY" sortKey="physical" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <SortHeader label="TEC" sortKey="technique" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <SortHeader label="TAC" sortKey="tactic" current={sortKey} dir={sortDir} onClick={handleSort} />
+            <th className="text-left py-2 px-2 text-zinc-400 font-medium">Tags</th>
             <SortHeader label="Date" sortKey="gradedAt" current={sortKey} dir={sortDir} onClick={handleSort} />
           </tr>
         </thead>
         <tbody>
-          {sorted.map((grade) => {
-            const techAvg = getTechnicalAvg(grade);
-            const athAvg = getAthleticAvg(grade);
-            const attAvg = getAttackingAvg(grade);
-            const tactAvg = getTacticalAvg(grade);
-            const overall = getOverallAvg(grade);
-            
-            return (
-              <tr
-                key={grade.playerId}
-                onClick={() => router.push(`/player/${grade.playerId}`)}
-                className="border-b border-zinc-800 hover:bg-zinc-800 cursor-pointer transition-colors"
-              >
-                <td className="py-2 px-2 font-medium text-white">{grade.playerName}</td>
-                <td className="py-2 px-2 text-zinc-400">{grade.position}</td>
-                <td className="py-2 px-2 text-zinc-400">{grade.club}</td>
-                <td className="py-2 px-2">
-                  <span className={`px-2 py-0.5 rounded text-xs font-medium ${recColors[grade.recommendation] || 'bg-zinc-600 text-white'}`}>
-                    {grade.recommendation}
-                  </span>
-                </td>
-                <td className="py-2 px-2 text-center">
-                  <span className={`px-2 py-0.5 rounded text-xs font-bold ${getRatingBadgeColor(overall)}`}>
-                    {overall || '-'}
-                  </span>
-                </td>
-                <td className="py-2 px-2 text-center text-zinc-300">{techAvg || '-'}</td>
-                <td className="py-2 px-2 text-center text-zinc-300">{athAvg || '-'}</td>
-                <td className="py-2 px-2 text-center text-zinc-300">{attAvg || '-'}</td>
-                <td className="py-2 px-2 text-center text-zinc-300">{tactAvg || '-'}</td>
-                <td className="py-2 px-2">
-                  <div className="flex flex-wrap gap-1">
-                    {grade.strengths.slice(0, 3).map((s, i) => (
-                      <span key={i} className="px-1.5 py-0.5 bg-green-900 text-green-300 rounded text-xs">{s}</span>
-                    ))}
-                    {grade.strengths.length > 3 && <span className="text-zinc-500 text-xs">+{grade.strengths.length - 3}</span>}
-                  </div>
-                </td>
-                <td className="py-2 px-2">
-                  <div className="flex flex-wrap gap-1">
-                    {grade.weaknesses.slice(0, 3).map((w, i) => (
-                      <span key={i} className="px-1.5 py-0.5 bg-red-900 text-red-300 rounded text-xs">{w}</span>
-                    ))}
-                    {grade.weaknesses.length > 3 && <span className="text-zinc-500 text-xs">+{grade.weaknesses.length - 3}</span>}
-                  </div>
-                </td>
-                <td className="py-2 px-2 text-zinc-500 text-xs">
-                  {new Date(grade.gradedAt).toLocaleDateString()}
-                </td>
-              </tr>
-            );
-          })}
+          {sorted.map((grade) => (
+            <tr key={grade.playerId}
+              onClick={() => router.push(`/player/${grade.playerId}`)}
+              className="border-b border-zinc-800 hover:bg-zinc-800 cursor-pointer transition-colors">
+              <td className="py-2 px-2 font-medium text-white">{grade.playerName}</td>
+              <td className="py-2 px-2 text-zinc-400">{grade.position}</td>
+              <td className="py-2 px-2 text-zinc-400">{grade.club}</td>
+              <td className="py-2 px-2">
+                <span className={`px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${verdictColors[grade.verdict] || 'bg-zinc-600 text-white'}`}>
+                  {grade.verdict}
+                </span>
+              </td>
+              <td className="py-2 px-2 text-center">
+                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getAttributeColor(grade.ability || 3)}`}>
+                  {grade.ability || 3}
+                </span>
+              </td>
+              <td className="py-2 px-2 text-center">
+                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getPotentialColor(grade.potential || 4)}`}>
+                  {grade.potential || 4}
+                </span>
+              </td>
+              <td className="py-2 px-2 text-center text-zinc-300">{getPhysicalAvg(grade) || '-'}</td>
+              <td className="py-2 px-2 text-center text-zinc-300">{getTechniqueAvg(grade) || '-'}</td>
+              <td className="py-2 px-2 text-center text-zinc-300">{getTacticAvg(grade) || '-'}</td>
+              <td className="py-2 px-2">
+                <div className="flex flex-wrap gap-1">
+                  {(grade.scoutingTags || []).slice(0, 3).map((tag, i) => (
+                    <span key={i} className="px-1.5 py-0.5 bg-blue-900 text-blue-300 rounded text-xs">{tag}</span>
+                  ))}
+                </div>
+              </td>
+              <td className="py-2 px-2 text-zinc-500 text-xs">
+                {new Date(grade.gradedAt).toLocaleDateString()}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
   );
 }
 
-// SortHeader helper component
-function SortHeader({
-  label,
-  sortKey,
-  current,
-  dir,
-  onClick,
-}: {
-  label: string;
-  sortKey: SortKey;
-  current: SortKey;
-  dir: 'asc' | 'desc';
-  onClick: (key: SortKey) => void;
+function SortHeader({ label, sortKey, current, dir, onClick }: {
+  label: string; sortKey: SortKey; current: SortKey; dir: 'asc' | 'desc'; onClick: (key: SortKey) => void;
 }) {
   const isActive = current === sortKey;
   return (
-    <th
-      className="text-left py-2 px-2 cursor-pointer hover:text-blue-400 text-zinc-400 font-medium transition-colors"
-      onClick={() => onClick(sortKey)}
-    >
+    <th className="text-left py-2 px-2 cursor-pointer hover:text-blue-400 text-zinc-400 font-medium transition-colors"
+      onClick={() => onClick(sortKey)}>
       {label} {isActive && (dir === 'asc' ? '↑' : '↓')}
     </th>
   );

@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
-// Force dynamic - don't try to connect at build time
 export const dynamic = 'force-dynamic'
 
 const prisma = new PrismaClient()
@@ -12,36 +11,56 @@ export async function GET() {
     const grades = await prisma.scoutingReport.findMany({
       orderBy: { updatedAt: 'desc' }
     })
-    
-    // Convert to the format expected by frontend
-    const gradesMap: Record<string, any> = {}
-    grades.forEach(grade => {
-      gradesMap[grade.playerId] = {
-        metrics: {
-          ballControl: grade.ballControl,
-          passing: grade.passing,
-          dribbling: grade.dribbling,
-          finishing: grade.finishing,
-          pace: grade.pace,
-          stamina: grade.stamina,
-          strength: grade.strength,
-          positioning: grade.positioning,
-          movement: grade.movement,
-          creativity: grade.creativity,
-          decisionMaking: grade.decisionMaking,
-          workRate: grade.workRate,
-          discipline: grade.discipline,
-        },
-        recommendation: grade.recommendation,
-        strengths: grade.strengths,
-        weaknesses: grade.weaknesses,
-        notes: grade.notes,
-        scoutName: grade.scoutName,
-        updatedAt: grade.updatedAt.toISOString(),
-      }
-    })
-    
-    return NextResponse.json(gradesMap)
+
+    // Return as array of grade objects
+    const results = grades.map(grade => ({
+      playerId: grade.playerId,
+      gradedAt: grade.updatedAt.toISOString(),
+
+      status: grade.status || 'WATCH',
+      scoutingLevel: grade.scoutingLevel || 'Basic',
+
+      ability: grade.ability || 3,
+      potential: grade.potential || 4,
+      report: grade.report || 3,
+
+      physStrength: grade.physStrength || 3,
+      physSpeed: grade.physSpeed || 3,
+      physAgility: grade.physAgility || 3,
+      physCoordination: grade.physCoordination || 3,
+
+      techControl: grade.techControl || 3,
+      techShortPasses: grade.techShortPasses || 3,
+      techLongPasses: grade.techLongPasses || 3,
+      techAerial: grade.techAerial || 3,
+      techCrossing: grade.techCrossing || 3,
+      techFinishing: grade.techFinishing || 3,
+      techDribbling: grade.techDribbling || 3,
+      techOneVsOneOffense: grade.techOneVsOneOffense || 3,
+      techOneVsOneDefense: grade.techOneVsOneDefense || 3,
+
+      tacPositioning: grade.tacPositioning || 3,
+      tacTransition: grade.tacTransition || 3,
+      tacDecisions: grade.tacDecisions || 3,
+      tacAnticipations: grade.tacAnticipations || 3,
+      tacDuels: grade.tacDuels || 3,
+      tacSetPieces: grade.tacSetPieces || 3,
+
+      scoutingTags: grade.scoutingTags || [],
+      strengths: grade.strengths || [],
+      weaknesses: grade.weaknesses || [],
+
+      verdict: grade.verdict || grade.recommendation || 'Monitor',
+      role: grade.role || '',
+      conclusion: grade.conclusion || '',
+      notes: grade.notes || '',
+
+      transferFee: grade.transferFee || '',
+      salary: grade.salary || '',
+      scoutName: grade.scoutName,
+    }))
+
+    return NextResponse.json(results)
   } catch (error) {
     console.error('Failed to fetch grades:', error)
     return NextResponse.json({ error: 'Failed to fetch grades' }, { status: 500 })

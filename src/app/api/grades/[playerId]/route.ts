@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 
-// Force dynamic - don't try to connect at build time
 export const dynamic = 'force-dynamic'
 
 const prisma = new PrismaClient()
@@ -12,38 +11,70 @@ export async function GET(
   { params }: { params: Promise<{ playerId: string }> }
 ) {
   const { playerId } = await params
-  
+
   try {
     const grade = await prisma.scoutingReport.findUnique({
       where: { playerId }
     })
-    
+
     if (!grade) {
       return NextResponse.json(null)
     }
-    
+
     return NextResponse.json({
-      metrics: {
-        ballControl: grade.ballControl,
-        passing: grade.passing,
-        dribbling: grade.dribbling,
-        finishing: grade.finishing,
-        pace: grade.pace,
-        stamina: grade.stamina,
-        strength: grade.strength,
-        positioning: grade.positioning,
-        movement: grade.movement,
-        creativity: grade.creativity,
-        decisionMaking: grade.decisionMaking,
-        workRate: grade.workRate,
-        discipline: grade.discipline,
-      },
-      recommendation: grade.recommendation,
-      strengths: grade.strengths,
-      weaknesses: grade.weaknesses,
-      notes: grade.notes,
+      playerId: grade.playerId,
+      gradedAt: grade.updatedAt.toISOString(),
+
+      // Status
+      status: grade.status || 'WATCH',
+      scoutingLevel: grade.scoutingLevel || 'Basic',
+
+      // Ability & Potential
+      ability: grade.ability || 3,
+      potential: grade.potential || 4,
+      report: grade.report || 3,
+
+      // Physical
+      physStrength: grade.physStrength || 3,
+      physSpeed: grade.physSpeed || 3,
+      physAgility: grade.physAgility || 3,
+      physCoordination: grade.physCoordination || 3,
+
+      // Technique
+      techControl: grade.techControl || 3,
+      techShortPasses: grade.techShortPasses || 3,
+      techLongPasses: grade.techLongPasses || 3,
+      techAerial: grade.techAerial || 3,
+      techCrossing: grade.techCrossing || 3,
+      techFinishing: grade.techFinishing || 3,
+      techDribbling: grade.techDribbling || 3,
+      techOneVsOneOffense: grade.techOneVsOneOffense || 3,
+      techOneVsOneDefense: grade.techOneVsOneDefense || 3,
+
+      // Tactic
+      tacPositioning: grade.tacPositioning || 3,
+      tacTransition: grade.tacTransition || 3,
+      tacDecisions: grade.tacDecisions || 3,
+      tacAnticipations: grade.tacAnticipations || 3,
+      tacDuels: grade.tacDuels || 3,
+      tacSetPieces: grade.tacSetPieces || 3,
+
+      // Tags
+      scoutingTags: grade.scoutingTags || [],
+      strengths: grade.strengths || [],
+      weaknesses: grade.weaknesses || [],
+
+      // Verdict & text fields
+      verdict: grade.verdict || grade.recommendation || 'Monitor',
+      role: grade.role || '',
+      conclusion: grade.conclusion || '',
+      notes: grade.notes || '',
+
+      // Transfer info
+      transferFee: grade.transferFee || '',
+      salary: grade.salary || '',
+
       scoutName: grade.scoutName,
-      updatedAt: grade.updatedAt.toISOString(),
     })
   } catch (error) {
     console.error('Failed to fetch grade:', error)
@@ -57,56 +88,68 @@ export async function POST(
   { params }: { params: Promise<{ playerId: string }> }
 ) {
   const { playerId } = await params
-  
+
   try {
     const body = await request.json()
-    const { metrics, recommendation, strengths, weaknesses, notes, scoutName } = body
-    
+
+    const data = {
+      // Ability & Potential
+      ability: body.ability,
+      potential: body.potential,
+      report: body.report,
+
+      // Physical
+      physStrength: body.physStrength,
+      physSpeed: body.physSpeed,
+      physAgility: body.physAgility,
+      physCoordination: body.physCoordination,
+
+      // Technique
+      techControl: body.techControl,
+      techShortPasses: body.techShortPasses,
+      techLongPasses: body.techLongPasses,
+      techAerial: body.techAerial,
+      techCrossing: body.techCrossing,
+      techFinishing: body.techFinishing,
+      techDribbling: body.techDribbling,
+      techOneVsOneOffense: body.techOneVsOneOffense,
+      techOneVsOneDefense: body.techOneVsOneDefense,
+
+      // Tactic
+      tacPositioning: body.tacPositioning,
+      tacTransition: body.tacTransition,
+      tacDecisions: body.tacDecisions,
+      tacAnticipations: body.tacAnticipations,
+      tacDuels: body.tacDuels,
+      tacSetPieces: body.tacSetPieces,
+
+      // Tags
+      scoutingTags: body.scoutingTags || [],
+      strengths: body.strengths || [],
+      weaknesses: body.weaknesses || [],
+
+      // Verdict
+      verdict: body.verdict,
+
+      // Text fields
+      role: body.role,
+      conclusion: body.conclusion,
+      notes: body.notes,
+
+      // Metadata
+      status: body.status,
+      scoutingLevel: body.scoutingLevel,
+      scoutName: body.scoutName,
+      transferFee: body.transferFee,
+      salary: body.salary,
+    }
+
     const grade = await prisma.scoutingReport.upsert({
       where: { playerId },
-      update: {
-        ballControl: metrics?.ballControl,
-        passing: metrics?.passing,
-        dribbling: metrics?.dribbling,
-        finishing: metrics?.finishing,
-        pace: metrics?.pace,
-        stamina: metrics?.stamina,
-        strength: metrics?.strength,
-        positioning: metrics?.positioning,
-        movement: metrics?.movement,
-        creativity: metrics?.creativity,
-        decisionMaking: metrics?.decisionMaking,
-        workRate: metrics?.workRate,
-        discipline: metrics?.discipline,
-        recommendation,
-        strengths: strengths || [],
-        weaknesses: weaknesses || [],
-        notes,
-        scoutName,
-      },
-      create: {
-        playerId,
-        ballControl: metrics?.ballControl,
-        passing: metrics?.passing,
-        dribbling: metrics?.dribbling,
-        finishing: metrics?.finishing,
-        pace: metrics?.pace,
-        stamina: metrics?.stamina,
-        strength: metrics?.strength,
-        positioning: metrics?.positioning,
-        movement: metrics?.movement,
-        creativity: metrics?.creativity,
-        decisionMaking: metrics?.decisionMaking,
-        workRate: metrics?.workRate,
-        discipline: metrics?.discipline,
-        recommendation,
-        strengths: strengths || [],
-        weaknesses: weaknesses || [],
-        notes,
-        scoutName,
-      },
+      update: data,
+      create: { playerId, ...data },
     })
-    
+
     return NextResponse.json({ success: true, grade })
   } catch (error) {
     console.error('Failed to save grade:', error)
@@ -120,12 +163,11 @@ export async function DELETE(
   { params }: { params: Promise<{ playerId: string }> }
 ) {
   const { playerId } = await params
-  
+
   try {
     await prisma.scoutingReport.delete({
       where: { playerId }
     })
-    
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete grade:', error)

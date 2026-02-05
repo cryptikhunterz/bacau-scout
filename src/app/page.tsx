@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { getAllGrades, PlayerGrade } from '@/lib/grades';
+import { getAllGrades, PlayerGrade, getAttributeColor, getPotentialColor } from '@/lib/grades';
 
 // Position badge colors
 const positionColors: Record<string, string> = {
@@ -40,64 +40,65 @@ function getPositionAbbrev(position: string): string {
   return position.substring(0, 2).toUpperCase();
 }
 
-// Calculate category averages from grades
-function getTechnicalAvg(g: PlayerGrade): number {
-  return Math.round(((g.dribblingBallControl || 4) + (g.oneVsOneDribbling || 4) + (g.passingRangeCreation || 4) + (g.crossingDelivery || 4)) / 4 * 10) / 10;
+// Calculate category averages from new grade structure
+function getPhysicalAvg(g: PlayerGrade): number {
+  return Math.round(((g.physStrength || 3) + (g.physSpeed || 3) + (g.physAgility || 3) + (g.physCoordination || 3)) / 4 * 10) / 10;
 }
 
-function getAthleticAvg(g: PlayerGrade): number {
-  return Math.round(((g.accelerationPace || 4) + (g.workRateStamina || 4) + (g.physicalDuelingAerial || 4)) / 3 * 10) / 10;
+function getTechniqueAvg(g: PlayerGrade): number {
+  const vals = [g.techControl, g.techShortPasses, g.techLongPasses, g.techAerial,
+    g.techCrossing, g.techFinishing, g.techDribbling, g.techOneVsOneOffense, g.techOneVsOneDefense];
+  const sum = vals.reduce((a, v) => a + (v || 3), 0);
+  return Math.round(sum / vals.length * 10) / 10;
 }
 
-function getAttackingAvg(g: PlayerGrade): number {
-  return Math.round(((g.goalContribution || 4) + (g.carryingProgression || 4) + (g.finishingShotPlacement || 4)) / 3 * 10) / 10;
-}
-
-function getTacticalAvg(g: PlayerGrade): number {
-  return Math.round(((g.positionalIntelligence || 4) + (g.defensivePressingIntensity || 4) + (g.oneVsOneDuels || 4)) / 3 * 10) / 10;
+function getTacticAvg(g: PlayerGrade): number {
+  const vals = [g.tacPositioning, g.tacTransition, g.tacDecisions, g.tacAnticipations, g.tacDuels, g.tacSetPieces];
+  const sum = vals.reduce((a, v) => a + (v || 3), 0);
+  return Math.round(sum / vals.length * 10) / 10;
 }
 
 function getOverallAvg(g: PlayerGrade): number {
-  return Math.round((getTechnicalAvg(g) + getAthleticAvg(g) + getAttackingAvg(g) + getTacticalAvg(g)) / 4 * 10) / 10;
+  return Math.round((getPhysicalAvg(g) + getTechniqueAvg(g) + getTacticAvg(g)) / 3 * 10) / 10;
 }
 
-// FM-style rating badge (1-8 scale)
+// Rating badge (1-5 scale)
 function RatingBadge({ value }: { value: number }) {
-  let color = 'bg-zinc-700 text-zinc-300';
-  if (value >= 7) color = 'bg-green-500 text-white';
-  else if (value >= 5) color = 'bg-yellow-500 text-black';
-  else if (value >= 3) color = 'bg-orange-500 text-white';
-  else color = 'bg-red-600 text-white';
-  
   return (
-    <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${color}`}>
+    <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAttributeColor(Math.round(value))}`}>
       {value.toFixed(1)}
     </span>
   );
 }
 
-// Recommendation badge
-function RecBadge({ rec }: { rec: string }) {
+// Verdict badge
+function VerdictBadge({ verdict }: { verdict: string }) {
   const colors: Record<string, string> = {
     'Sign': 'bg-green-600 text-white',
+    'Observe': 'bg-blue-600 text-white',
     'Monitor': 'bg-yellow-500 text-black',
-    'Discard': 'bg-red-600 text-white',
+    'Not a priority': 'bg-zinc-600 text-white',
+    'Out of reach': 'bg-red-600 text-white',
   };
   return (
-    <span className={`inline-block px-2 py-1 text-xs font-bold rounded ${colors[rec] || 'bg-zinc-600 text-white'}`}>
-      {rec}
+    <span className={`inline-block px-2 py-1 text-xs font-bold rounded whitespace-nowrap ${colors[verdict] || 'bg-zinc-600 text-white'}`}>
+      {verdict}
     </span>
   );
 }
 
 // Tags display
-function TagsList({ tags, color }: { tags: string[]; color: 'green' | 'red' }) {
+function TagsList({ tags, color }: { tags: string[]; color: 'green' | 'red' | 'blue' }) {
   if (!tags || tags.length === 0) return <span className="text-zinc-600">-</span>;
-  const bgColor = color === 'green' ? 'bg-green-900/50 text-green-400 border border-green-700' : 'bg-red-900/50 text-red-400 border border-red-700';
+  const bgColors = {
+    green: 'bg-green-900/50 text-green-400 border border-green-700',
+    red: 'bg-red-900/50 text-red-400 border border-red-700',
+    blue: 'bg-blue-900/50 text-blue-400 border border-blue-700',
+  };
   return (
     <div className="flex flex-wrap gap-1">
       {tags.slice(0, 3).map(tag => (
-        <span key={tag} className={`inline-block px-1.5 py-0.5 text-[10px] rounded ${bgColor}`}>
+        <span key={tag} className={`inline-block px-1.5 py-0.5 text-[10px] rounded ${bgColors[color]}`}>
           {tag}
         </span>
       ))}
@@ -109,9 +110,9 @@ function TagsList({ tags, color }: { tags: string[]; color: 'green' | 'red' }) {
 export default function Home() {
   const [grades, setGrades] = useState<PlayerGrade[]>([]);
   const [search, setSearch] = useState('');
-  const [recFilter, setRecFilter] = useState('');
+  const [verdictFilter, setVerdictFilter] = useState('');
   const [posFilter, setPosFilter] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'overall' | 'technical' | 'athletic' | 'attacking' | 'tactical' | 'date'>('date');
+  const [sortBy, setSortBy] = useState<'name' | 'overall' | 'physical' | 'technique' | 'tactic' | 'ability' | 'potential' | 'date'>('date');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -124,7 +125,7 @@ export default function Home() {
   const filteredGrades = useMemo(() => {
     let result = grades.filter(g => {
       if (search && !g.playerName.toLowerCase().includes(search.toLowerCase())) return false;
-      if (recFilter && g.recommendation !== recFilter) return false;
+      if (verdictFilter && g.verdict !== verdictFilter) return false;
       if (posFilter && !g.position.toLowerCase().includes(posFilter.toLowerCase())) return false;
       return true;
     });
@@ -134,17 +135,18 @@ export default function Home() {
       switch (sortBy) {
         case 'name': cmp = a.playerName.localeCompare(b.playerName); break;
         case 'overall': cmp = getOverallAvg(a) - getOverallAvg(b); break;
-        case 'technical': cmp = getTechnicalAvg(a) - getTechnicalAvg(b); break;
-        case 'athletic': cmp = getAthleticAvg(a) - getAthleticAvg(b); break;
-        case 'attacking': cmp = getAttackingAvg(a) - getAttackingAvg(b); break;
-        case 'tactical': cmp = getTacticalAvg(a) - getTacticalAvg(b); break;
+        case 'physical': cmp = getPhysicalAvg(a) - getPhysicalAvg(b); break;
+        case 'technique': cmp = getTechniqueAvg(a) - getTechniqueAvg(b); break;
+        case 'tactic': cmp = getTacticAvg(a) - getTacticAvg(b); break;
+        case 'ability': cmp = (a.ability || 3) - (b.ability || 3); break;
+        case 'potential': cmp = (a.potential || 4) - (b.potential || 4); break;
         case 'date': cmp = new Date(a.gradedAt).getTime() - new Date(b.gradedAt).getTime(); break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
     });
 
     return result;
-  }, [grades, search, recFilter, posFilter, sortBy, sortDir]);
+  }, [grades, search, verdictFilter, posFilter, sortBy, sortDir]);
 
   const handleSort = (col: typeof sortBy) => {
     if (sortBy === col) setSortDir(sortDir === 'asc' ? 'desc' : 'asc');
@@ -156,9 +158,9 @@ export default function Home() {
     return <span className="text-blue-400 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>;
   };
 
-  const signCount = grades.filter(g => g.recommendation === 'Sign').length;
-  const monitorCount = grades.filter(g => g.recommendation === 'Monitor').length;
-  const discardCount = grades.filter(g => g.recommendation === 'Discard').length;
+  const signCount = grades.filter(g => g.verdict === 'Sign').length;
+  const observeCount = grades.filter(g => g.verdict === 'Observe').length;
+  const monitorCount = grades.filter(g => g.verdict === 'Monitor').length;
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -168,17 +170,15 @@ export default function Home() {
           <div>
             <h1 className="text-xl font-bold text-white">Bacau Scout</h1>
             <p className="text-sm text-zinc-400">
-              {grades.length} scouting reports • 
-              <span className="text-green-400 ml-2">{signCount} Sign</span> • 
-              <span className="text-yellow-400 ml-2">{monitorCount} Monitor</span> • 
-              <span className="text-red-400 ml-2">{discardCount} Discard</span>
+              {grades.length} scouting reports •
+              <span className="text-green-400 ml-2">{signCount} Sign</span> •
+              <span className="text-blue-400 ml-2">{observeCount} Observe</span> •
+              <span className="text-yellow-400 ml-2">{monitorCount} Monitor</span>
             </p>
           </div>
-          
-          <Link
-            href="/search"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
-          >
+
+          <Link href="/search"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
             + Scout New Player
           </Link>
         </div>
@@ -187,30 +187,22 @@ export default function Home() {
       {/* Filters */}
       <div className="bg-zinc-800/50 border-b border-zinc-700 py-3 px-4">
         <div className="max-w-[1800px] mx-auto flex flex-wrap items-center gap-4">
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+          <input type="text" value={search} onChange={(e) => setSearch(e.target.value)}
             placeholder="Search reports..."
-            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white placeholder-zinc-400 w-64"
-          />
+            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white placeholder-zinc-400 w-64" />
 
-          <select
-            value={recFilter}
-            onChange={(e) => setRecFilter(e.target.value)}
-            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white"
-          >
-            <option value="">All Recommendations</option>
+          <select value={verdictFilter} onChange={(e) => setVerdictFilter(e.target.value)}
+            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white">
+            <option value="">All Verdicts</option>
             <option value="Sign">Sign</option>
+            <option value="Observe">Observe</option>
             <option value="Monitor">Monitor</option>
-            <option value="Discard">Discard</option>
+            <option value="Not a priority">Not a priority</option>
+            <option value="Out of reach">Out of reach</option>
           </select>
 
-          <select
-            value={posFilter}
-            onChange={(e) => setPosFilter(e.target.value)}
-            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white"
-          >
+          <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)}
+            className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white">
             <option value="">All Positions</option>
             <option value="Goalkeeper">Goalkeeper</option>
             <option value="Back">Defenders</option>
@@ -219,13 +211,9 @@ export default function Home() {
             <option value="Forward">Forwards</option>
           </select>
 
-          {(search || recFilter || posFilter) && (
-            <button
-              onClick={() => { setSearch(''); setRecFilter(''); setPosFilter(''); }}
-              className="text-sm text-red-400 hover:text-red-300"
-            >
-              Clear
-            </button>
+          {(search || verdictFilter || posFilter) && (
+            <button onClick={() => { setSearch(''); setVerdictFilter(''); setPosFilter(''); }}
+              className="text-sm text-red-400 hover:text-red-300">Clear</button>
           )}
         </div>
       </div>
@@ -235,10 +223,8 @@ export default function Home() {
         {grades.length === 0 ? (
           <div className="bg-zinc-800 rounded-lg shadow-xl border border-zinc-700 p-12 text-center">
             <p className="text-zinc-400 mb-4">No scouting reports yet</p>
-            <Link
-              href="/search"
-              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium"
-            >
+            <Link href="/search"
+              className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">
               Start Scouting
             </Link>
           </div>
@@ -254,23 +240,23 @@ export default function Home() {
                     </th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Club</th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400">Verdict</th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('overall')}>
-                      OVR <SortIcon col="overall" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('ability')}>
+                      ABL <SortIcon col="ability" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('technical')}>
-                      TEC <SortIcon col="technical" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('potential')}>
+                      POT <SortIcon col="potential" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('athletic')}>
-                      ATH <SortIcon col="athletic" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('physical')}>
+                      PHY <SortIcon col="physical" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('attacking')}>
-                      ATK <SortIcon col="attacking" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('technique')}>
+                      TEC <SortIcon col="technique" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('tactical')}>
-                      TAC <SortIcon col="tactical" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('tactic')}>
+                      TAC <SortIcon col="tactic" />
                     </th>
+                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Tags</th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Strengths</th>
-                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Weaknesses</th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('date')}>
                       Date <SortIcon col="date" />
                     </th>
@@ -290,14 +276,22 @@ export default function Home() {
                         </Link>
                       </td>
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
-                      <td className="px-3 py-2 text-center"><RecBadge rec={grade.recommendation} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getOverallAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getTechnicalAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getAthleticAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getAttackingAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getTacticalAvg(grade)} /></td>
+                      <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
+                      <td className="px-3 py-2 text-center">
+                        <span className={`inline-flex items-center justify-center w-8 h-7 rounded font-bold text-sm ${getAttributeColor(grade.ability || 3)}`}>
+                          {grade.ability || 3}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-center">
+                        <span className={`inline-flex items-center justify-center w-8 h-7 rounded font-bold text-sm ${getPotentialColor(grade.potential || 4)}`}>
+                          {grade.potential || 4}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-center"><RatingBadge value={getPhysicalAvg(grade)} /></td>
+                      <td className="px-3 py-2 text-center"><RatingBadge value={getTechniqueAvg(grade)} /></td>
+                      <td className="px-3 py-2 text-center"><RatingBadge value={getTacticAvg(grade)} /></td>
+                      <td className="px-3 py-2"><TagsList tags={grade.scoutingTags || []} color="blue" /></td>
                       <td className="px-3 py-2"><TagsList tags={grade.strengths || []} color="green" /></td>
-                      <td className="px-3 py-2"><TagsList tags={grade.weaknesses || []} color="red" /></td>
                       <td className="px-3 py-2 text-zinc-500 text-xs">{new Date(grade.gradedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}

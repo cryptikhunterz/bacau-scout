@@ -10,44 +10,81 @@ datasource db {
 model ScoutingReport {
   id            String   @id @default(cuid())
   playerId      String
-  
-  // Technical Proficiency (1-8)
-  ballControl   Int?
-  passing       Int?
-  dribbling     Int?
-  finishing     Int?
-  
-  // Athletic & Physical (1-8)
-  pace          Int?
-  stamina       Int?
-  strength      Int?
-  
-  // Attacking Output (1-8)
-  positioning   Int?
-  movement      Int?
-  creativity    Int?
-  
-  // Tactical IQ (1-8)
-  decisionMaking Int?
-  workRate      Int?
-  discipline    Int?
-  
-  // Recommendation
-  recommendation String?  // "sign" | "monitor" | "discard"
-  
-  // Strengths and Weaknesses (JSON arrays)
+
+  // Ability & Potential
+  ability       Int?     // 1-5 scale
+  potential     Int?     // 1-8 scale (Liga 3a → Superliga playoff)
+
+  // Report Rating (1-5 FCB Scale)
+  report        Int?     // 1=Well below FCB, 5=Well above FCB
+
+  // Physical Attributes (1-5)
+  physStrength     Int?
+  physSpeed        Int?
+  physAgility      Int?
+  physCoordination Int?
+
+  // Technique Attributes (1-5)
+  techControl          Int?
+  techShortPasses      Int?
+  techLongPasses       Int?
+  techAerial           Int?
+  techCrossing         Int?
+  techFinishing        Int?
+  techDribbling        Int?
+  techOneVsOneOffense  Int?
+  techOneVsOneDefense  Int?
+
+  // Tactic Attributes (1-5)
+  tacPositioning    Int?
+  tacTransition     Int?
+  tacDecisions      Int?
+  tacAnticipations  Int?
+  tacDuels          Int?
+  tacSetPieces      Int?
+
+  // Scouting Tags (3 max, from categorized list)
+  scoutingTags  String[] @default([])
+
+  // Strengths & Weaknesses (tag-based)
   strengths     String[] @default([])
   weaknesses    String[] @default([])
-  
-  // Notes
+
+  // Verdict
+  verdict       String?  // sign | observe | monitor | not_a_priority | out_of_reach
+
+  // Role & Conclusion
+  role          String?
+  conclusion    String?
   notes         String?
-  
+
   // Metadata
   scoutName     String?
+  status        String?  // FM | U23 | LOAN | WATCH
+  scoutingLevel String?  // Basic | Impressive | Data only
+  transferFee   String?
+  salary        String?
+
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
+
+  // Legacy columns (kept for backward compat with existing data)
+  ballControl    Int?
+  passing        Int?
+  dribbling      Int?
+  finishing      Int?
+  pace           Int?
+  stamina        Int?
+  strength       Int?
+  positioning    Int?
+  movement       Int?
+  creativity     Int?
+  decisionMaking Int?
+  workRate       Int?
+  discipline     Int?
+  recommendation String?
+
   @@unique([playerId])
   @@index([playerId])
-  @@index([recommendation])
+  @@index([verdict])
 }

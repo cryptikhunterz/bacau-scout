@@ -2,7 +2,7 @@
 
 interface GradesFiltersProps {
   filters: {
-    recommendation: string;
+    verdict: string;
     minAbility: number;
     position: string;
   };
@@ -12,19 +12,19 @@ interface GradesFiltersProps {
 export function GradesFilters({ filters, onChange }: GradesFiltersProps) {
   return (
     <div className="flex flex-wrap gap-4 items-center">
-      {/* Recommendation toggle buttons */}
+      {/* Verdict toggle buttons */}
       <div className="flex gap-1">
-        {['All', 'Sign', 'Monitor', 'Discard'].map((rec) => (
+        {['All', 'Sign', 'Observe', 'Monitor', 'Not a priority', 'Out of reach'].map((v) => (
           <button
-            key={rec}
-            onClick={() => onChange({ ...filters, recommendation: rec === 'All' ? '' : rec })}
+            key={v}
+            onClick={() => onChange({ ...filters, verdict: v === 'All' ? '' : v })}
             className={`px-3 py-1.5 text-sm rounded transition-colors ${
-              (rec === 'All' && !filters.recommendation) || filters.recommendation === rec
+              (v === 'All' && !filters.verdict) || filters.verdict === v
                 ? 'bg-zinc-800 text-white dark:bg-white dark:text-zinc-900'
                 : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-200 dark:hover:bg-zinc-700'
             }`}
           >
-            {rec}
+            {v}
           </button>
         ))}
       </div>
