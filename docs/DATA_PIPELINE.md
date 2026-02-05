@@ -34,12 +34,24 @@ If players show wrong clubs, check `saison_id` first. Transfermarkt uses the sta
 
 ### League Codes
 
-Currently scraping 35 leagues. Key Romanian codes:
+Currently scraping 37 leagues. Key codes:
+
+**Romania:**
 - `RO1` — Liga 1 (Superliga)  
 - `RO2` — Liga 2
-- `RO3` — Liga 3 (⚠️ currently broken on Transfermarkt, returns 302 redirect)
+- `RO3` — Liga 3 (⚠️ broken on Transfermarkt, returns 302)
 
-Full list in `scripts/scraper_complete.py` → `LEAGUES` array.
+**Codes that changed (updated 2026-02-05):**
+- Kosovo: `KOS1` → `KO1`
+- Slovakia: `SK1` → `SLO1` (Niké Liga)
+- Portugal Liga 3: `PO3` → `PT3A`
+- France National 2: `FR4` → split into 4 groups: `CN2A`, `CN2B`, `CN2C`, `CN2D`
+- Spain Primera RFEF: `ES3` → split into 2 groups: `ES3A`, `ES3B`
+- Spain Segunda RFEF: `ES4` → split into 5 groups: `E4G1`-`E4G5` (not currently scraped)
+
+**⚠️ League codes change!** Transfermarkt restructures leagues (splits into groups, renames codes). If a league returns 0 teams or 302 redirect, the code has changed. Check the country's competition page: `transfermarkt.com/wettbewerbe/national/wettbewerbe/{COUNTRY_ID}`
+
+Full list in `scripts/rescrape_all.py` → `LEAGUES` array.
 
 ### Rate Limiting
 
@@ -310,16 +322,20 @@ Code change → git push origin master → railway up → Build (Node 22+) → D
 | Player profiles (age, height, etc.) | After bulk scrape | `enrich_data.py` |
 | Career stats | Quarterly | `scraper_complete.py` with profile scraping |
 
-### Current Data Coverage (as of 2026-02-05)
+### Current Data Coverage (as of 2026-02-05, post-rescrape)
 
 ```
-Total players:    15,747
-Position filled:  97%
-Age filled:       99%
-Height filled:    78%
-Foot filled:      76%
-Photo URL:        7%  (only for recently scraped profiles)
-Career stats:     94%
+Total players:    15,259
+Leagues:          37 (28 active + 9 recovered)
+Position filled:  99.7%
+Age filled:       99.9%
+Height filled:    ~78% (from enrichment, not roster pages)
+Foot filled:      ~76% (from enrichment, not roster pages)
+Career stats:     ~90% (preserved from previous enrichment)
 ```
 
 Romanian leagues (RO1+RO2): 1,065 players, **100% age + position coverage**
+
+Note: Player count dropped from ~16K to ~15K because:
+1. Players not on current 2025/26 rosters were removed (transfers, retirements, deceased)
+2. RO3 no longer available on Transfermarkt
