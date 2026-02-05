@@ -62,6 +62,28 @@ function getOverallAvg(g: PlayerGrade): number {
   return Math.round((getPhysicalAvg(g) + getTechniqueAvg(g) + getTacticAvg(g)) / 3 * 10) / 10;
 }
 
+// Average ability across all attributes (1-5)
+function getAvgAbility(g: PlayerGrade): number {
+  const vals = [
+    g.physStrength, g.physSpeed, g.physAgility, g.physCoordination,
+    g.techControl, g.techShortPasses, g.techLongPasses, g.techAerial,
+    g.techCrossing, g.techFinishing, g.techDribbling, g.techOneVsOneOffense, g.techOneVsOneDefense,
+    g.tacPositioning, g.tacTransition, g.tacDecisions, g.tacAnticipations, g.tacDuels, g.tacSetPieces,
+  ].filter(v => v && v > 0);
+  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 3;
+}
+
+// Average potential across all attributes (1-8)
+function getAvgPotential(g: PlayerGrade): number {
+  const vals = [
+    g.physStrengthPot, g.physSpeedPot, g.physAgilityPot, g.physCoordinationPot,
+    g.techControlPot, g.techShortPassesPot, g.techLongPassesPot, g.techAerialPot,
+    g.techCrossingPot, g.techFinishingPot, g.techDribblingPot, g.techOneVsOneOffensePot, g.techOneVsOneDefensePot,
+    g.tacPositioningPot, g.tacTransitionPot, g.tacDecisionsPot, g.tacAnticipationsPot, g.tacDuelsPot, g.tacSetPiecesPot,
+  ].filter(v => v && v > 0);
+  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 4;
+}
+
 // Rating badge (1-5 scale)
 function RatingBadge({ value }: { value: number }) {
   return (
@@ -112,7 +134,7 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [verdictFilter, setVerdictFilter] = useState('');
   const [posFilter, setPosFilter] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'overall' | 'physical' | 'technique' | 'tactic' | 'ability' | 'potential' | 'date'>('date');
+  const [sortBy, setSortBy] = useState<'name' | 'overall' | 'physical' | 'technique' | 'tactic' | 'avgAbility' | 'avgPotential' | 'date'>('date');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -138,8 +160,8 @@ export default function Home() {
         case 'physical': cmp = getPhysicalAvg(a) - getPhysicalAvg(b); break;
         case 'technique': cmp = getTechniqueAvg(a) - getTechniqueAvg(b); break;
         case 'tactic': cmp = getTacticAvg(a) - getTacticAvg(b); break;
-        case 'ability': cmp = (a.ability || 3) - (b.ability || 3); break;
-        case 'potential': cmp = (a.potential || 4) - (b.potential || 4); break;
+        case 'avgAbility': cmp = getAvgAbility(a) - getAvgAbility(b); break;
+        case 'avgPotential': cmp = getAvgPotential(a) - getAvgPotential(b); break;
         case 'date': cmp = new Date(a.gradedAt).getTime() - new Date(b.gradedAt).getTime(); break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -240,11 +262,11 @@ export default function Home() {
                     </th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Club</th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400">Verdict</th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('ability')}>
-                      ABL <SortIcon col="ability" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgAbility')}>
+                      ABL <SortIcon col="avgAbility" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('potential')}>
-                      POT <SortIcon col="potential" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgPotential')}>
+                      POT <SortIcon col="avgPotential" />
                     </th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('physical')}>
                       PHY <SortIcon col="physical" />
@@ -256,7 +278,7 @@ export default function Home() {
                       TAC <SortIcon col="tactic" />
                     </th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Tags</th>
-                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Strengths</th>
+                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Role</th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('date')}>
                       Date <SortIcon col="date" />
                     </th>
@@ -278,20 +300,20 @@ export default function Home() {
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
                       <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-8 h-7 rounded font-bold text-sm ${getAttributeColor(grade.ability || 3)}`}>
-                          {grade.ability || 3}
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAttributeColor(Math.round(getAvgAbility(grade)))}`}>
+                          {getAvgAbility(grade).toFixed(1)}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-8 h-7 rounded font-bold text-sm ${getPotentialColor(grade.potential || 4)}`}>
-                          {grade.potential || 4}
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(Math.round(getAvgPotential(grade)))}`}>
+                          {getAvgPotential(grade).toFixed(1)}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-center"><RatingBadge value={getPhysicalAvg(grade)} /></td>
                       <td className="px-3 py-2 text-center"><RatingBadge value={getTechniqueAvg(grade)} /></td>
                       <td className="px-3 py-2 text-center"><RatingBadge value={getTacticAvg(grade)} /></td>
                       <td className="px-3 py-2"><TagsList tags={grade.scoutingTags || []} color="blue" /></td>
-                      <td className="px-3 py-2"><TagsList tags={grade.strengths || []} color="green" /></td>
+                      <td className="px-3 py-2 text-zinc-400 text-xs">{grade.role || '-'}</td>
                       <td className="px-3 py-2 text-zinc-500 text-xs">{new Date(grade.gradedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}

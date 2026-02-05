@@ -58,8 +58,8 @@ export function GradesTable({ grades }: GradesTableProps) {
       case 'physical': aVal = getPhysicalAvg(a); bVal = getPhysicalAvg(b); break;
       case 'technique': aVal = getTechniqueAvg(a); bVal = getTechniqueAvg(b); break;
       case 'tactic': aVal = getTacticAvg(a); bVal = getTacticAvg(b); break;
-      case 'ability': aVal = a.ability || 3; bVal = b.ability || 3; break;
-      case 'potential': aVal = a.potential || 4; bVal = b.potential || 4; break;
+      case 'ability': aVal = getPhysicalAvg(a); bVal = getPhysicalAvg(b); break;
+      case 'potential': aVal = getTacticAvg(a); bVal = getTacticAvg(b); break;
       default: aVal = a[sortKey] ?? ''; bVal = b[sortKey] ?? '';
     }
 
@@ -99,13 +99,13 @@ export function GradesTable({ grades }: GradesTableProps) {
                 </span>
               </td>
               <td className="py-2 px-2 text-center">
-                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getAttributeColor(grade.ability || 3)}`}>
-                  {grade.ability || 3}
+                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getAttributeColor(Math.round(getPhysicalAvg(grade)))}`}>
+                  {getPhysicalAvg(grade) || '-'}
                 </span>
               </td>
               <td className="py-2 px-2 text-center">
-                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getPotentialColor(grade.potential || 4)}`}>
-                  {grade.potential || 4}
+                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getPotentialColor(Math.round(getTacticAvg(grade)))}`}>
+                  {getTacticAvg(grade) || '-'}
                 </span>
               </td>
               <td className="py-2 px-2 text-center text-zinc-300">{getPhysicalAvg(grade) || '-'}</td>

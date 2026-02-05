@@ -18,35 +18,54 @@ model ScoutingReport {
   // Report Rating (1-5 FCB Scale)
   report        Int?     // 1=Well below FCB, 5=Well above FCB
 
-  // Physical Attributes (1-5)
+  // Physical — Ability (1-5) + Potential (1-8)
   physStrength     Int?
+  physStrengthPot  Int?
   physSpeed        Int?
+  physSpeedPot     Int?
   physAgility      Int?
+  physAgilityPot   Int?
   physCoordination Int?
+  physCoordinationPot Int?
 
-  // Technique Attributes (1-5)
+  // Technique — Ability (1-5) + Potential (1-8)
   techControl          Int?
+  techControlPot       Int?
   techShortPasses      Int?
+  techShortPassesPot   Int?
   techLongPasses       Int?
+  techLongPassesPot    Int?
   techAerial           Int?
+  techAerialPot        Int?
   techCrossing         Int?
+  techCrossingPot      Int?
   techFinishing        Int?
+  techFinishingPot     Int?
   techDribbling        Int?
+  techDribblingPot     Int?
   techOneVsOneOffense  Int?
+  techOneVsOneOffensePot Int?
   techOneVsOneDefense  Int?
+  techOneVsOneDefensePot Int?
 
-  // Tactic Attributes (1-5)
+  // Tactic — Ability (1-5) + Potential (1-8)
   tacPositioning    Int?
+  tacPositioningPot Int?
   tacTransition     Int?
+  tacTransitionPot  Int?
   tacDecisions      Int?
+  tacDecisionsPot   Int?
   tacAnticipations  Int?
+  tacAnticipationsPot Int?
   tacDuels          Int?
+  tacDuelsPot       Int?
   tacSetPieces      Int?
+  tacSetPiecesPot   Int?
 
   // Scouting Tags (3 max, from categorized list)
   scoutingTags  String[] @default([])
 
-  // Strengths & Weaknesses (tag-based)
+  // Legacy — kept for backward compat
   strengths     String[] @default([])
   weaknesses    String[] @default([])
 

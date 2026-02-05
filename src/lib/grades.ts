@@ -5,12 +5,20 @@
 export type Status = "FM" | "U23" | "LOAN" | "WATCH";
 export type Verdict = "Sign" | "Observe" | "Monitor" | "Not a priority" | "Out of reach";
 export type ScoutingLevel = "Basic" | "Impressive" | "Data only";
-export type AttributeRating = 1 | 2 | 3 | 4 | 5;
+export type AbilityRating = 1 | 2 | 3 | 4 | 5;
 export type PotentialRating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
-// Keep for backward compat
-export type MetricRating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+// Backward compat aliases
+export type MetricRating = PotentialRating;
 export type Recommendation = Verdict;
+export type AttributeRating = AbilityRating;
+
+// ─── Attribute Entry (ability + potential per attribute) ─────────────
+
+export interface AttributePair {
+  ability: AbilityRating;
+  potential: PotentialRating;
+}
 
 // ─── Player Grade Interface ─────────────────────────────────────────
 
@@ -25,44 +33,55 @@ export interface PlayerGrade {
   status: Status;
   scoutingLevel: ScoutingLevel;
 
-  // Ability & Potential
-  ability: AttributeRating;      // 1-5
-  potential: PotentialRating;    // 1-8
-
   // Report (FCB Scale 1-5)
-  report: AttributeRating;
+  report: AbilityRating;
 
-  // Physical (1-5)
-  physStrength: AttributeRating;
-  physSpeed: AttributeRating;
-  physAgility: AttributeRating;
-  physCoordination: AttributeRating;
+  // Physical — Ability (1-5) + Potential (1-8)
+  physStrength: AbilityRating;
+  physStrengthPot: PotentialRating;
+  physSpeed: AbilityRating;
+  physSpeedPot: PotentialRating;
+  physAgility: AbilityRating;
+  physAgilityPot: PotentialRating;
+  physCoordination: AbilityRating;
+  physCoordinationPot: PotentialRating;
 
-  // Technique (1-5)
-  techControl: AttributeRating;
-  techShortPasses: AttributeRating;
-  techLongPasses: AttributeRating;
-  techAerial: AttributeRating;
-  techCrossing: AttributeRating;
-  techFinishing: AttributeRating;
-  techDribbling: AttributeRating;
-  techOneVsOneOffense: AttributeRating;
-  techOneVsOneDefense: AttributeRating;
+  // Technique — Ability (1-5) + Potential (1-8)
+  techControl: AbilityRating;
+  techControlPot: PotentialRating;
+  techShortPasses: AbilityRating;
+  techShortPassesPot: PotentialRating;
+  techLongPasses: AbilityRating;
+  techLongPassesPot: PotentialRating;
+  techAerial: AbilityRating;
+  techAerialPot: PotentialRating;
+  techCrossing: AbilityRating;
+  techCrossingPot: PotentialRating;
+  techFinishing: AbilityRating;
+  techFinishingPot: PotentialRating;
+  techDribbling: AbilityRating;
+  techDribblingPot: PotentialRating;
+  techOneVsOneOffense: AbilityRating;
+  techOneVsOneOffensePot: PotentialRating;
+  techOneVsOneDefense: AbilityRating;
+  techOneVsOneDefensePot: PotentialRating;
 
-  // Tactic (1-5)
-  tacPositioning: AttributeRating;
-  tacTransition: AttributeRating;
-  tacDecisions: AttributeRating;
-  tacAnticipations: AttributeRating;
-  tacDuels: AttributeRating;
-  tacSetPieces: AttributeRating;
+  // Tactic — Ability (1-5) + Potential (1-8)
+  tacPositioning: AbilityRating;
+  tacPositioningPot: PotentialRating;
+  tacTransition: AbilityRating;
+  tacTransitionPot: PotentialRating;
+  tacDecisions: AbilityRating;
+  tacDecisionsPot: PotentialRating;
+  tacAnticipations: AbilityRating;
+  tacAnticipationsPot: PotentialRating;
+  tacDuels: AbilityRating;
+  tacDuelsPot: PotentialRating;
+  tacSetPieces: AbilityRating;
+  tacSetPiecesPot: PotentialRating;
 
   // Scouting Tags (3 max)
   scoutingTags: string[];
-
-  // Tags
-  strengths: string[];
-  weaknesses: string[];
 
   // Verdict
   verdict: Verdict;
@@ -91,7 +110,7 @@ export const POTENTIAL_LABELS: Record<number, string> = {
   8: "Superliga playoff player",
 };
 
-// Keep old name for backward compat
+// Backward compat
 export const RATING_LABELS = POTENTIAL_LABELS;
 
 // Report scale (1-5) — FCB standard
@@ -103,22 +122,21 @@ export const REPORT_LABELS: Record<number, string> = {
   5: "Well above FCB (Above Liga 2 standard)",
 };
 
-// Ability scale (1-5) — general ability assessment
+// Ability scale (1-5)
 export const ABILITY_LABELS: Record<number, string> = {
-  1: "Very Low",
-  2: "Low",
-  3: "Average",
-  4: "High",
-  5: "Very High",
+  1: "Well below standard",
+  2: "Below standard",
+  3: "At standard",
+  4: "Above standard",
+  5: "Well above standard",
 };
 
-// ─── Attribute Categories ───────────────────────────────────────────
+// ─── Attribute Definitions ──────────────────────────────────────────
 
 export const ATTRIBUTE_CATEGORIES = {
   physical: {
     title: "Physical",
-    scale: 5,
-    metrics: [
+    attrs: [
       { key: 'physStrength', label: 'Strength' },
       { key: 'physSpeed', label: 'Speed' },
       { key: 'physAgility', label: 'Agility' },
@@ -127,8 +145,7 @@ export const ATTRIBUTE_CATEGORIES = {
   },
   technique: {
     title: "Technique",
-    scale: 5,
-    metrics: [
+    attrs: [
       { key: 'techControl', label: 'Control' },
       { key: 'techShortPasses', label: 'Short passes' },
       { key: 'techLongPasses', label: 'Long passes' },
@@ -142,8 +159,7 @@ export const ATTRIBUTE_CATEGORIES = {
   },
   tactic: {
     title: "Tactic",
-    scale: 5,
-    metrics: [
+    attrs: [
       { key: 'tacPositioning', label: 'Positioning' },
       { key: 'tacTransition', label: 'Transition' },
       { key: 'tacDecisions', label: 'Decisions' },
@@ -154,7 +170,7 @@ export const ATTRIBUTE_CATEGORIES = {
   },
 };
 
-// Keep old name for backward compat
+// Keep old name
 export const METRIC_CATEGORIES = ATTRIBUTE_CATEGORIES;
 
 // ─── Scouting Tags (categorized, 3 max) ────────────────────────────
@@ -162,67 +178,34 @@ export const METRIC_CATEGORIES = ATTRIBUTE_CATEGORIES;
 export const SCOUTING_TAG_CATEGORIES = {
   defensive: {
     title: "Defensive Actions",
-    tags: [
-      "1v1 defending", "Anticipation", "Interceptions",
-      "Ball recoveries", "Aerial duels", "Shot blocking",
-    ],
+    tags: ["1v1 defending", "Anticipation", "Interceptions", "Ball recoveries", "Aerial duels", "Shot blocking"],
   },
   offensive: {
     title: "Offensive Actions",
-    tags: [
-      "Runs in behind", "Hold-up play", "Key passes",
-      "Chance conversion", "Long-range shooting",
-    ],
+    tags: ["Runs in behind", "Hold-up play", "Key passes", "Chance conversion", "Long-range shooting"],
   },
   physical: {
     title: "Physical",
-    tags: [
-      "Height / body build", "Strength", "Acceleration",
-      "Top speed", "Agility", "Explosiveness",
-      "Mobility", "Endurance / work rate",
-    ],
+    tags: ["Height / body build", "Strength", "Acceleration", "Top speed", "Agility", "Explosiveness", "Mobility", "Endurance / work rate"],
   },
   technical: {
     title: "Technical",
-    tags: [
-      "Ball control", "First touch", "Technique under pressure",
-      "Passing quality", "Progressive passing", "Two-footed ability",
-      "Aerial striking", "Ball striking", "Crossing", "Finishing",
-      "Secure handling (GK)", "Short distribution (GK)", "Long distribution (GK)",
-    ],
+    tags: ["Ball control", "First touch", "Technique under pressure", "Passing quality", "Progressive passing", "Two-footed ability", "Aerial striking", "Ball striking", "Crossing", "Finishing", "Secure handling (GK)", "Short distribution (GK)", "Long distribution (GK)"],
   },
   tactical: {
     title: "Tactical",
-    tags: [
-      "Game intelligence", "Spatial awareness", "Scanning",
-      "Timing", "Role understanding", "Tactical adaptability",
-      "Tempo control", "Build-up play", "Playing between lines",
-      "Defensive balance", "Pressing",
-    ],
+    tags: ["Game intelligence", "Spatial awareness", "Scanning", "Timing", "Role understanding", "Tactical adaptability", "Tempo control", "Build-up play", "Playing between lines", "Defensive balance", "Pressing"],
   },
   mental: {
     title: "Mental / Behavioral",
-    tags: [
-      "Competitive mentality", "Concentration", "Decision-making",
-      "Leadership", "Communication", "Tactical discipline",
-      "Bravery", "Reaction to mistakes", "Determination", "Creativity",
-    ],
+    tags: ["Competitive mentality", "Concentration", "Decision-making", "Leadership", "Communication", "Tactical discipline", "Bravery", "Reaction to mistakes", "Determination", "Creativity"],
   },
 };
 
-// Flat list of all scouting tags
-export const ALL_SCOUTING_TAGS = Object.values(SCOUTING_TAG_CATEGORIES)
-  .flatMap(cat => cat.tags);
+export const ALL_SCOUTING_TAGS = Object.values(SCOUTING_TAG_CATEGORIES).flatMap(cat => cat.tags);
 
-// Legacy AVAILABLE_TAGS — keep for backward compat
-export const AVAILABLE_TAGS = [
-  'Passing', 'Work rate', 'Header', 'Duels', 'Defensive awareness',
-  'Speed', 'Finishing', 'Dribbling', 'Vision', 'Positioning',
-  'Crossing', 'Long shots', 'Set pieces', 'Leadership', 'Aerial ability',
-  'Tackling', 'Interceptions', 'Ball control', 'First touch',
-  'Decision making', 'Composure', 'Stamina', 'Strength', 'Agility',
-  'Concentration',
-];
+// Legacy
+export const AVAILABLE_TAGS = ALL_SCOUTING_TAGS;
 
 // ─── Verdict Options ────────────────────────────────────────────────
 
@@ -236,28 +219,24 @@ export const VERDICT_OPTIONS: { value: Verdict; color: string }[] = [
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
-export function getRatingColor(rating: number): string {
-  if (rating <= 1) return 'bg-red-600';
-  if (rating <= 2) return 'bg-orange-500';
-  if (rating <= 3) return 'bg-yellow-500';
-  if (rating <= 4) return 'bg-green-500';
-  return 'bg-green-400';
-}
-
-export function getPotentialColor(rating: number): string {
-  if (rating <= 2) return 'bg-red-600 text-white';
-  if (rating <= 4) return 'bg-orange-500 text-white';
-  if (rating <= 6) return 'bg-yellow-500 text-black';
-  return 'bg-green-500 text-white';
-}
-
-export function getAttributeColor(value: number): string {
+export function getAbilityColor(value: number): string {
   if (value >= 5) return 'bg-green-500 text-white';
   if (value >= 4) return 'bg-green-600 text-white';
   if (value >= 3) return 'bg-yellow-500 text-black';
   if (value >= 2) return 'bg-orange-500 text-white';
   return 'bg-red-600 text-white';
 }
+
+export function getPotentialColor(rating: number): string {
+  if (rating >= 7) return 'bg-green-500 text-white';
+  if (rating >= 5) return 'bg-yellow-500 text-black';
+  if (rating >= 3) return 'bg-orange-500 text-white';
+  return 'bg-red-600 text-white';
+}
+
+// Backward compat
+export const getAttributeColor = getAbilityColor;
+export const getRatingColor = getAbilityColor;
 
 // ─── API Functions ──────────────────────────────────────────────────
 
@@ -310,7 +289,7 @@ export async function deleteGradeAsync(playerId: string): Promise<boolean> {
 
 // ─── Local Storage (legacy, saves to both) ──────────────────────────
 
-const STORAGE_KEY = "bacau-scout-grades-v3";
+const STORAGE_KEY = "bacau-scout-grades-v4";
 
 export function getAllGrades(): PlayerGrade[] {
   if (typeof window === 'undefined') return [];
@@ -326,13 +305,11 @@ export function getGrade(playerId: string): PlayerGrade | null {
 export function saveGrade(grade: PlayerGrade): void {
   const grades = getAllGrades();
   const existingIndex = grades.findIndex(g => g.playerId === grade.playerId);
-
   if (existingIndex >= 0) {
     grades[existingIndex] = { ...grade, gradedAt: new Date().toISOString() };
   } else {
     grades.push({ ...grade, gradedAt: new Date().toISOString() });
   }
-
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grades));
   saveGradeAsync(grade).catch(console.error);
 }
