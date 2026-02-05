@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { getAllGrades, PlayerGrade, getAbilityColor, getPotentialColor } from '@/lib/grades';
+import { getAllGradesAsync, PlayerGrade, getAbilityColor, getPotentialColor } from '@/lib/grades';
 
 // Position badge colors
 const positionColors: Record<string, string> = {
@@ -70,10 +70,7 @@ export default function Home() {
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
-    setGrades(getAllGrades());
-    const handleStorage = () => setGrades(getAllGrades());
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
+    getAllGradesAsync().then(setGrades);
   }, []);
 
   const filteredGrades = useMemo(() => {

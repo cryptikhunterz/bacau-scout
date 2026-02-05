@@ -30,6 +30,9 @@ model Invite {
 model ScoutingReport {
   id            String   @id @default(cuid())
   playerId      String
+  playerName    String?
+  position      String?
+  club          String?
   scoutId       String?
 
   // Ability & Potential

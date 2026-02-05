@@ -30,9 +30,14 @@ export async function GET(
     // Build response with all fields, defaulting ability to 3 and potential to 4
     const result: Record<string, any> = {
       playerId: grade.playerId,
+      playerName: grade.playerName || '',
+      position: grade.position || '',
+      club: grade.club || '',
       gradedAt: grade.updatedAt.toISOString(),
       status: grade.status || 'WATCH',
       scoutingLevel: grade.scoutingLevel || 'Basic',
+      ability: grade.ability || 3,
+      potential: grade.potential || 4,
       report: grade.report || 3,
       scoutingTags: grade.scoutingTags || [],
       verdict: grade.verdict || grade.recommendation || 'Monitor',
@@ -73,7 +78,12 @@ export async function POST(
 
     // Build data object from body
     const data: Record<string, any> = {
+      playerName: body.playerName,
+      position: body.position,
+      club: body.club,
       report: body.report,
+      ability: body.ability,
+      potential: body.potential,
       scoutingTags: body.scoutingTags || [],
       verdict: body.verdict,
       role: body.role,

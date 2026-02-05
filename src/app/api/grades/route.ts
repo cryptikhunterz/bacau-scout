@@ -15,6 +15,9 @@ export async function GET() {
     // Return as array of grade objects
     const results = grades.map(grade => ({
       playerId: grade.playerId,
+      playerName: grade.playerName || '',
+      position: grade.position || '',
+      club: grade.club || '',
       gradedAt: grade.updatedAt.toISOString(),
 
       status: grade.status || 'WATCH',
