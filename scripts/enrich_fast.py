@@ -71,7 +71,7 @@ def get_teams(league_code):
 def get_roster_data(team):
     """Get player age + position from roster table"""
     slug = team['slug'] or 'team'
-    url = f"{BASE_URL}/{slug}/kader/verein/{team['id']}/saison_id/2024/plus/1"
+    url = f"{BASE_URL}/{slug}/kader/verein/{team['id']}/saison_id/2025/plus/1"
     html = fetch(url)
     if not html:
         return {}
