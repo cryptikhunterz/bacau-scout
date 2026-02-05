@@ -118,8 +118,8 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [tacDuels, setTacDuels] = useState<AbilityRating>(e?.tacDuels || 3);
   const [tacSetPieces, setTacSetPieces] = useState<AbilityRating>(e?.tacSetPieces || 3);
 
-  // Overall Scores
-  const [ability, setAbility] = useState<AbilityRating>(e?.ability || 3);
+  // Overall Scores (both 1-8)
+  const [ability, setAbility] = useState<PotentialRating>(e?.ability || 4);
   const [potential, setPotential] = useState<PotentialRating>(e?.potential || 4);
 
   // Scouting Tags (3 max)
@@ -190,7 +190,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Potential (1-8)</p>
+            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Overall Ability & Potential (1-8)</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
               {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
                 <div key={num}><span className="font-bold text-zinc-300">{num}</span> = {label}</div>
@@ -268,9 +268,9 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
         <div className="flex items-center justify-between py-2">
           <div>
             <span className="text-sm font-semibold text-zinc-200">ABILITY</span>
-            <span className="text-xs text-zinc-500 ml-2">(1-5)</span>
+            <span className="text-xs text-zinc-500 ml-2">(1-8)</span>
           </div>
-          <AbilityBadge value={ability} onChange={setAbility} />
+          <PotentialBadge value={ability} onChange={setAbility} />
         </div>
         <div className="flex items-center justify-between py-2 border-t border-zinc-700">
           <div>

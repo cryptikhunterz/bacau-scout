@@ -61,8 +61,8 @@ export interface PlayerGrade {
   tacDuels: AbilityRating;
   tacSetPieces: AbilityRating;
 
-  // Overall Scores (before verdict)
-  ability: AbilityRating;       // Overall ability (1-5)
+  // Overall Scores (before verdict) — both 1-8
+  ability: PotentialRating;     // Overall ability (1-8)
   potential: PotentialRating;   // Overall potential (1-8)
 
   // Scouting Tags (3 max)
@@ -215,10 +215,17 @@ export function getAbilityColor(value: number): string {
 }
 
 export function getPotentialColor(rating: number): string {
-  if (rating >= 7) return 'bg-green-500 text-white';
-  if (rating >= 5) return 'bg-yellow-500 text-black';
-  if (rating >= 3) return 'bg-orange-500 text-white';
-  return 'bg-red-600 text-white';
+  switch (rating) {
+    case 8: return 'bg-purple-600 text-white';
+    case 7: return 'bg-indigo-500 text-white';
+    case 6: return 'bg-blue-500 text-white';
+    case 5: return 'bg-green-500 text-white';
+    case 4: return 'bg-green-400 text-black';
+    case 3: return 'bg-yellow-400 text-black';
+    case 2: return 'bg-orange-500 text-white';
+    case 1: return 'bg-red-600 text-white';
+    default: return 'bg-zinc-600 text-white';
+  }
 }
 
 // Backward compat

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { getAllGradesAsync, PlayerGrade, getAbilityColor, getPotentialColor } from '@/lib/grades';
+import { getAllGradesAsync, PlayerGrade, getPotentialColor } from '@/lib/grades';
 
 // Position badge colors
 const positionColors: Record<string, string> = {
@@ -41,8 +41,8 @@ function getPositionAbbrev(position: string): string {
   return position.substring(0, 2).toUpperCase();
 }
 
-// Direct ability and potential from grade (overall scores set by scout)
-function getAbility(g: PlayerGrade): number { return g.ability || 3; }
+// Direct ability and potential from grade (both 1-8, set by scout)
+function getAbility(g: PlayerGrade): number { return g.ability || 4; }
 function getPotential(g: PlayerGrade): number { return g.potential || 4; }
 
 // Verdict badge
@@ -232,7 +232,7 @@ export default function Home() {
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
                       <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAbilityColor(getAbility(grade))}`}>
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(getAbility(grade))}`}>
                           {getAbility(grade)}
                         </span>
                       </td>
