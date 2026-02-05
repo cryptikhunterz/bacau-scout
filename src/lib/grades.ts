@@ -3,7 +3,7 @@
 // ─── Types ──────────────────────────────────────────────────────────
 
 export type Status = "FM" | "U23" | "LOAN" | "WATCH";
-export type Verdict = "Sign" | "Observe" | "Monitor" | "Not a priority" | "Out of reach";
+export type Verdict = "Sign" | "Observe" | "Monitor" | "Not a priority" | "Out of reach" | "Discard";
 export type ScoutingLevel = "Basic" | "Impressive" | "Data only";
 export type AbilityRating = 1 | 2 | 3 | 4 | 5;
 export type PotentialRating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -201,6 +201,7 @@ export const VERDICT_OPTIONS: { value: Verdict; color: string }[] = [
   { value: 'Monitor', color: 'bg-yellow-500' },
   { value: 'Not a priority', color: 'bg-zinc-600' },
   { value: 'Out of reach', color: 'bg-red-600' },
+  { value: 'Discard', color: 'bg-red-800' },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────

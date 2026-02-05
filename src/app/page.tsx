@@ -52,6 +52,7 @@ function VerdictBadge({ verdict }: { verdict: string }) {
     'Monitor': 'bg-yellow-500 text-black',
     'Not a priority': 'bg-zinc-600 text-white',
     'Out of reach': 'bg-red-600 text-white',
+    'Discard': 'bg-red-800 text-white',
   };
   return (
     <span className={`inline-block px-2 py-1 text-xs font-bold rounded whitespace-nowrap ${colors[verdict] || 'bg-zinc-600 text-white'}`}>
@@ -147,6 +148,7 @@ export default function Home() {
             <option value="Monitor">Monitor</option>
             <option value="Not a priority">Not a priority</option>
             <option value="Out of reach">Out of reach</option>
+            <option value="Discard">Discard</option>
           </select>
 
           <select value={posFilter} onChange={(e) => setPosFilter(e.target.value)}
