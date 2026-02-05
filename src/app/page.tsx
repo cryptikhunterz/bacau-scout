@@ -110,6 +110,9 @@ export default function Home() {
   const signCount = grades.filter(g => g.verdict === 'Sign').length;
   const observeCount = grades.filter(g => g.verdict === 'Observe').length;
   const monitorCount = grades.filter(g => g.verdict === 'Monitor').length;
+  const notPriorityCount = grades.filter(g => g.verdict === 'Not a priority').length;
+  const outOfReachCount = grades.filter(g => g.verdict === 'Out of reach').length;
+  const discardCount = grades.filter(g => g.verdict === 'Discard').length;
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -118,11 +121,14 @@ export default function Home() {
         <div className="max-w-[1800px] mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">Bacau Scout</h1>
-            <p className="text-sm text-zinc-400">
-              {grades.length} scouting reports •
-              <span className="text-green-400 ml-2">{signCount} Sign</span> •
-              <span className="text-blue-400 ml-2">{observeCount} Observe</span> •
-              <span className="text-yellow-400 ml-2">{monitorCount} Monitor</span>
+            <p className="text-sm text-zinc-400 flex flex-wrap gap-x-1">
+              <span>{grades.length} scouting reports •</span>
+              <span className="text-green-400">{signCount} Sign</span><span>•</span>
+              <span className="text-blue-400">{observeCount} Observe</span><span>•</span>
+              <span className="text-yellow-400">{monitorCount} Monitor</span><span>•</span>
+              <span className="text-zinc-400">{notPriorityCount} Not a priority</span><span>•</span>
+              <span className="text-red-400">{outOfReachCount} Out of reach</span><span>•</span>
+              <span className="text-red-600">{discardCount} Discard</span>
             </p>
           </div>
           <div className="flex items-center gap-3">
