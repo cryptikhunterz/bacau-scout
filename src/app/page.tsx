@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 import { getAllGradesAsync, PlayerGrade, getAbilityColor, getPotentialColor } from '@/lib/grades';
 
 // Position badge colors
@@ -62,6 +63,7 @@ function VerdictBadge({ verdict }: { verdict: string }) {
 }
 
 export default function Home() {
+  const { data: session } = useSession();
   const [grades, setGrades] = useState<PlayerGrade[]>([]);
   const [search, setSearch] = useState('');
   const [verdictFilter, setVerdictFilter] = useState('');
@@ -123,10 +125,18 @@ export default function Home() {
               <span className="text-yellow-400 ml-2">{monitorCount} Monitor</span>
             </p>
           </div>
-          <Link href="/search"
-            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
-            + Scout New Player
-          </Link>
+          <div className="flex items-center gap-3">
+            {session?.user?.role === 'admin' && (
+              <Link href="/admin"
+                className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
+                ⚙️ Admin
+              </Link>
+            )}
+            <Link href="/search"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
+              + Scout New Player
+            </Link>
+          </div>
         </div>
       </header>
 
