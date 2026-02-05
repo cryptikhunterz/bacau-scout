@@ -228,13 +228,23 @@ Centre-Forward   → CF    (red)
 
 ## 4. Frontend Data Flow
 
-### Search Page (`/search`)
+### Search Page (`/search`) — Player Database
 
 1. Client-side: fetches `/players.json` directly
 2. All filtering, sorting, pagination happens in browser
 3. Position filter dropdown populated from unique `position` values in data
-4. Search matches on `name` (case-insensitive)
+4. **Search supports TWO modes:**
+   - **Name search**: case-insensitive partial match on player name
+   - **URL search**: paste any Transfermarkt URL (`.com`, `.es`, `.de`, `.pt`, etc.) — extracts `spieler/{ID}` and matches on `player_id`
 5. Age badges: ≤21 green, ≤25 dark green, ≤28 yellow, ≤32 orange, >32 red
+
+**URL search detection logic** (in `search/page.tsx` → `filteredPlayers`):
+```typescript
+if (search.includes('transfermarkt') && search.includes('spieler')) {
+  const match = search.match(/spieler\/(\d+)/);
+  if (match) return p.player_id === match[1];
+}
+```
 
 ### Player Detail Page (`/player/[id]`)
 
@@ -244,9 +254,12 @@ Centre-Forward   → CF    (red)
 
 ### Search API (`/api/search`)
 
-Server-side search endpoint used by SearchBar component:
+Server-side search endpoint used by homepage SearchBar component:
 - Strips diacritics for matching (Târnovanu → tarnovanu)
+- **Supports Transfermarkt URL input** — extracts `spieler/{ID}` from any TLD
 - Returns top matches with basic info
+
+**⚠️ Both `/search` page AND `/api/search` must support URL search.** The `/search` page does client-side filtering; the API does server-side. If you change search logic, update BOTH.
 
 ### Grades System
 
