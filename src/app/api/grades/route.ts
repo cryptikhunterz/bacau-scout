@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
+import { loadPlayers } from '@/lib/players'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,12 +13,23 @@ export async function GET() {
       orderBy: { updatedAt: 'desc' }
     })
 
+    // Load player data for backfilling missing info
+    const players = loadPlayers()
+    const playerMap = new Map(players.map(p => [p.playerId, p]))
+
     // Return as array of grade objects
-    const results = grades.map(grade => ({
+    const results = grades.map(grade => {
+      // Backfill from static data if DB fields are empty
+      const player = playerMap.get(grade.playerId)
+      const playerName = grade.playerName || player?.name || ''
+      const position = grade.position || player?.position || ''
+      const club = grade.club || player?.club || ''
+
+      return {
       playerId: grade.playerId,
-      playerName: grade.playerName || '',
-      position: grade.position || '',
-      club: grade.club || '',
+      playerName,
+      position,
+      club,
       gradedAt: grade.updatedAt.toISOString(),
 
       status: grade.status || 'WATCH',
@@ -61,7 +73,8 @@ export async function GET() {
       transferFee: grade.transferFee || '',
       salary: grade.salary || '',
       scoutName: grade.scoutName,
-    }))
+      }
+    })
 
     return NextResponse.json(results)
   } catch (error) {
