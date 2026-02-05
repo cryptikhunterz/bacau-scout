@@ -4,6 +4,69 @@ All notable changes to the Bacau Scout platform are documented here.
 
 ---
 
+## 2026-02-05 — Player Profiles: Direct Data Lookup (`739bf07`)
+
+### Problem
+Player profile pages showing "Player Not Found" after middleware fix was deployed.
+
+### Root Cause
+`/player/[id]/page.tsx` is a **server component** — it runs on the Railway server, NOT in the user's browser. It was fetching its own API via HTTP (`http://localhost:3000/api/player/...`), which failed for two reasons:
+1. **Wrong port:** Railway runs on 8080, not 3000
+2. **No auth:** Server-side fetch has no user cookies, so middleware returned 401
+
+### Fix
+Removed the HTTP self-call entirely. Page now imports `findPlayerById()` directly from `lib/players.ts` — reads data from memory, no HTTP, no auth needed.
+
+### Files Changed
+- `src/app/player/[id]/page.tsx` — replaced HTTP fetch with direct import
+
+### Lesson
+**Server components cannot make authenticated HTTP calls to their own API routes.** They don't have browser cookies. Always use direct imports for server-side data access.
+
+---
+
+## 2026-02-05 — Middleware: JSON 401 for API Routes (`337999a`)
+
+### Problem
+App crashing with `SyntaxError: Unexpected token '<', "<!DOCTYPE"... is not valid JSON` — Railway logs showed repeated crashes.
+
+### Root Cause
+Auth middleware redirected unauthenticated `/api/*` requests to `/login` (HTML page). When client code called `response.json()` on HTML, it crashed.
+
+### Fix
+Middleware now checks if path starts with `/api/` — returns `NextResponse.json({ error: "Unauthorized" }, { status: 401 })` instead of HTML redirect.
+
+### Files Changed
+- `src/middleware.ts` — added API route check before redirect
+
+---
+
+## 2026-02-05 — Dashboard: Backfill Missing Player Info (`2b3e1a9`)
+
+### Problem
+Dashboard POS, Player, and Club columns were empty for grades saved before the `playerName`/`position`/`club` columns were added.
+
+### Fix
+GET `/api/grades` now loads `players.json` and backfills missing player info on the fly. No re-save needed.
+
+### Files Changed
+- `src/app/api/grades/route.ts` — imports `loadPlayers()`, fills null fields from static data
+
+---
+
+## 2026-02-05 — Admin Button on Dashboard (`48b751c`)
+
+### Problem
+No way to navigate to `/admin` from the dashboard. Users had to type the URL manually.
+
+### Fix
+Added ⚙️ Admin button in header, visible only to admin-role users via `useSession()`.
+
+### Files Changed
+- `src/app/page.tsx` — added useSession, conditional admin link
+
+---
+
 ## 2026-02-05 — Dashboard: Database-Backed Grades (`e2d3fe6`)
 
 ### Problem

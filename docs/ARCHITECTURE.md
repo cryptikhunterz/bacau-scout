@@ -7,24 +7,27 @@ Last updated: 2026-02-05
 1. [Project Overview](#1-project-overview)
 2. [Tech Stack](#2-tech-stack)
 3. [File Structure](#3-file-structure)
-4. [Pages & Routes](#4-pages--routes)
-5. [Components](#5-components)
-6. [Data Libraries](#6-data-libraries)
-7. [API Endpoints](#7-api-endpoints)
-8. [Database (Prisma/PostgreSQL)](#8-database)
-9. [Grading System](#9-grading-system)
-10. [Scraper Scripts](#10-scraper-scripts)
-11. [Deployment](#11-deployment)
-12. [Known Issues & TODOs](#12-known-issues--todos)
+4. [Authentication & Authorization](#4-authentication--authorization)
+5. [Pages & Routes](#5-pages--routes)
+6. [Components](#6-components)
+7. [Data Libraries](#7-data-libraries)
+8. [API Endpoints](#8-api-endpoints)
+9. [Database (Prisma/PostgreSQL)](#9-database)
+10. [Grading System](#10-grading-system)
+11. [Scraper Scripts](#11-scraper-scripts)
+12. [Deployment](#12-deployment)
+13. [Common Pitfalls & Gotchas](#13-common-pitfalls--gotchas)
+14. [Known Issues & TODOs](#14-known-issues--todos)
 
 ---
 
 ## 1. Project Overview
 
-Bacau Scout is a football scouting tool for evaluating players across 37 leagues. 15 scouts use it to search players, view profiles, and submit scouting reports with a 13-metric grading system (1-8 scale based on Romanian league tiers).
+Bacau Scout is a football scouting tool for evaluating players across 37 leagues. 15 scouts use it to search players, view profiles, and submit scouting reports with detailed attribute ratings.
 
-**Live URL:** https://bacau-scout-production.up.railway.app  
-**Repo:** https://github.com/cryptikhunterz/bacau-scout
+**Live URL:** https://bacau-scout-production.up.railway.app
+**Repo:** https://github.com/cryptikhunterz/bacau-scout (PRIVATE)
+**Data:** 21,647 unique players, 39 leagues, 2025/26 season
 
 ---
 
@@ -35,6 +38,7 @@ Bacau Scout is a football scouting tool for evaluating players across 37 leagues
 | Framework | Next.js 16.1.6 (App Router) |
 | Language | TypeScript 5 |
 | Styling | Tailwind CSS 4 |
+| Auth | NextAuth v4 (credentials provider, bcrypt, JWT) |
 | Database | PostgreSQL (Railway) |
 | ORM | Prisma 6.19.2 |
 | Player Data | Static JSON (`public/players.json`) |
@@ -50,473 +54,479 @@ Bacau Scout is a football scouting tool for evaluating players across 37 leagues
 bacau-scout/
 ├── docs/
 │   ├── ARCHITECTURE.md          ← This file
+│   ├── CHANGELOG.md             ← Detailed fix documentation (required per commit)
 │   └── DATA_PIPELINE.md         ← Scraping, parsing, data schema docs
 ├── prisma/
-│   └── schema.prisma            ← Database schema (ScoutingReport model)
+│   ├── schema.prisma            ← Database schema (Scout, Invite, ScoutingReport)
+│   └── migrations/              ← All migration history
 ├── public/
-│   └── players.json             ← All player data (22K+ players, ~13MB)
+│   └── players.json             ← All player data (21,647 players, ~13MB)
 ├── scripts/
 │   ├── rescrape_all.py          ← ⭐ Full rescrape of all 37 leagues
 │   ├── rescrape_romania.py      ← Quick Romanian-only rescrape
 │   ├── scraper_complete.py      ← Full scrape with individual profiles
-│   ├── enrich_data.py           ← Fill missing age/position from profiles
-│   └── ... (legacy scripts)
+│   └── enrich_data.py           ← Fill missing age/position from profiles
 ├── src/
 │   ├── app/
-│   │   ├── page.tsx             ← Homepage (scouting reports dashboard)
-│   │   ├── layout.tsx           ← Root layout (dark theme)
-│   │   ├── search/
-│   │   │   └── page.tsx         ← Player Database (full table view)
+│   │   ├── layout.tsx           ← Root layout (SessionProvider wraps all pages)
+│   │   ├── page.tsx             ← Homepage dashboard (CLIENT component)
+│   │   ├── login/page.tsx       ← Login page (PUBLIC)
+│   │   ├── register/page.tsx    ← Invite-only registration (PUBLIC)
+│   │   ├── admin/page.tsx       ← Admin panel — invite scouts, manage users
+│   │   ├── search/page.tsx      ← Player Database (full table view)
 │   │   ├── player/[id]/
-│   │   │   ├── page.tsx         ← Player detail/profile page
+│   │   │   ├── page.tsx         ← Player detail (SERVER component, reads data directly)
 │   │   │   └── not-found.tsx    ← 404 for missing players
 │   │   └── api/
-│   │       ├── search/route.ts  ← Search API (server-side)
-│   │       ├── player/[id]/route.ts ← Player detail API
+│   │       ├── auth/
+│   │       │   ├── [...nextauth]/route.ts ← NextAuth endpoints (PUBLIC)
+│   │       │   ├── register/route.ts      ← Registration endpoint (PUBLIC)
+│   │       │   └── validate-invite/route.ts ← Invite token validation (PUBLIC)
+│   │       ├── admin/
+│   │       │   ├── invites/route.ts       ← CRUD invites (ADMIN only)
+│   │       │   └── scouts/route.ts        ← List scouts (ADMIN only)
+│   │       ├── search/route.ts            ← Player search API (AUTH required)
+│   │       ├── player/[id]/route.ts       ← Player detail API (AUTH required)
 │   │       └── grades/
-│   │           ├── route.ts     ← List all grades
-│   │           └── [playerId]/route.ts ← CRUD for individual grades
+│   │           ├── route.ts               ← List all grades (AUTH required)
+│   │           └── [playerId]/route.ts    ← CRUD grades (AUTH required)
 │   ├── components/
-│   │   ├── SearchBar.tsx        ← Homepage search (uses /api/search)
+│   │   ├── GradingForm.tsx      ← Full scouting report form (19 attributes)
+│   │   ├── GradesTable.tsx      ← Dashboard grades table
+│   │   ├── PlayerGrading.tsx    ← Grading wrapper on player detail page
 │   │   ├── PlayerCard.tsx       ← Player card for grid view
 │   │   ├── PlayerList.tsx       ← Grid/list view renderer
-│   │   ├── FilterPanel.tsx      ← Search filters (position, club, age, value)
-│   │   ├── GradingForm.tsx      ← 13-metric grading form (1-8 scale)
-│   │   ├── GradesTable.tsx      ← Table of all scouting reports
-│   │   ├── GradesFilters.tsx    ← Filter controls for grades table
-│   │   └── PlayerGrading.tsx    ← Grading section on player detail page
+│   │   ├── SearchBar.tsx        ← Homepage search (uses /api/search)
+│   │   └── FilterPanel.tsx      ← Search filters
 │   ├── lib/
-│   │   ├── players.ts           ← Player data loading, normalization, search
-│   │   ├── grades.ts            ← Grade CRUD (localStorage + API)
+│   │   ├── players.ts           ← Player data loading/normalization/search
+│   │   ├── grades.ts            ← Grade types, helpers, localStorage + API functions
 │   │   ├── prisma.ts            ← Prisma client singleton
-│   │   └── supabase.ts          ← Supabase client (legacy, unused)
-│   └── types/
-│       └── player.ts            ← Shared TypeScript types
-├── .node-version                ← Node 22 (required for Railway)
-├── package.json                 ← Dependencies + engines
-├── railway.toml                 ← Railway build config
-└── prisma.config.ts             ← Prisma config
+│   │   └── auth.ts              ← NextAuth configuration
+│   └── middleware.ts            ← Auth middleware (protects all non-public routes)
+├── .node-version                ← "22" (required for Railway)
+├── .env                         ← Local env vars (NEXTAUTH_URL, DATABASE_URL, NEXTAUTH_SECRET)
+├── package.json                 ← Dependencies + engines: { node: ">=22" }
+└── railway.toml                 ← Railway build config
 ```
 
 ---
 
-## 4. Pages & Routes
+## 4. Authentication & Authorization
+
+### Overview
+- **Provider:** NextAuth v4 with credentials (email/password + bcrypt)
+- **Sessions:** JWT-based (not database sessions)
+- **Roles:** `admin` and `scout`
+
+### Flow
+1. User visits any page → middleware checks for JWT token
+2. No token → redirected to `/login` (pages) or gets JSON 401 (API routes)
+3. Login with email/password → bcrypt compare → JWT issued
+4. Registration requires invite token → `/register?token=xxx`
+
+### Middleware (`src/middleware.ts`)
+
+**CRITICAL: Understand this before changing ANY route**
+
+```
+Request → middleware.ts
+  ├── Public paths (bypass): /login, /register, /api/auth/*
+  ├── Static assets (bypass): /_next/*, /favicon.ico, /images/*
+  ├── Has valid JWT token → NextResponse.next()
+  └── No token:
+      ├── /api/* routes → JSON { error: "Unauthorized" } (401)
+      └── Page routes → redirect to /login?callbackUrl=...
+```
+
+**⚠️ GOTCHA: API routes MUST return JSON errors, never HTML redirects.** If an API route returns HTML and a client tries to `JSON.parse()` it, the app crashes with `SyntaxError: Unexpected token '<'`. This was the root cause of the Feb 5 crash.
+
+### Admin Accounts
+- `crypwalk@bacauscout.com` / `BacauScout2026!` (admin)
+- `flavius@bacauscout.com` / `BacauScout2026!` (admin)
+
+### Invite System
+- Admins create invites at `/admin` → generates `/register?token=xxx` link
+- Tokens expire after 7 days
+- Each token tied to an email address
+- Once used, token is marked `used: true`
+
+---
+
+## 5. Pages & Routes
+
+### ⚠️ Server vs Client Components — READ THIS
+
+| Page | Type | Why It Matters |
+|------|------|---------------|
+| `/` (Homepage) | **CLIENT** (`'use client'`) | Runs in browser, has session access via `useSession()` |
+| `/search` | **CLIENT** | Fetches players.json client-side |
+| `/player/[id]` | **SERVER** | Runs on Railway server, NO browser cookies, NO session |
+| `/login` | **CLIENT** | Handles sign-in form |
+| `/register` | **CLIENT** | Handles registration form |
+| `/admin` | **CLIENT** | Admin panel with session check |
+
+**CRITICAL RULE: Server components cannot make authenticated HTTP calls to their own API routes.** They don't have the user's cookies. If a server component needs data, it must import the data function directly (e.g., `findPlayerById()` from `lib/players.ts`), NOT fetch from `/api/player/[id]`.
 
 ### Homepage (`/`) — `src/app/page.tsx`
 
-**Purpose:** Scouting reports dashboard  
-**Data source:** `getAllGrades()` from `lib/grades.ts` (localStorage)  
+**Type:** Client component
+**Data source:** `getAllGradesAsync()` from `lib/grades.ts` → fetches `/api/grades` (database)
+**Auth:** Uses `useSession()` hook for admin button visibility
 **Features:**
-- Shows all graded players with their scores
-- Filter by recommendation (Sign/Monitor/Discard)
-- Filter by position, sort by various metrics
-- Summary stats: total reports, sign/monitor/discard counts
-- Links to Player Database and individual player pages
+- Shared dashboard — all scouts see all reports from the database
+- Filter by verdict, position, search by name
+- Sort by name, ability, potential, date
+- Summary stats: total reports, sign/observe/monitor counts
+- ⚙️ Admin button (visible only to admin role)
+- "+ Scout New Player" button → links to `/search`
 
-**⚠️ Known issue:** Uses `getAllGrades()` (localStorage) instead of `getAllGradesAsync()` (database). Grades don't sync across devices.
+**Dashboard columns:** POS | Player | Club | Verdict | Ability | Potential | Est Salary | Scout | Date
 
 ### Player Database (`/search`) — `src/app/search/page.tsx`
 
-**Purpose:** Browse and search all 22K+ players  
-**Data source:** Client-side fetch of `/players.json`  
+**Type:** Client component
+**Data source:** Client-side fetch of `/players.json` (static file)
 **Features:**
-- Full table with columns: POS, Name, Age, Club, League, Value, MP, Gls, Ast, G+A
-- **Search by name** (case-insensitive, partial match)
-- **Search by Transfermarkt URL** (any TLD — detects `transfermarkt` + `spieler` in query, extracts player ID)
-- Filter by position (dropdown), league (dropdown), age range
-- Sort by name, age, value, goals, matches (asc/desc toggle)
+- Full table with 21,647 players
+- Search by name (diacritics-stripped) or Transfermarkt URL
+- Filter by position, league, age range
+- Sort by name, age, value, goals, matches
 - Pagination (50 per page)
-- Color-coded position badges (GK=yellow, CB=blue, CM=green, CF=red, etc.)
-- Color-coded age badges (≤21 green → >32 red)
-- Market value in green
-
-**URL search detection logic:**
-```typescript
-if (search.includes('transfermarkt') && search.includes('spieler')) {
-  const match = search.match(/spieler\/(\d+)/);
-  if (match) return p.player_id === match[1];
-}
-```
 
 ### Player Detail (`/player/[id]`) — `src/app/player/[id]/page.tsx`
 
-**Purpose:** Full player profile + grading form  
-**Data source:** Server-side via `findPlayerById()` from `lib/players.ts`  
+**Type:** SERVER component
+**Data source:** `findPlayerById(id)` imported directly from `lib/players.ts`
+**⚠️ Does NOT fetch from API — reads data in-process from memory/filesystem**
 **Features:**
-- Hero card with player photo, name, club, league, nationality
-- Bio details: DOB, height, foot, citizenship, contract
-- Market value display
-- Career stats summary (appearances, goals, assists, minutes)
+- Hero card with player info, position badge, market value
+- Career overview (appearances, goals, assists, minutes, ratios)
 - Season-by-season stats table
 - Scouting report form (GradingForm component)
 - Link to Transfermarkt profile
 
+### Admin (`/admin`) — `src/app/admin/page.tsx`
+
+**Type:** Client component
+**Auth:** Checks `session.user.role === 'admin'`, redirects non-admins
+**Features:**
+- Invite form: enter email + role → generates invite link
+- Copy invite link button
+- All Scouts table (name, email, role, joined date)
+- Pending Invites list (email, role, expiry)
+
 ---
 
-## 5. Components
-
-### SearchBar (`src/components/SearchBar.tsx`)
-
-**Used on:** Homepage  
-**Calls:** `/api/search` (server-side)  
-**Features:**
-- Debounced input (300ms)
-- Supports name search AND Transfermarkt URL search (via API)
-- Shows results in grid or list view
-- Filter panel appears after first search
-- Loading skeleton cards while fetching
+## 6. Components
 
 ### GradingForm (`src/components/GradingForm.tsx`)
 
-**Used on:** Player detail page  
-**Features:**
-- 13 metrics across 4 categories, each rated 1-8
-- Rating scale based on Romanian league levels:
-  - 1 = Liga 3a level
-  - 4 = Liga 2 average
-  - 6 = Superliga starter
-  - 8 = Superliga playoff / international
-- Status selector: FM, U23, LOAN, WATCH
-- Recommendation: Sign, Monitor, Discard
-- Scouting level: Basic, Impressive, Data only
-- Strengths/weaknesses tags
-- Free-text notes
-- Transfer fee and salary fields
-- Saves to localStorage AND database (dual write)
+The main scouting report form. Used on player detail pages.
 
-### GradesTable (`src/components/GradesTable.tsx`)
+**Categories & Attributes (19 total):**
 
-**Used on:** Homepage  
-**Features:**
-- Table of all scouting reports
-- Shows player name, position, club, recommendation, average score
-- Color-coded recommendation badges
-- Sortable columns
-- Click to open player detail
+| Category | Attributes | Rating |
+|----------|-----------|--------|
+| Physical (4) | Strength, Speed, Agility, Coordination | 1-5 each |
+| Technique (9) | Control, Short passes, Long passes, Aerial, Crossing, Finishing, Dribbling, 1v1 Offensive, 1v1 Defensive | 1-5 each |
+| Tactic (6) | Positioning, Transition, Decisions, Anticipations, Duels, Set pieces | 1-5 each |
 
-### PlayerCard (`src/components/PlayerCard.tsx`)
+**Overall Assessment (prominent, bordered box before verdict):**
+- ABILITY (1-5) — overall ability score
+- POTENTIAL (1-8) — overall potential score (Romanian league levels)
 
-**Used on:** Search results (grid view)  
-**Features:**
-- Compact card with name, position, club, nationality flag
-- Market value, age, stats (G, A, G+A)
-- Click to open player detail
-- Skeleton loading state
+**Additional fields:**
+- Scout Name — auto-filled from session (`session.user.name`), read-only
+- Status: FM, U23, LOAN, WATCH
+- Scouting Level: Basic, Impressive, Data only
+- Scouting Tags: 3 max from 65+ options across 6 categories
+- Verdict: Sign, Observe, Monitor, Not a priority, Out of reach, Discard
+- Role (text), Conclusion (text), Notes (text)
+- Transfer Fee, Salary (text)
 
-### FilterPanel (`src/components/FilterPanel.tsx`)
+**UI pattern:** Compact FM-style badge with ▲▼ arrows for each rating.
 
-**Used on:** Homepage search results  
-**Features:**
-- Position dropdown
-- Club text filter
-- Age range (min/max)
-- Market value range (min/max)
+**Save behavior:** Dual write — saves to localStorage AND POST to `/api/grades/{playerId}`
 
 ---
 
-## 6. Data Libraries
+## 7. Data Libraries
 
-### `src/lib/players.ts`
+### `src/lib/players.ts` — Player Data (Server-Side)
 
 **Core data layer.** Loads and normalizes `public/players.json`.
 
 **Key functions:**
 - `loadPlayers()` — Loads JSON, normalizes all players, caches in memory. Returns `NormalizedPlayer[]`
-- `normalizePlayer(raw)` — Converts raw JSON record to normalized format. Handles both new format (`player_id`) and legacy format (`Player` array)
 - `findPlayerById(id)` — O(1) lookup by player ID. Returns `PlayerDetail` with full bio + career stats
-- `parseMarketValue(str)` — Converts "€500k" → 500000, "€1.2m" → 1200000
-- `extractPlayerIdFromUrl(url)` — Extracts ID from `/spieler/12345` pattern
-- `stripDiacritics(str)` — Removes accents for search (Târnovanu → tarnovanu)
+- `normalizePlayer(raw)` — Converts raw JSON to normalized format
+- `parseMarketValue(str)` — Converts "€500k" → 500000
+- `stripDiacritics(str)` — Removes accents for search
 
-**Caching:** Players loaded once on first request, cached in module-level variables. Server restarts clear cache.
+**Caching:** Players loaded once, cached in module-level variables. Server restart clears cache.
 
-**Types:**
-- `RawPlayer` — Raw JSON format (many optional fields, supports legacy formats)
-- `NormalizedPlayer` — Cleaned format for search (includes pre-computed `nameSearch`, `marketValueNum`, `ageNum`)
-- `PlayerDetail` — Full detail for profile page (bio, career stats, season stats)
+**⚠️ This is a server-only module (uses `fs`). Cannot be imported in client components.**
 
-### `src/lib/grades.ts`
+### `src/lib/grades.ts` — Grades & Types (Client-Side)
 
-**Grading data layer.** Dual storage: localStorage (client) + PostgreSQL (server).
+**Marked `'use client'`.** Contains all grade types, constants, and CRUD functions.
 
 **Key functions:**
-- `getGrade(playerId)` — Get grade from localStorage
-- `saveGrade(grade)` — Save to localStorage AND POST to `/api/grades/{playerId}`
-- `getAllGrades()` — Get all grades from localStorage (sync, client-only)
-- `getAllGradesAsync()` — Get all grades from database (async, cross-device)
-- `deleteGrade(playerId)` — Delete from localStorage AND database
+- `getAllGradesAsync()` — Fetches from `/api/grades` (database, cross-device)
+- `getGradeAsync(playerId)` — Fetches single grade from database
+- `saveGrade(grade)` — Saves to localStorage AND database (dual write)
+- `getAllGrades()` — Legacy: reads from localStorage only
 
-**Types:**
-- `PlayerGrade` — Full grade with 13 metrics, status, recommendation, tags, notes
-- `MetricRating` — 1-8 integer
-- `Status` — "FM" | "U23" | "LOAN" | "WATCH"
-- `Recommendation` — "Sign" | "Monitor" | "Discard"
+**Key constants:**
+- `ATTRIBUTE_CATEGORIES` — Physical/Technique/Tactic with attribute definitions
+- `SCOUTING_TAG_CATEGORIES` — 6 categories, 65+ tags
+- `VERDICT_OPTIONS` — 6 verdicts with colors
+- `POTENTIAL_LABELS` — 1-8 scale descriptions (Liga 3a → Superliga playoff)
+- `ABILITY_LABELS` — 1-5 scale descriptions
 
-**⚠️ Homepage uses `getAllGrades()` (localStorage). Should use `getAllGradesAsync()` for cross-device sync.**
-
-### `src/lib/prisma.ts`
+### `src/lib/prisma.ts` — Database Client
 
 Prisma client singleton (prevents multiple instances in dev hot reload).
 
 ---
 
-## 7. API Endpoints
+## 8. API Endpoints
 
-### `GET /api/search?q={query}&position=...&club=...&minAge=...&maxAge=...`
+### Authentication (PUBLIC — no auth required)
 
-**Purpose:** Server-side player search  
-**Used by:** Homepage SearchBar component
+| Method | Path | Purpose |
+|--------|------|---------|
+| `*` | `/api/auth/*` | NextAuth endpoints (login, session, etc.) |
+| `POST` | `/api/auth/register` | Create account with invite token |
+| `POST` | `/api/auth/validate-invite` | Check if invite token is valid |
 
-**Search modes:**
-1. **Transfermarkt URL** — If query contains `transfermarkt` AND `spieler`, extracts player ID and returns exact match
-2. **Name search** — Strips diacritics, partial match on name. Applies filters after name match.
+### Admin (ADMIN role required)
 
-**Filters (all optional, AND-ed together):**
-- `position` — exact match (case-insensitive)
-- `club` — partial match (case-insensitive)
-- `minAge` / `maxAge` — integer range on pre-computed `ageNum`
-- `minValue` / `maxValue` — integer range on pre-computed `marketValueNum`
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/admin/scouts` | List all registered scouts |
+| `GET` | `/api/admin/invites` | List all invites |
+| `POST` | `/api/admin/invites` | Create new invite (email + role → token) |
 
-**Returns:** Array of `SearchPlayer` objects
+### Player Data (AUTH required)
 
-### `GET /api/player/{id}`
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/search?q=...` | Search players by name or TM URL |
+| `GET` | `/api/player/{id}` | Get full player detail by ID |
 
-**Purpose:** Get player detail by Transfermarkt ID  
-**Used by:** Player detail page (server component)  
-**Returns:** Full player detail with bio, career stats, season stats  
-**Logging:** `[Player] id="{id}" found={true|false} time={ms}ms`
+**Note:** `/api/player/{id}` exists but the player detail page does NOT use it (uses direct import instead). The API route is still available for other clients.
 
-### `GET /api/grades`
+### Grades (AUTH required)
 
-**Purpose:** List all scouting reports from database  
-**Returns:** Array of `ScoutingReport` objects (Prisma model)
+| Method | Path | Purpose |
+|--------|------|---------|
+| `GET` | `/api/grades` | List ALL scouting reports (dashboard) |
+| `GET` | `/api/grades/{playerId}` | Get single grade |
+| `POST` | `/api/grades/{playerId}` | Create/update grade (upsert) |
+| `DELETE` | `/api/grades/{playerId}` | Delete grade |
 
-### `GET /api/grades/{playerId}`
-
-**Purpose:** Get single scouting report  
-**Returns:** `ScoutingReport` or 404
-
-### `PUT /api/grades/{playerId}`
-
-**Purpose:** Create or update scouting report  
-**Body:** Full grade data (13 metrics, recommendation, notes, etc.)  
-**Behavior:** Upsert — creates if new, updates if exists
-
-### `DELETE /api/grades/{playerId}`
-
-**Purpose:** Delete scouting report  
-**Returns:** 200 on success, 404 if not found
+**GET /api/grades backfill:** If a grade has null `playerName`/`position`/`club` (saved before those columns were added), the API automatically looks up the data from `players.json` and returns it. No re-save needed.
 
 ---
 
-## 8. Database
+## 9. Database
 
 ### Provider
-PostgreSQL on Railway (auto-provisioned)
+PostgreSQL on Railway (same project as the app)
 
 ### Connection
-`DATABASE_URL` environment variable (set in Railway dashboard)
+`DATABASE_URL` env var (set in Railway + local `.env`)
 
 ### Schema (`prisma/schema.prisma`)
 
-Single model: `ScoutingReport`
+**3 models:**
 
-```prisma
-model ScoutingReport {
-  id                String   @id @default(cuid())
-  playerId          String   @unique
-  
-  // Technical (1-8)
-  ballControl       Int?
-  passing           Int?
-  dribbling         Int?
-  finishing         Int?
-  
-  // Athletic (1-8)
-  pace              Int?
-  stamina           Int?
-  strength          Int?
-  
-  // Attacking (1-8)
-  positioning       Int?
-  movement          Int?
-  creativity        Int?
-  
-  // Tactical (1-8)
-  decisionMaking    Int?
-  workRate          Int?
-  discipline        Int?
-  
-  recommendation    String?    // "sign" | "monitor" | "discard"
-  strengths         String[]
-  weaknesses        String[]
-  notes             String?
-  scoutName         String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-}
-```
+#### Scout
+Registered users. Fields: id, email (unique), password (bcrypt), name, role, timestamps.
 
-**Indexes:** `playerId` (unique + indexed), `recommendation` (indexed)
+#### Invite
+Invite tokens for registration. Fields: id, email (unique), role, token (unique), used, timestamps, expiresAt.
+
+#### ScoutingReport
+Scouting grades. One per player (unique on `playerId`).
+
+**Fields:**
+- `playerId` (unique, indexed) — Transfermarkt player ID
+- `playerName`, `position`, `club` — Player info (nullable, backfilled from players.json if missing)
+- `ability` (1-5), `potential` (1-8) — Overall scores
+- 19 attribute ability fields: `physStrength`, `physSpeed`, ..., `tacSetPieces` (all Int?)
+- 19 attribute potential fields: `physStrengthPot`, ..., `tacSetPiecesPot` (all Int?)
+- `scoutingTags` (String[]), `verdict`, `role`, `conclusion`, `notes`
+- `scoutName`, `status`, `scoutingLevel`, `transferFee`, `salary`
+- `report` (1-5 FCB scale, legacy)
+- Legacy columns preserved: `ballControl`, `passing`, etc., `recommendation`, `strengths`, `weaknesses`
+
+**Indexes:** `playerId` (unique + indexed), `verdict` (indexed)
 
 ### Migrations
-Run `npx prisma migrate deploy` on Railway or `npx prisma db push` for quick sync.
+- Run locally: `npx prisma migrate dev --name description`
+- Railway auto-runs migrations on build via `prisma generate`
+- For schema-only push: `npx prisma db push`
 
 ---
 
-## 9. Grading System
+## 10. Grading System
 
-### Rating Scale (1-8)
+### Ability Scale (1-5) — Per Attribute
 
-| Score | Level | Description |
-|-------|-------|-------------|
-| 1 | Liga 3a | Third division level |
-| 2 | Liga 3a top | Top of third division |
-| 3 | Liga 2 bottom | Second division fringe |
-| 4 | Liga 2 average | Solid second division |
-| 5 | Liga 2 top / Superliga fringe | Promotion quality |
-| 6 | Superliga starter | First division regular |
-| 7 | Superliga top | Top of first division |
-| 8 | Superliga playoff / international | Elite domestic level |
+| Score | Label |
+|-------|-------|
+| 1 | Well below standard |
+| 2 | Below standard |
+| 3 | At standard |
+| 4 | Above standard |
+| 5 | Well above standard |
 
-### 13 Metrics (4 Categories)
+### Potential Scale (1-8) — Overall Only
 
-**I. Technical Proficiency:**
-1. Dribbling & Ball Control
-2. 1v1 Dribbling
-3. Passing Range & Creation
-4. Crossing & Delivery
+| Score | Level |
+|-------|-------|
+| 1 | Liga 3a Player |
+| 2 | Relegation Player |
+| 3 | Mid-table Player (playout) |
+| 4 | Play-off player |
+| 5 | Promotion/championship player |
+| 6 | Superliga Player (Playout/Relegation) |
+| 7 | Superliga Midtable player |
+| 8 | Superliga playoff player |
 
-**II. Athletic & Physical:**
-5. Acceleration & Pace
-6. Work Rate & Stamina
-7. Physical Dueling & Aerial
+### Verdicts (6 options)
+- **Sign** (green) — Acquire
+- **Observe** (blue) — Watch closely
+- **Monitor** (yellow) — Keep on radar
+- **Not a priority** (gray) — Low interest
+- **Out of reach** (red) — Too expensive/unrealistic
+- **Discard** (dark red) — Not suitable
 
-**III. Attacking Output:**
-8. Goal Contribution
-9. Carrying & Progression
-10. Finishing & Shot Placement
+### Design History
+Went through 3 iterations in one session (Feb 5):
+1. Single column attributes → Crypwalk asked for dual columns
+2. Dual columns (ability + potential per attribute) → Flavius said too much
+3. **Final: Single ability badge per attribute + overall Ability/Potential scores**
 
-**IV. Tactical IQ:**
-11. Positional Intelligence
-12. Defensive Pressing Intensity
-13. 1v1 Duels
-
-### Recommendations
-- **Sign** — Player worth acquiring
-- **Monitor** — Keep watching, not ready to commit
-- **Discard** — Not suitable
-
-### Status Tags
-- **FM** — First team material
-- **U23** — Youth/development prospect
-- **LOAN** — Loan candidate
-- **WATCH** — Watchlist
+**Lesson: Always start minimal. Let users request complexity.**
 
 ---
 
-## 10. Scraper Scripts
+## 11. Scraper Scripts
 
-### Active Scripts (use these)
+### Active Scripts
 
 | Script | Purpose | Speed | When to Use |
 |--------|---------|-------|-------------|
-| `rescrape_all.py` | ⭐ Fresh rosters for ALL 37 leagues | ~15 min | Monthly refresh or after transfer window |
-| `rescrape_romania.py` | Fresh RO1+RO2 rosters only | ~5 min | Quick Romanian data update |
-| `scraper_complete.py` | Full scrape with individual profiles + stats | ~10+ hours | Initial database build or major refresh |
-| `enrich_data.py` | Fill missing age/position from profiles | ~3 hours | After bulk scrape shows data gaps |
+| `rescrape_all.py` | ⭐ Fresh rosters for ALL 37 leagues | ~15 min | Monthly + transfer windows |
+| `rescrape_romania.py` | Fresh RO1+RO2 rosters only | ~5 min | Quick Romanian update |
+| `scraper_complete.py` | Full scrape with profiles + stats | ~10+ hours | Major data refresh |
+| `enrich_data.py` | Fill missing age/position from profiles | ~3 hours | After gaps found |
 
-### Legacy Scripts (don't use unless needed)
-
-| Script | Notes |
-|--------|-------|
-| `scraper.py` | Original market value page scraper |
-| `scraper_full_rosters.py` | Older roster scraper |
-| `scraper_details.py` | Profile detail scraper |
-| `scrape_fast.py` | Quick scrape variant |
-| `scrape_profiles.py` | Career stats scraper |
-| `scrape_everything.py` | All-in-one (superseded by scraper_complete.py) |
-| `fix_positions.py` | One-time position fix |
-| `scrape_positions_*.py` | Position-only scrapers |
-| `enrich_fast.py` | Fast enrichment variant |
-
-### Key Design Decisions
-
-1. **No `saison_id` in URLs** — Omitting it makes Transfermarkt default to current season automatically
-2. **Checkpoint/resume** — `rescrape_all.py` saves progress after each league to `rescrape_progress.json`
-3. **Merge strategy** — Rescrape scripts merge new data with existing enriched data (keeps career stats, height, foot, etc. from old profiles)
-4. **Rate limiting** — 1.2-2.5s between team pages, 2-3.5s between individual profiles
-5. **League codes change** — TM restructures leagues (splits into groups, renames). If 0 teams returned, code changed. See DATA_PIPELINE.md for current codes.
-
-### Current League Codes (37 leagues)
-
-**Romania:** RO1, RO2  
-**Balkans:** KR1, KR2, SER1, SER2, ALB1, KO1, MNE1, SL1, SL2, BOS1  
-**Italy:** IT3A, IT3B, IT3C  
-**Portugal:** PO2, PT3A  
-**France:** FR3, CN2A, CN2B, CN2C, CN2D  
-**Spain:** ES3A, ES3B  
-**Belgium:** BE2  
-**Poland:** PL1, PL2  
-**Austria:** A1, A2  
-**Czech/Slovakia:** TS1, TS2, SLO1  
-**Netherlands:** NL2  
-**Nordics/Baltics:** FI1, LI1, EST1  
-**USA:** MNP3  
+### Key Design Rules
+1. **NEVER hardcode `saison_id`** — Omit it (TM defaults to current) or use `get_current_season()`
+2. **Checkpoint/resume** — `rescrape_all.py` saves to `rescrape_progress.json`
+3. **Merge strategy** — New data merges with existing (preserves enriched fields)
+4. **Rate limiting** — 1.2-2.5s between requests
+5. **League codes change** — If 0 teams or 302 redirect, the code changed. Check DATA_PIPELINE.md.
 
 ---
 
-## 11. Deployment
+## 12. Deployment
 
 ### Infrastructure
-
-- **Hosting:** Railway (auto-builds from `railway up`)
+- **Hosting:** Railway
 - **Database:** PostgreSQL on Railway (same project)
 - **Domain:** bacau-scout-production.up.railway.app
-- **Build:** `prisma generate && next build`
-- **Start:** `next start` (port 8080)
-
-### Requirements
-
-- Node ≥22 (set in `.node-version` + `package.json` engines)
-- `DATABASE_URL` env var for PostgreSQL
-- `railway.toml` with `NO_CACHE = true` for clean builds
+- **Port:** 8080 (Railway default, NOT 3000)
 
 ### Deploy Process
+```bash
+cd projects/bacau-scout
+npx next build           # Verify build passes locally
+git add -A && git commit -m "description"
+git push origin master
+echo "y" | railway up    # Git push does NOT auto-deploy
+```
 
-1. Make changes
-2. `git add -A && git commit -m "description"`
-3. `git push origin master`
-4. `echo "y" | railway up` (git push alone does NOT auto-deploy)
-5. Wait ~2 min for build
-6. Verify: `curl -s "https://bacau-scout-production.up.railway.app/players.json" | python3 -c "import json,sys; print(len(json.load(sys.stdin)))"`
+### Environment Variables (Railway)
+| Var | Value |
+|-----|-------|
+| `DATABASE_URL` | postgresql://... (auto-set by Railway PostgreSQL addon) |
+| `NEXTAUTH_URL` | https://bacau-scout-production.up.railway.app |
+| `NEXTAUTH_SECRET` | (random string) |
 
-### Common Build Failures
-
-| Error | Cause | Fix |
-|-------|-------|-----|
-| `Node.js 18.x ... version ">=20.9.0" is required` | Railway using wrong Node | Check `.node-version` = `22` |
-| `prisma generate` fails | Missing DATABASE_URL | Set env var in Railway dashboard |
-| Old data after deploy | CDN cache | Hard refresh (Cmd+Shift+R) |
-| Deploy shows SUCCESS but old data | Build used cached layers | Add `NO_CACHE=true` in railway.toml |
+### Requirements
+- Node ≥22 (`.node-version` + `package.json` engines)
+- `railway.toml` with build config
 
 ---
 
-## 12. Known Issues & TODOs
+## 13. Common Pitfalls & Gotchas
 
-### Bugs
-- [ ] **Homepage uses localStorage for grades** — `getAllGrades()` should be `getAllGradesAsync()` for cross-device sync
-- [ ] **RO3 (Liga 3) unavailable** — Transfermarkt redirects, code may have changed
-- [ ] **Italy Serie B (IT2) not in scraper league list** — Was in old data from a different scraper run, recovered via merge but will be lost on next full rescrape
+### ⚠️ CRITICAL — Read Before Making Changes
 
-### TODOs
-- [ ] Add IT2 (Serie B) to league list in `rescrape_all.py`
-- [ ] Position name normalization — Both "Centre-Back" and "Defender - Centre-Back" exist in data
-- [ ] Deduplicate players — Some players appear in both old (recovered) and new data if they transferred between leagues
-- [ ] Photo URLs — Only 7% coverage, need to scrape from profiles
-- [ ] Season stats — Only available for players scraped with `scraper_complete.py`
+#### 1. Server Components Cannot Call Authenticated APIs
+**What:** Server components (like `/player/[id]/page.tsx`) run on the Railway server. They do NOT have the user's browser cookies/JWT.
+**Impact:** If a server component fetches `/api/grades` or any auth-protected API, the middleware returns 401 (or used to redirect to login HTML, causing JSON parse crash).
+**Rule:** Server components that need data must import functions directly (e.g., `findPlayerById()`), NOT make HTTP calls to their own API routes.
+**Affected pages:** `/player/[id]` (server component)
 
-### Maintenance Schedule
-- **Every transfer window** (Jan, Aug): Run `rescrape_all.py`
-- **Monthly:** Run `rescrape_romania.py` for scouts' primary leagues
-- **Quarterly:** Consider full `scraper_complete.py` run for career stats refresh
+#### 2. API Routes Must Return JSON Errors, Not HTML
+**What:** The middleware must return `NextResponse.json({ error }, { status: 401 })` for `/api/*` routes, never redirect to `/login`.
+**Impact:** Clients calling APIs expect JSON. An HTML redirect causes `SyntaxError: Unexpected token '<', "<!DOCTYPE"... is not valid JSON` — crashes the app.
+**Where:** `src/middleware.ts`
+
+#### 3. Railway Runs on Port 8080, Not 3000
+**What:** Next.js defaults to port 3000 locally, but Railway sets PORT=8080.
+**Impact:** Any hardcoded `localhost:3000` reference in server-side code fails on Railway.
+**Rule:** Never hardcode ports. Use relative URLs in client code. Use direct imports in server code.
+
+#### 4. Railway Requires Manual Deploy
+**What:** `git push origin master` pushes code but does NOT deploy.
+**Rule:** Always run `echo "y" | railway up` after pushing.
+
+#### 5. Never Hardcode Dates/Seasons
+**What:** Scraper season IDs must be dynamic. My training data makes old years feel "current."
+**Rule:** Always use `get_current_season()` or derive from `datetime.now()`.
+
+#### 6. `players.ts` is Server-Only
+**What:** Uses Node.js `fs` module to read `players.json`.
+**Impact:** Cannot be imported in any file marked `'use client'`.
+**Rule:** Client components access player data via API routes or static file fetch.
+
+#### 7. Prisma Client Singleton
+**What:** Creating `new PrismaClient()` in every API route file creates connection leaks in dev.
+**Rule:** Import from `lib/prisma.ts` for the singleton. (Currently some routes create their own — should be migrated.)
+
+#### 8. localStorage vs Database Grades
+**What:** `grades.ts` has both `getAllGrades()` (localStorage) and `getAllGradesAsync()` (database).
+**Dashboard uses:** `getAllGradesAsync()` (database — shared across all scouts)
+**GradingForm uses:** `saveGrade()` (dual write to both localStorage and database)
+**Rule:** For reading, always prefer `getAllGradesAsync()` (database). localStorage is legacy.
+
+#### 9. Missing Player Info in Old Grades
+**What:** Grades saved before Feb 5 don't have `playerName`/`position`/`club` in the DB.
+**Handled by:** GET `/api/grades` backfills from `players.json` on the fly.
+**Long-term:** Old grades get updated when re-saved.
+
+---
+
+## 14. Known Issues & TODOs
+
+### Active Issues
+- [ ] Some API routes create `new PrismaClient()` instead of using singleton
+- [ ] localStorage dual-write in `saveGrade()` is redundant now that dashboard reads from DB
+- [ ] No password change/reset flow for scouts
+- [ ] RO3 (Liga 3) broken on Transfermarkt (302 redirect)
+- [ ] Spain Segunda RFEF available but not scraped (5 groups, too many low-tier players)
+
+### Future Work
+- [ ] Remove localStorage grade reads entirely (keep write as offline fallback only)
+- [ ] Add scout filtering on dashboard (show only my reports vs all)
+- [ ] Photo URLs — only 7% coverage
+- [ ] Position name normalization (both "Centre-Back" and "Defender - Centre-Back" exist)
+- [ ] Scheduled rescrapes (cron job for monthly Romanian data refresh)
