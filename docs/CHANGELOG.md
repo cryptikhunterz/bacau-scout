@@ -4,6 +4,95 @@ All notable changes to the Bacau Scout platform are documented here.
 
 ---
 
+## 2026-02-05 — Grading System Overhaul (v2)
+
+### Complete Grading Restructure to Match FC Bacau Scout Report
+**Requested by:** Crypwalk
+**Commits:** `d37968c`, `225cd1b`, `255c54c`
+
+#### What Changed
+
+**1. New Attribute Categories (replacing old 4-category system)**
+
+Old structure:
+- I. Technical Proficiency (4 metrics)
+- II. Athletic & Physical Profile (3 metrics)
+- III. Attacking Output & Efficiency (3 metrics)
+- IV. Tactical IQ & Character (3 metrics)
+
+New structure (matching FC Bacau scout report form):
+- **I. Physical** (4 attrs): Strength, Speed, Agility, Coordination
+- **II. Technique** (9 attrs): Control, Short passes, Long passes, Aerial, Crossing, Finishing, Dribbling, 1v1 Offensive, 1v1 Defensive
+- **III. Tactic** (6 attrs): Positioning, Transition, Decisions, Anticipations, Duels, Set pieces
+
+**2. Dual Rating Per Attribute — Ability + Potential**
+
+Every attribute now has TWO ratings:
+- **Ability (1-5)** — current level of the player
+- **Potential (1-8)** — projected ceiling using the Romanian league scale:
+  1=Liga 3a, 2=Relegation, 3=Mid-table (playout), 4=Play-off, 5=Promotion/championship, 6=Superliga (Playout/Relegation), 7=Superliga Midtable, 8=Superliga playoff
+
+Each attribute row uses the compact FM-style badge with ▲▼ arrows for both columns.
+
+**3. Rating Scale Rubric at Top**
+
+Top of the form is now a non-interactive reference card showing all three rating scales:
+- Ability (1-5): Well below → Well above standard
+- Potential (1-8): Liga 3a → Superliga playoff player
+- Report FCB Standard (1-5): Well below FCB → Well above FCB
+
+**4. Expanded Verdict (was "Recommendation")**
+
+Old: Sign, Monitor, Discard (3 options)
+New: Sign, Observe, Monitor, Not a priority, Out of reach (5 options)
+
+**5. Scouting Tags (3 max, 65+ options)**
+
+New categorized tag system with 6 categories:
+- Defensive Actions (6 tags)
+- Offensive Actions (5 tags)
+- Physical (8 tags)
+- Technical (13 tags, incl. GK-specific)
+- Tactical (11 tags)
+- Mental / Behavioral (10 tags)
+
+**6. New Text Fields**
+
+- **Role** — free text (e.g. "Box-to-box midfielder", "False 9")
+- **Conclusion** — free text for overall assessment
+
+**7. Removed**
+
+- Strengths & Weaknesses tag sections (removed per request)
+- Old metric names (dribblingBallControl, accelerationPace, etc.)
+
+#### Database Changes
+
+Two Prisma migrations:
+1. `20260205145405_add_scout_report_v2_fields` — Added all new attribute columns, verdict, role, conclusion, report, status, scoutingLevel, transferFee, salary
+2. `20260205150654_add_potential_per_attribute` — Added 19 `*Pot` columns (one per attribute) for potential ratings
+
+Old columns preserved for backward compatibility (ballControl, passing, etc. still exist but unused by new UI).
+
+#### Files Changed
+
+| File | Change |
+|------|--------|
+| `prisma/schema.prisma` | 38 new columns (19 ability + 19 potential + metadata) |
+| `src/lib/grades.ts` | Complete rewrite: new types, scales, tag categories |
+| `src/components/GradingForm.tsx` | Compact badge+arrows layout with dual columns |
+| `src/components/GradesTable.tsx` | Updated for new fields, verdict colors |
+| `src/components/GradesFilters.tsx` | 5 verdict options |
+| `src/app/page.tsx` | Average ability/potential calcs, removed S&W columns |
+| `src/app/api/grades/route.ts` | Returns new field structure |
+| `src/app/api/grades/[playerId]/route.ts` | Dynamic field handling for all attrs |
+
+#### localStorage Version
+
+Bumped from `bacau-scout-grades-v2` → `bacau-scout-grades-v4` (existing local grades from old schema won't load — clean slate for new format).
+
+---
+
 ## 2026-02-05 — Search Bug Fixes & Data Deduplication
 
 ### Bug: Duplicate Player Rows in Search Results
