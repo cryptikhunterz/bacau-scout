@@ -6,7 +6,6 @@ import {
   PlayerGrade,
   POTENTIAL_LABELS,
   REPORT_LABELS,
-  ATTRIBUTE_CATEGORIES,
   SCOUTING_TAG_CATEGORIES,
   VERDICT_OPTIONS,
   getAbilityColor,
@@ -29,7 +28,43 @@ interface GradingFormProps {
   onSave: () => void;
 }
 
-// ─── Attribute Row: Label | Ability (1-5) | Potential (1-8) ─────────
+// ─── Compact Badge with ▲▼ arrows (1-5 scale) ──────────────────────
+
+function AbilityBadge({ value, onChange }: { value: AbilityRating; onChange: (v: AbilityRating) => void }) {
+  return (
+    <div className="flex items-center gap-1">
+      <span className={`inline-flex items-center justify-center w-8 h-8 rounded font-bold text-sm ${getAbilityColor(value)}`}>
+        {value}
+      </span>
+      <div className="flex flex-col">
+        <button type="button" onClick={() => value < 5 && onChange((value + 1) as AbilityRating)}
+          className="px-1 py-0 text-xs text-zinc-400 hover:text-white leading-none">▲</button>
+        <button type="button" onClick={() => value > 1 && onChange((value - 1) as AbilityRating)}
+          className="px-1 py-0 text-xs text-zinc-400 hover:text-white leading-none">▼</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Compact Badge with ▲▼ arrows (1-8 scale) ──────────────────────
+
+function PotentialBadge({ value, onChange }: { value: PotentialRating; onChange: (v: PotentialRating) => void }) {
+  return (
+    <div className="flex items-center gap-1">
+      <span className={`inline-flex items-center justify-center w-8 h-8 rounded font-bold text-sm ${getPotentialColor(value)}`}>
+        {value}
+      </span>
+      <div className="flex flex-col">
+        <button type="button" onClick={() => value < 8 && onChange((value + 1) as PotentialRating)}
+          className="px-1 py-0 text-xs text-zinc-400 hover:text-white leading-none">▲</button>
+        <button type="button" onClick={() => value > 1 && onChange((value - 1) as PotentialRating)}
+          className="px-1 py-0 text-xs text-zinc-400 hover:text-white leading-none">▼</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── Attribute Row: Label | Ability Badge | Potential Badge ─────────
 
 function AttributeRow({
   label,
@@ -45,31 +80,11 @@ function AttributeRow({
   onPotentialChange: (val: PotentialRating) => void;
 }) {
   return (
-    <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 py-1.5 border-b border-zinc-700/50 last:border-0">
-      <span className="text-sm text-zinc-300">{label}</span>
-
-      {/* Ability 1-5 */}
-      <div className="flex gap-0.5">
-        {([1, 2, 3, 4, 5] as AbilityRating[]).map(n => (
-          <button key={n} type="button" onClick={() => onAbilityChange(n)}
-            className={`w-7 h-7 rounded text-xs font-bold transition-colors ${
-              ability === n ? getAbilityColor(n) : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700'
-            }`}>
-            {n}
-          </button>
-        ))}
-      </div>
-
-      {/* Potential 1-8 */}
-      <div className="flex gap-0.5">
-        {([1, 2, 3, 4, 5, 6, 7, 8] as PotentialRating[]).map(n => (
-          <button key={n} type="button" onClick={() => onPotentialChange(n)}
-            className={`w-7 h-7 rounded text-xs font-bold transition-colors ${
-              potential === n ? getPotentialColor(n) : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700'
-            }`}>
-            {n}
-          </button>
-        ))}
+    <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-700/50 last:border-0">
+      <span className="text-sm text-zinc-300 flex-1">{label}</span>
+      <div className="flex items-center gap-4">
+        <AbilityBadge value={ability} onChange={onAbilityChange} />
+        <PotentialBadge value={potential} onChange={onPotentialChange} />
       </div>
     </div>
   );
@@ -78,7 +93,7 @@ function AttributeRow({
 // ─── Main Form ──────────────────────────────────────────────────────
 
 export function GradingForm({ player, existingGrade, onSave }: GradingFormProps) {
-  const e = existingGrade; // shorthand
+  const e = existingGrade;
 
   // Status
   const [status, setStatus] = useState<Status>(e?.status || 'WATCH');
@@ -87,7 +102,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   // Report (FCB Scale)
   const [report, setReport] = useState<AbilityRating>(e?.report || 3);
 
-  // Physical — ability + potential
+  // Physical
   const [physStrength, setPhysStrength] = useState<AbilityRating>(e?.physStrength || 3);
   const [physStrengthPot, setPhysStrengthPot] = useState<PotentialRating>(e?.physStrengthPot || 4);
   const [physSpeed, setPhysSpeed] = useState<AbilityRating>(e?.physSpeed || 3);
@@ -97,7 +112,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [physCoordination, setPhysCoordination] = useState<AbilityRating>(e?.physCoordination || 3);
   const [physCoordinationPot, setPhysCoordinationPot] = useState<PotentialRating>(e?.physCoordinationPot || 4);
 
-  // Technique — ability + potential
+  // Technique
   const [techControl, setTechControl] = useState<AbilityRating>(e?.techControl || 3);
   const [techControlPot, setTechControlPot] = useState<PotentialRating>(e?.techControlPot || 4);
   const [techShortPasses, setTechShortPasses] = useState<AbilityRating>(e?.techShortPasses || 3);
@@ -117,7 +132,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [techOneVsOneDefense, setTechOneVsOneDefense] = useState<AbilityRating>(e?.techOneVsOneDefense || 3);
   const [techOneVsOneDefensePot, setTechOneVsOneDefensePot] = useState<PotentialRating>(e?.techOneVsOneDefensePot || 4);
 
-  // Tactic — ability + potential
+  // Tactic
   const [tacPositioning, setTacPositioning] = useState<AbilityRating>(e?.tacPositioning || 3);
   const [tacPositioningPot, setTacPositioningPot] = useState<PotentialRating>(e?.tacPositioningPot || 4);
   const [tacTransition, setTacTransition] = useState<AbilityRating>(e?.tacTransition || 3);
@@ -137,7 +152,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   // Verdict
   const [verdict, setVerdict] = useState<Verdict>(e?.verdict || 'Monitor');
 
-  // Role, Conclusion, Notes
+  // Text fields
   const [role, setRole] = useState<string>(e?.role || '');
   const [conclusion, setConclusion] = useState<string>(e?.conclusion || '');
   const [notes, setNotes] = useState<string>(e?.notes || '');
@@ -186,11 +201,50 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   return (
     <div className="space-y-6">
 
+      {/* ─── RUBRIC: Rating Scales Reference ─── */}
+      <div className="p-3 bg-zinc-900 rounded-lg space-y-3">
+        <p className="text-xs font-medium text-zinc-500">Rating Scales</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          {/* Ability Scale (1-5) */}
+          <div>
+            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Ability (1-5)</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
+              <div><span className="font-bold text-zinc-300">1</span> = Well below standard</div>
+              <div><span className="font-bold text-zinc-300">2</span> = Below standard</div>
+              <div><span className="font-bold text-zinc-300">3</span> = At standard</div>
+              <div><span className="font-bold text-zinc-300">4</span> = Above standard</div>
+              <div><span className="font-bold text-zinc-300">5</span> = Well above standard</div>
+            </div>
+          </div>
+
+          {/* Potential Scale (1-8) */}
+          <div>
+            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Potential (1-8)</p>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
+              {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
+                <div key={num}><span className="font-bold text-zinc-300">{num}</span> = {label}</div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Report Scale (1-5 FCB) */}
+        <div>
+          <p className="text-[10px] font-semibold text-zinc-400 mb-1">Report — FCB Standard (1-5)</p>
+          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
+            {Object.entries(REPORT_LABELS).map(([num, label]) => (
+              <div key={num}><span className="font-bold text-zinc-300">{num}</span> = {label}</div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ─── Status & Level ─── */}
       <div className="flex flex-wrap gap-4">
         <div>
           <label className="block text-xs text-zinc-500 mb-1">Status</label>
-          <select value={status} onChange={(e) => setStatus(e.target.value as Status)}
+          <select value={status} onChange={(ev) => setStatus(ev.target.value as Status)}
             className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white">
             <option value="FM">FM (First Team)</option>
             <option value="U23">U23</option>
@@ -200,7 +254,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
         </div>
         <div>
           <label className="block text-xs text-zinc-500 mb-1">Scouting Level</label>
-          <select value={scoutingLevel} onChange={(e) => setScoutingLevel(e.target.value as ScoutingLevel)}
+          <select value={scoutingLevel} onChange={(ev) => setScoutingLevel(ev.target.value as ScoutingLevel)}
             className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white">
             <option value="Basic">Basic</option>
             <option value="Impressive">Impressive</option>
@@ -209,73 +263,27 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
         </div>
       </div>
 
-      {/* ─── RUBRIC: Rating Scales Reference ─── */}
-      <div className="p-4 bg-zinc-800/60 rounded-lg border border-zinc-700 space-y-4">
-        <h3 className="text-sm font-semibold text-zinc-200">Rating Scales</h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Ability Scale */}
-          <div>
-            <p className="text-xs font-medium text-zinc-400 mb-1">Ability (1-5)</p>
-            <div className="space-y-0.5 text-xs text-zinc-500">
-              <div><span className="font-medium text-zinc-300">1</span> = Well below standard</div>
-              <div><span className="font-medium text-zinc-300">2</span> = Below standard</div>
-              <div><span className="font-medium text-zinc-300">3</span> = At standard</div>
-              <div><span className="font-medium text-zinc-300">4</span> = Above standard</div>
-              <div><span className="font-medium text-zinc-300">5</span> = Well above standard</div>
-            </div>
-          </div>
-
-          {/* Potential Scale */}
-          <div>
-            <p className="text-xs font-medium text-zinc-400 mb-1">Potential (1-8)</p>
-            <div className="space-y-0.5 text-xs text-zinc-500">
-              {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
-                <div key={num}><span className="font-medium text-zinc-300">{num}</span> = {label}</div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Report Scale */}
-        <div>
-          <p className="text-xs font-medium text-zinc-400 mb-1">Report — FCB Standard (1-5)</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0.5 text-xs text-zinc-500">
-            {Object.entries(REPORT_LABELS).map(([num, label]) => (
-              <div key={num}><span className="font-medium text-zinc-300">{num}</span> = {label}</div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* ─── Report Rating ─── */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-zinc-200 border-b border-zinc-600 pb-2">Report (FCB Standard)</h3>
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">Report (FCB Standard)</h3>
         <div className="flex items-center justify-between py-1.5">
           <span className="text-sm text-zinc-300">Report Rating</span>
-          <div className="flex gap-0.5">
-            {([1, 2, 3, 4, 5] as AbilityRating[]).map(n => (
-              <button key={n} type="button" onClick={() => setReport(n)}
-                className={`w-8 h-8 rounded text-xs font-bold transition-colors ${
-                  report === n ? getAbilityColor(n) : 'bg-zinc-800 text-zinc-500 hover:bg-zinc-700'
-                }`}>
-                {n}
-              </button>
-            ))}
-          </div>
+          <AbilityBadge value={report} onChange={setReport} />
         </div>
       </div>
 
       {/* ─── Column Headers ─── */}
-      <div className="grid grid-cols-[1fr_auto_auto] items-center gap-3 px-0">
+      <div className="flex items-center justify-between">
         <span></span>
-        <span className="text-[10px] font-semibold text-zinc-400 text-center w-[148px]">ABILITY (1-5)</span>
-        <span className="text-[10px] font-semibold text-zinc-400 text-center w-[232px]">POTENTIAL (1-8)</span>
+        <div className="flex items-center gap-4">
+          <span className="text-[10px] font-semibold text-zinc-400 w-[52px] text-center">ABL (1-5)</span>
+          <span className="text-[10px] font-semibold text-zinc-400 w-[52px] text-center">POT (1-8)</span>
+        </div>
       </div>
 
-      {/* ─── Physical ─── */}
+      {/* ─── I. Physical ─── */}
       <div className="space-y-1">
-        <h3 className="text-sm font-semibold text-zinc-200 border-b border-zinc-600 pb-2">Physical</h3>
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">I. Physical</h3>
         <AttributeRow label="Strength" ability={physStrength} potential={physStrengthPot}
           onAbilityChange={setPhysStrength} onPotentialChange={setPhysStrengthPot} />
         <AttributeRow label="Speed" ability={physSpeed} potential={physSpeedPot}
@@ -286,9 +294,9 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
           onAbilityChange={setPhysCoordination} onPotentialChange={setPhysCoordinationPot} />
       </div>
 
-      {/* ─── Technique ─── */}
+      {/* ─── II. Technique ─── */}
       <div className="space-y-1">
-        <h3 className="text-sm font-semibold text-zinc-200 border-b border-zinc-600 pb-2">Technique</h3>
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">II. Technique</h3>
         <AttributeRow label="Control" ability={techControl} potential={techControlPot}
           onAbilityChange={setTechControl} onPotentialChange={setTechControlPot} />
         <AttributeRow label="Short passes" ability={techShortPasses} potential={techShortPassesPot}
@@ -309,9 +317,9 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
           onAbilityChange={setTechOneVsOneDefense} onPotentialChange={setTechOneVsOneDefensePot} />
       </div>
 
-      {/* ─── Tactic ─── */}
+      {/* ─── III. Tactic ─── */}
       <div className="space-y-1">
-        <h3 className="text-sm font-semibold text-zinc-200 border-b border-zinc-600 pb-2">Tactic</h3>
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">III. Tactic</h3>
         <AttributeRow label="Positioning" ability={tacPositioning} potential={tacPositioningPot}
           onAbilityChange={setTacPositioning} onPotentialChange={setTacPositioningPot} />
         <AttributeRow label="Transition" ability={tacTransition} potential={tacTransitionPot}
@@ -328,8 +336,8 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
 
       {/* ─── Scouting Tags (3 max) ─── */}
       <div className="space-y-4">
-        <div className="border-b border-zinc-600 pb-2">
-          <h3 className="text-sm font-semibold text-zinc-200">Scouting Tags</h3>
+        <div className="border-b border-zinc-700 pb-2">
+          <h3 className="text-sm font-semibold text-zinc-300">Scouting Tags</h3>
           <p className="text-xs text-zinc-500">Select up to 3 key traits ({scoutingTags.length}/3)</p>
         </div>
         {Object.entries(SCOUTING_TAG_CATEGORIES).map(([catKey, category]) => (
@@ -357,7 +365,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
 
       {/* ─── Verdict ─── */}
       <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-zinc-200 border-b border-zinc-600 pb-2">Verdict</h3>
+        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">Verdict</h3>
         <div className="flex flex-wrap gap-2">
           {VERDICT_OPTIONS.map(opt => (
             <button key={opt.value} type="button" onClick={() => setVerdict(opt.value)}
@@ -382,7 +390,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       <div>
         <label className="block text-xs text-zinc-500 mb-1">Conclusion</label>
         <textarea value={conclusion} onChange={(ev) => setConclusion(ev.target.value)}
-          placeholder="Overall assessment, fit for the team, recommendation details..."
+          placeholder="Overall assessment, fit for the team..."
           rows={4} className="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white resize-none" />
       </div>
 
@@ -390,7 +398,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       <div>
         <label className="block text-xs text-zinc-500 mb-1">Notes</label>
         <textarea value={notes} onChange={(ev) => setNotes(ev.target.value)}
-          placeholder="Additional observations, match context..."
+          placeholder="Additional observations..."
           rows={3} className="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white resize-none" />
       </div>
 
