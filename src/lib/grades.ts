@@ -91,7 +91,8 @@ export interface PlayerGrade {
   conclusion: string;
   notes: string;
 
-  // Optional
+  // Scout & Optional
+  scoutName: string;
   transferFee?: string;
   salary?: string;
 }

@@ -152,8 +152,12 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   // Verdict
   const [verdict, setVerdict] = useState<Verdict>(e?.verdict || 'Monitor');
 
+  // Scout name
+  const [scoutName, setScoutName] = useState<string>(e?.scoutName || '');
+
   // Text fields
   const [role, setRole] = useState<string>(e?.role || '');
+
   const [conclusion, setConclusion] = useState<string>(e?.conclusion || '');
   const [notes, setNotes] = useState<string>(e?.notes || '');
   const [transferFee, setTransferFee] = useState<string>(e?.transferFee || '');
@@ -187,7 +191,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       tacPositioning, tacPositioningPot, tacTransition, tacTransitionPot,
       tacDecisions, tacDecisionsPot, tacAnticipations, tacAnticipationsPot,
       tacDuels, tacDuelsPot, tacSetPieces, tacSetPiecesPot,
-      scoutingTags, verdict, role, conclusion, notes,
+      scoutingTags, verdict, role, conclusion, notes, scoutName,
       transferFee: transferFee || undefined,
       salary: salary || undefined,
     };
@@ -261,14 +265,11 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
             <option value="Data only">Data only</option>
           </select>
         </div>
-      </div>
-
-      {/* ─── Report Rating ─── */}
-      <div className="space-y-2">
-        <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">Report (FCB Standard)</h3>
-        <div className="flex items-center justify-between py-1.5">
-          <span className="text-sm text-zinc-300">Report Rating</span>
-          <AbilityBadge value={report} onChange={setReport} />
+        <div>
+          <label className="block text-xs text-zinc-500 mb-1">Report done by</label>
+          <input type="text" value={scoutName} onChange={(ev) => setScoutName(ev.target.value)}
+            placeholder="Scout name..."
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white w-48" />
         </div>
       </div>
 

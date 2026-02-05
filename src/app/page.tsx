@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
-import { getAllGrades, PlayerGrade, getAttributeColor, getPotentialColor } from '@/lib/grades';
+import { getAllGrades, PlayerGrade, getAbilityColor, getPotentialColor } from '@/lib/grades';
 
 // Position badge colors
 const positionColors: Record<string, string> = {
@@ -40,28 +40,6 @@ function getPositionAbbrev(position: string): string {
   return position.substring(0, 2).toUpperCase();
 }
 
-// Calculate category averages from new grade structure
-function getPhysicalAvg(g: PlayerGrade): number {
-  return Math.round(((g.physStrength || 3) + (g.physSpeed || 3) + (g.physAgility || 3) + (g.physCoordination || 3)) / 4 * 10) / 10;
-}
-
-function getTechniqueAvg(g: PlayerGrade): number {
-  const vals = [g.techControl, g.techShortPasses, g.techLongPasses, g.techAerial,
-    g.techCrossing, g.techFinishing, g.techDribbling, g.techOneVsOneOffense, g.techOneVsOneDefense];
-  const sum = vals.reduce((a, v) => a + (v || 3), 0);
-  return Math.round(sum / vals.length * 10) / 10;
-}
-
-function getTacticAvg(g: PlayerGrade): number {
-  const vals = [g.tacPositioning, g.tacTransition, g.tacDecisions, g.tacAnticipations, g.tacDuels, g.tacSetPieces];
-  const sum = vals.reduce((a, v) => a + (v || 3), 0);
-  return Math.round(sum / vals.length * 10) / 10;
-}
-
-function getOverallAvg(g: PlayerGrade): number {
-  return Math.round((getPhysicalAvg(g) + getTechniqueAvg(g) + getTacticAvg(g)) / 3 * 10) / 10;
-}
-
 // Average ability across all attributes (1-5)
 function getAvgAbility(g: PlayerGrade): number {
   const vals = [
@@ -84,15 +62,6 @@ function getAvgPotential(g: PlayerGrade): number {
   return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 4;
 }
 
-// Rating badge (1-5 scale)
-function RatingBadge({ value }: { value: number }) {
-  return (
-    <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAttributeColor(Math.round(value))}`}>
-      {value.toFixed(1)}
-    </span>
-  );
-}
-
 // Verdict badge
 function VerdictBadge({ verdict }: { verdict: string }) {
   const colors: Record<string, string> = {
@@ -109,32 +78,12 @@ function VerdictBadge({ verdict }: { verdict: string }) {
   );
 }
 
-// Tags display
-function TagsList({ tags, color }: { tags: string[]; color: 'green' | 'red' | 'blue' }) {
-  if (!tags || tags.length === 0) return <span className="text-zinc-600">-</span>;
-  const bgColors = {
-    green: 'bg-green-900/50 text-green-400 border border-green-700',
-    red: 'bg-red-900/50 text-red-400 border border-red-700',
-    blue: 'bg-blue-900/50 text-blue-400 border border-blue-700',
-  };
-  return (
-    <div className="flex flex-wrap gap-1">
-      {tags.slice(0, 3).map(tag => (
-        <span key={tag} className={`inline-block px-1.5 py-0.5 text-[10px] rounded ${bgColors[color]}`}>
-          {tag}
-        </span>
-      ))}
-      {tags.length > 3 && <span className="text-[10px] text-zinc-500">+{tags.length - 3}</span>}
-    </div>
-  );
-}
-
 export default function Home() {
   const [grades, setGrades] = useState<PlayerGrade[]>([]);
   const [search, setSearch] = useState('');
   const [verdictFilter, setVerdictFilter] = useState('');
   const [posFilter, setPosFilter] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'overall' | 'physical' | 'technique' | 'tactic' | 'avgAbility' | 'avgPotential' | 'date'>('date');
+  const [sortBy, setSortBy] = useState<'name' | 'avgAbility' | 'avgPotential' | 'date'>('date');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -156,10 +105,6 @@ export default function Home() {
       let cmp = 0;
       switch (sortBy) {
         case 'name': cmp = a.playerName.localeCompare(b.playerName); break;
-        case 'overall': cmp = getOverallAvg(a) - getOverallAvg(b); break;
-        case 'physical': cmp = getPhysicalAvg(a) - getPhysicalAvg(b); break;
-        case 'technique': cmp = getTechniqueAvg(a) - getTechniqueAvg(b); break;
-        case 'tactic': cmp = getTacticAvg(a) - getTacticAvg(b); break;
         case 'avgAbility': cmp = getAvgAbility(a) - getAvgAbility(b); break;
         case 'avgPotential': cmp = getAvgPotential(a) - getAvgPotential(b); break;
         case 'date': cmp = new Date(a.gradedAt).getTime() - new Date(b.gradedAt).getTime(); break;
@@ -198,7 +143,6 @@ export default function Home() {
               <span className="text-yellow-400 ml-2">{monitorCount} Monitor</span>
             </p>
           </div>
-
           <Link href="/search"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
             + Scout New Player
@@ -263,22 +207,13 @@ export default function Home() {
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Club</th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400">Verdict</th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgAbility')}>
-                      ABL <SortIcon col="avgAbility" />
+                      Ability <SortIcon col="avgAbility" />
                     </th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgPotential')}>
-                      POT <SortIcon col="avgPotential" />
+                      Potential <SortIcon col="avgPotential" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('physical')}>
-                      PHY <SortIcon col="physical" />
-                    </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('technique')}>
-                      TEC <SortIcon col="technique" />
-                    </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('tactic')}>
-                      TAC <SortIcon col="tactic" />
-                    </th>
-                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Tags</th>
-                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Role</th>
+                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Est Salary</th>
+                    <th className="px-3 py-3 text-left font-medium text-zinc-400">Scout</th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('date')}>
                       Date <SortIcon col="date" />
                     </th>
@@ -300,7 +235,7 @@ export default function Home() {
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
                       <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAttributeColor(Math.round(getAvgAbility(grade)))}`}>
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAbilityColor(Math.round(getAvgAbility(grade)))}`}>
                           {getAvgAbility(grade).toFixed(1)}
                         </span>
                       </td>
@@ -309,11 +244,8 @@ export default function Home() {
                           {getAvgPotential(grade).toFixed(1)}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getPhysicalAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getTechniqueAvg(grade)} /></td>
-                      <td className="px-3 py-2 text-center"><RatingBadge value={getTacticAvg(grade)} /></td>
-                      <td className="px-3 py-2"><TagsList tags={grade.scoutingTags || []} color="blue" /></td>
-                      <td className="px-3 py-2 text-zinc-400 text-xs">{grade.role || '-'}</td>
+                      <td className="px-3 py-2 text-zinc-400 text-xs">{grade.salary || '-'}</td>
+                      <td className="px-3 py-2 text-zinc-400 text-xs">{grade.scoutName || '-'}</td>
                       <td className="px-3 py-2 text-zinc-500 text-xs">{new Date(grade.gradedAt).toLocaleDateString()}</td>
                     </tr>
                   ))}
