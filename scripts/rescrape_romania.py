@@ -77,7 +77,7 @@ def get_teams(league_code):
 
 def get_roster(team_id, team_name):
     """Get detailed roster from team page - current season 2025/26"""
-    url = f"https://www.transfermarkt.com/team/kader/verein/{team_id}/saison_id/{get_current_season()}/plus/1"
+    url = f"https://www.transfermarkt.com/team/kader/verein/{team_id}/plus/1"
     html = fetch_page(url)
     if not html:
         return []

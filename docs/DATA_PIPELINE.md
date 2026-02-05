@@ -19,18 +19,15 @@ All player data lives in a single JSON file (`public/players.json`) that gets ba
 | Data | URL Pattern | Notes |
 |------|------------|-------|
 | League teams | `/wettbewerb/startseite/wettbewerb/{LEAGUE_CODE}` | Gets list of teams in a league |
-| Team roster | `/team/kader/verein/{TEAM_ID}/saison_id/{YEAR}/plus/1` | **⚠️ CRITICAL: `saison_id` must be current season year** |
+| Team roster | `/team/kader/verein/{TEAM_ID}/plus/1` | **Omit `saison_id` — TM defaults to current season** |
 | Player profile | `/spieler/profil/spieler/{PLAYER_ID}` | Detailed bio/info |
 | Career stats | `/spieler/leistungsdaten/spieler/{PLAYER_ID}/plus/0?saession_id=ges` | Season-by-season stats |
 
 ### Season ID
 
-**This is the #1 source of stale data bugs.**
+**DO NOT use `saison_id` in roster URLs.** Omitting it makes Transfermarkt default to the current season automatically. This eliminates all hardcoding/calculation issues.
 
-- `saison_id=2025` → 2025/26 season (current as of Feb 2026)
-- `saison_id=2024` → 2024/25 season (LAST SEASON - stale!)
-
-If players show wrong clubs, check `saison_id` first. Transfermarkt uses the starting year of the season.
+If you ever need a specific season (e.g., for historical data), use `saison_id={YEAR}` where YEAR is the season start year (e.g., 2025 = 2025/26 season). But for current rosters, just leave it out.
 
 ### League Codes
 

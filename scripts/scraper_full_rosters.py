@@ -116,7 +116,7 @@ def get_teams_in_league(league_code):
                         teams.append({
                             'id': team_id,
                             'name': name,
-                            'url': f"https://www.transfermarkt.com/team/kader/verein/{team_id}/saison_id/{get_current_season()}/plus/1"
+                            'url': f"https://www.transfermarkt.com/team/kader/verein/{team_id}/plus/1"
                         })
             return teams
         
@@ -131,7 +131,7 @@ def get_teams_in_league(league_code):
                     teams.append({
                         'id': team_id,
                         'name': name,
-                        'url': f"https://www.transfermarkt.com/team/kader/verein/{team_id}/saison_id/{get_current_season()}/plus/1"
+                        'url': f"https://www.transfermarkt.com/team/kader/verein/{team_id}/plus/1"
                     })
         
         return teams
