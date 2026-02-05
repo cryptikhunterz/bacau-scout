@@ -36,49 +36,34 @@ export interface PlayerGrade {
   // Report (FCB Scale 1-5)
   report: AbilityRating;
 
-  // Physical — Ability (1-5) + Potential (1-8)
+  // Physical (1-5)
   physStrength: AbilityRating;
-  physStrengthPot: PotentialRating;
   physSpeed: AbilityRating;
-  physSpeedPot: PotentialRating;
   physAgility: AbilityRating;
-  physAgilityPot: PotentialRating;
   physCoordination: AbilityRating;
-  physCoordinationPot: PotentialRating;
 
-  // Technique — Ability (1-5) + Potential (1-8)
+  // Technique (1-5)
   techControl: AbilityRating;
-  techControlPot: PotentialRating;
   techShortPasses: AbilityRating;
-  techShortPassesPot: PotentialRating;
   techLongPasses: AbilityRating;
-  techLongPassesPot: PotentialRating;
   techAerial: AbilityRating;
-  techAerialPot: PotentialRating;
   techCrossing: AbilityRating;
-  techCrossingPot: PotentialRating;
   techFinishing: AbilityRating;
-  techFinishingPot: PotentialRating;
   techDribbling: AbilityRating;
-  techDribblingPot: PotentialRating;
   techOneVsOneOffense: AbilityRating;
-  techOneVsOneOffensePot: PotentialRating;
   techOneVsOneDefense: AbilityRating;
-  techOneVsOneDefensePot: PotentialRating;
 
-  // Tactic — Ability (1-5) + Potential (1-8)
+  // Tactic (1-5)
   tacPositioning: AbilityRating;
-  tacPositioningPot: PotentialRating;
   tacTransition: AbilityRating;
-  tacTransitionPot: PotentialRating;
   tacDecisions: AbilityRating;
-  tacDecisionsPot: PotentialRating;
   tacAnticipations: AbilityRating;
-  tacAnticipationsPot: PotentialRating;
   tacDuels: AbilityRating;
-  tacDuelsPot: PotentialRating;
   tacSetPieces: AbilityRating;
-  tacSetPiecesPot: PotentialRating;
+
+  // Overall Scores (before verdict)
+  ability: AbilityRating;       // Overall ability (1-5)
+  potential: PotentialRating;   // Overall potential (1-8)
 
   // Scouting Tags (3 max)
   scoutingTags: string[];

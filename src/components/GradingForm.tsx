@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import {
   saveGrade,
@@ -29,7 +29,7 @@ interface GradingFormProps {
   onSave: () => void;
 }
 
-// ─── Compact Badge with ▲▼ arrows (1-5 scale) ──────────────────────
+// ─── Compact Badge with ▲▼ arrows (1-5) ────────────────────────────
 
 function AbilityBadge({ value, onChange }: { value: AbilityRating; onChange: (v: AbilityRating) => void }) {
   return (
@@ -47,7 +47,7 @@ function AbilityBadge({ value, onChange }: { value: AbilityRating; onChange: (v:
   );
 }
 
-// ─── Compact Badge with ▲▼ arrows (1-8 scale) ──────────────────────
+// ─── Compact Badge with ▲▼ arrows (1-8) ────────────────────────────
 
 function PotentialBadge({ value, onChange }: { value: PotentialRating; onChange: (v: PotentialRating) => void }) {
   return (
@@ -65,28 +65,17 @@ function PotentialBadge({ value, onChange }: { value: PotentialRating; onChange:
   );
 }
 
-// ─── Attribute Row: Label | Ability Badge | Potential Badge ─────────
+// ─── Attribute Row: Label + single Ability badge ────────────────────
 
-function AttributeRow({
-  label,
-  ability,
-  potential,
-  onAbilityChange,
-  onPotentialChange,
-}: {
+function AttributeRow({ label, value, onChange }: {
   label: string;
-  ability: AbilityRating;
-  potential: PotentialRating;
-  onAbilityChange: (val: AbilityRating) => void;
-  onPotentialChange: (val: PotentialRating) => void;
+  value: AbilityRating;
+  onChange: (val: AbilityRating) => void;
 }) {
   return (
-    <div className="flex items-center justify-between py-1.5 border-b border-zinc-100 dark:border-zinc-700/50 last:border-0">
-      <span className="text-sm text-zinc-300 flex-1">{label}</span>
-      <div className="flex items-center gap-4">
-        <AbilityBadge value={ability} onChange={onAbilityChange} />
-        <PotentialBadge value={potential} onChange={onPotentialChange} />
-      </div>
+    <div className="flex items-center justify-between py-1.5 border-b border-zinc-700/50 last:border-0">
+      <span className="text-sm text-zinc-300">{label}</span>
+      <AbilityBadge value={value} onChange={onChange} />
     </div>
   );
 }
@@ -101,52 +90,37 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [status, setStatus] = useState<Status>(e?.status || 'WATCH');
   const [scoutingLevel, setScoutingLevel] = useState<ScoutingLevel>(e?.scoutingLevel || 'Basic');
 
-  // Report (FCB Scale)
+  // Report
   const [report, setReport] = useState<AbilityRating>(e?.report || 3);
 
-  // Physical
+  // Physical (1-5)
   const [physStrength, setPhysStrength] = useState<AbilityRating>(e?.physStrength || 3);
-  const [physStrengthPot, setPhysStrengthPot] = useState<PotentialRating>(e?.physStrengthPot || 4);
   const [physSpeed, setPhysSpeed] = useState<AbilityRating>(e?.physSpeed || 3);
-  const [physSpeedPot, setPhysSpeedPot] = useState<PotentialRating>(e?.physSpeedPot || 4);
   const [physAgility, setPhysAgility] = useState<AbilityRating>(e?.physAgility || 3);
-  const [physAgilityPot, setPhysAgilityPot] = useState<PotentialRating>(e?.physAgilityPot || 4);
   const [physCoordination, setPhysCoordination] = useState<AbilityRating>(e?.physCoordination || 3);
-  const [physCoordinationPot, setPhysCoordinationPot] = useState<PotentialRating>(e?.physCoordinationPot || 4);
 
-  // Technique
+  // Technique (1-5)
   const [techControl, setTechControl] = useState<AbilityRating>(e?.techControl || 3);
-  const [techControlPot, setTechControlPot] = useState<PotentialRating>(e?.techControlPot || 4);
   const [techShortPasses, setTechShortPasses] = useState<AbilityRating>(e?.techShortPasses || 3);
-  const [techShortPassesPot, setTechShortPassesPot] = useState<PotentialRating>(e?.techShortPassesPot || 4);
   const [techLongPasses, setTechLongPasses] = useState<AbilityRating>(e?.techLongPasses || 3);
-  const [techLongPassesPot, setTechLongPassesPot] = useState<PotentialRating>(e?.techLongPassesPot || 4);
   const [techAerial, setTechAerial] = useState<AbilityRating>(e?.techAerial || 3);
-  const [techAerialPot, setTechAerialPot] = useState<PotentialRating>(e?.techAerialPot || 4);
   const [techCrossing, setTechCrossing] = useState<AbilityRating>(e?.techCrossing || 3);
-  const [techCrossingPot, setTechCrossingPot] = useState<PotentialRating>(e?.techCrossingPot || 4);
   const [techFinishing, setTechFinishing] = useState<AbilityRating>(e?.techFinishing || 3);
-  const [techFinishingPot, setTechFinishingPot] = useState<PotentialRating>(e?.techFinishingPot || 4);
   const [techDribbling, setTechDribbling] = useState<AbilityRating>(e?.techDribbling || 3);
-  const [techDribblingPot, setTechDribblingPot] = useState<PotentialRating>(e?.techDribblingPot || 4);
   const [techOneVsOneOffense, setTechOneVsOneOffense] = useState<AbilityRating>(e?.techOneVsOneOffense || 3);
-  const [techOneVsOneOffensePot, setTechOneVsOneOffensePot] = useState<PotentialRating>(e?.techOneVsOneOffensePot || 4);
   const [techOneVsOneDefense, setTechOneVsOneDefense] = useState<AbilityRating>(e?.techOneVsOneDefense || 3);
-  const [techOneVsOneDefensePot, setTechOneVsOneDefensePot] = useState<PotentialRating>(e?.techOneVsOneDefensePot || 4);
 
-  // Tactic
+  // Tactic (1-5)
   const [tacPositioning, setTacPositioning] = useState<AbilityRating>(e?.tacPositioning || 3);
-  const [tacPositioningPot, setTacPositioningPot] = useState<PotentialRating>(e?.tacPositioningPot || 4);
   const [tacTransition, setTacTransition] = useState<AbilityRating>(e?.tacTransition || 3);
-  const [tacTransitionPot, setTacTransitionPot] = useState<PotentialRating>(e?.tacTransitionPot || 4);
   const [tacDecisions, setTacDecisions] = useState<AbilityRating>(e?.tacDecisions || 3);
-  const [tacDecisionsPot, setTacDecisionsPot] = useState<PotentialRating>(e?.tacDecisionsPot || 4);
   const [tacAnticipations, setTacAnticipations] = useState<AbilityRating>(e?.tacAnticipations || 3);
-  const [tacAnticipationsPot, setTacAnticipationsPot] = useState<PotentialRating>(e?.tacAnticipationsPot || 4);
   const [tacDuels, setTacDuels] = useState<AbilityRating>(e?.tacDuels || 3);
-  const [tacDuelsPot, setTacDuelsPot] = useState<PotentialRating>(e?.tacDuelsPot || 4);
   const [tacSetPieces, setTacSetPieces] = useState<AbilityRating>(e?.tacSetPieces || 3);
-  const [tacSetPiecesPot, setTacSetPiecesPot] = useState<PotentialRating>(e?.tacSetPiecesPot || 4);
+
+  // Overall Scores
+  const [ability, setAbility] = useState<AbilityRating>(e?.ability || 3);
+  const [potential, setPotential] = useState<PotentialRating>(e?.potential || 4);
 
   // Scouting Tags (3 max)
   const [scoutingTags, setScoutingTags] = useState<string[]>(e?.scoutingTags || []);
@@ -154,24 +128,17 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   // Verdict
   const [verdict, setVerdict] = useState<Verdict>(e?.verdict || 'Monitor');
 
-  // Scout name (auto-filled from session)
-  const [scoutName, setScoutName] = useState<string>(e?.scoutName || '');
-
-  useEffect(() => {
-    if (session?.user?.name && !e?.scoutName) {
-      setScoutName(session.user.name);
-    }
-  }, [session, e?.scoutName]);
-
   // Text fields
   const [role, setRole] = useState<string>(e?.role || '');
-
   const [conclusion, setConclusion] = useState<string>(e?.conclusion || '');
   const [notes, setNotes] = useState<string>(e?.notes || '');
   const [transferFee, setTransferFee] = useState<string>(e?.transferFee || '');
   const [salary, setSalary] = useState<string>(e?.salary || '');
 
   const [showSuccess, setShowSuccess] = useState(false);
+
+  // Scout name from session
+  const scoutName = session?.user?.name || e?.scoutName || '';
 
   const toggleScoutingTag = (tag: string) => {
     if (scoutingTags.includes(tag)) {
@@ -189,27 +156,17 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       club: player.club,
       gradedAt: new Date().toISOString(),
       status, scoutingLevel, report,
-      physStrength, physStrengthPot, physSpeed, physSpeedPot,
-      physAgility, physAgilityPot, physCoordination, physCoordinationPot,
-      techControl, techControlPot, techShortPasses, techShortPassesPot,
-      techLongPasses, techLongPassesPot, techAerial, techAerialPot,
-      techCrossing, techCrossingPot, techFinishing, techFinishingPot,
-      techDribbling, techDribblingPot, techOneVsOneOffense, techOneVsOneOffensePot,
-      techOneVsOneDefense, techOneVsOneDefensePot,
-      tacPositioning, tacPositioningPot, tacTransition, tacTransitionPot,
-      tacDecisions, tacDecisionsPot, tacAnticipations, tacAnticipationsPot,
-      tacDuels, tacDuelsPot, tacSetPieces, tacSetPiecesPot,
+      physStrength, physSpeed, physAgility, physCoordination,
+      techControl, techShortPasses, techLongPasses, techAerial,
+      techCrossing, techFinishing, techDribbling, techOneVsOneOffense, techOneVsOneDefense,
+      tacPositioning, tacTransition, tacDecisions, tacAnticipations, tacDuels, tacSetPieces,
+      ability, potential,
       scoutingTags, verdict, role, conclusion, notes, scoutName,
       transferFee: transferFee || undefined,
       salary: salary || undefined,
     };
 
-    // Include scoutId from session
-    const gradeWithScout = {
-      ...grade,
-      scoutId: session?.user?.id,
-    };
-    saveGrade(gradeWithScout as PlayerGrade);
+    saveGrade(grade);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 2000);
     onSave();
@@ -218,14 +175,12 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   return (
     <div className="space-y-6">
 
-      {/* ─── RUBRIC: Rating Scales Reference ─── */}
+      {/* ─── RUBRIC ─── */}
       <div className="p-3 bg-zinc-900 rounded-lg space-y-3">
         <p className="text-xs font-medium text-zinc-500">Rating Scales</p>
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {/* Ability Scale (1-5) */}
           <div>
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Ability (1-5)</p>
+            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Attributes / Ability (1-5)</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
               <div><span className="font-bold text-zinc-300">1</span> = Well below standard</div>
               <div><span className="font-bold text-zinc-300">2</span> = Below standard</div>
@@ -234,8 +189,6 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
               <div><span className="font-bold text-zinc-300">5</span> = Well above standard</div>
             </div>
           </div>
-
-          {/* Potential Scale (1-8) */}
           <div>
             <p className="text-[10px] font-semibold text-zinc-400 mb-1">Potential (1-8)</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
@@ -245,19 +198,9 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
             </div>
           </div>
         </div>
-
-        {/* Report Scale (1-5 FCB) */}
-        <div>
-          <p className="text-[10px] font-semibold text-zinc-400 mb-1">Report — FCB Standard (1-5)</p>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
-            {Object.entries(REPORT_LABELS).map(([num, label]) => (
-              <div key={num}><span className="font-bold text-zinc-300">{num}</span> = {label}</div>
-            ))}
-          </div>
-        </div>
       </div>
 
-      {/* ─── Status & Level ─── */}
+      {/* ─── Status, Level & Scout ─── */}
       <div className="flex flex-wrap gap-4">
         <div>
           <label className="block text-xs text-zinc-500 mb-1">Status</label>
@@ -281,70 +224,61 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
         <div>
           <label className="block text-xs text-zinc-500 mb-1">Report done by</label>
           <input type="text" value={scoutName} readOnly
-            className="px-3 py-2 rounded border border-zinc-600 bg-zinc-700 text-sm text-zinc-300 w-48 cursor-not-allowed" />
-        </div>
-      </div>
-
-      {/* ─── Column Headers ─── */}
-      <div className="flex items-center justify-between">
-        <span></span>
-        <div className="flex items-center gap-4">
-          <span className="text-[10px] font-semibold text-zinc-400 w-[52px] text-center">ABL (1-5)</span>
-          <span className="text-[10px] font-semibold text-zinc-400 w-[52px] text-center">POT (1-8)</span>
+            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-900 text-sm text-zinc-400 w-48 cursor-not-allowed" />
         </div>
       </div>
 
       {/* ─── I. Physical ─── */}
       <div className="space-y-1">
         <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">I. Physical</h3>
-        <AttributeRow label="Strength" ability={physStrength} potential={physStrengthPot}
-          onAbilityChange={setPhysStrength} onPotentialChange={setPhysStrengthPot} />
-        <AttributeRow label="Speed" ability={physSpeed} potential={physSpeedPot}
-          onAbilityChange={setPhysSpeed} onPotentialChange={setPhysSpeedPot} />
-        <AttributeRow label="Agility" ability={physAgility} potential={physAgilityPot}
-          onAbilityChange={setPhysAgility} onPotentialChange={setPhysAgilityPot} />
-        <AttributeRow label="Coordination" ability={physCoordination} potential={physCoordinationPot}
-          onAbilityChange={setPhysCoordination} onPotentialChange={setPhysCoordinationPot} />
+        <AttributeRow label="Strength" value={physStrength} onChange={setPhysStrength} />
+        <AttributeRow label="Speed" value={physSpeed} onChange={setPhysSpeed} />
+        <AttributeRow label="Agility" value={physAgility} onChange={setPhysAgility} />
+        <AttributeRow label="Coordination" value={physCoordination} onChange={setPhysCoordination} />
       </div>
 
       {/* ─── II. Technique ─── */}
       <div className="space-y-1">
         <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">II. Technique</h3>
-        <AttributeRow label="Control" ability={techControl} potential={techControlPot}
-          onAbilityChange={setTechControl} onPotentialChange={setTechControlPot} />
-        <AttributeRow label="Short passes" ability={techShortPasses} potential={techShortPassesPot}
-          onAbilityChange={setTechShortPasses} onPotentialChange={setTechShortPassesPot} />
-        <AttributeRow label="Long passes" ability={techLongPasses} potential={techLongPassesPot}
-          onAbilityChange={setTechLongPasses} onPotentialChange={setTechLongPassesPot} />
-        <AttributeRow label="Aerial" ability={techAerial} potential={techAerialPot}
-          onAbilityChange={setTechAerial} onPotentialChange={setTechAerialPot} />
-        <AttributeRow label="Crossing" ability={techCrossing} potential={techCrossingPot}
-          onAbilityChange={setTechCrossing} onPotentialChange={setTechCrossingPot} />
-        <AttributeRow label="Finishing" ability={techFinishing} potential={techFinishingPot}
-          onAbilityChange={setTechFinishing} onPotentialChange={setTechFinishingPot} />
-        <AttributeRow label="Dribbling" ability={techDribbling} potential={techDribblingPot}
-          onAbilityChange={setTechDribbling} onPotentialChange={setTechDribblingPot} />
-        <AttributeRow label="1v1 Offensive" ability={techOneVsOneOffense} potential={techOneVsOneOffensePot}
-          onAbilityChange={setTechOneVsOneOffense} onPotentialChange={setTechOneVsOneOffensePot} />
-        <AttributeRow label="1v1 Defensive" ability={techOneVsOneDefense} potential={techOneVsOneDefensePot}
-          onAbilityChange={setTechOneVsOneDefense} onPotentialChange={setTechOneVsOneDefensePot} />
+        <AttributeRow label="Control" value={techControl} onChange={setTechControl} />
+        <AttributeRow label="Short passes" value={techShortPasses} onChange={setTechShortPasses} />
+        <AttributeRow label="Long passes" value={techLongPasses} onChange={setTechLongPasses} />
+        <AttributeRow label="Aerial" value={techAerial} onChange={setTechAerial} />
+        <AttributeRow label="Crossing" value={techCrossing} onChange={setTechCrossing} />
+        <AttributeRow label="Finishing" value={techFinishing} onChange={setTechFinishing} />
+        <AttributeRow label="Dribbling" value={techDribbling} onChange={setTechDribbling} />
+        <AttributeRow label="1v1 Offensive" value={techOneVsOneOffense} onChange={setTechOneVsOneOffense} />
+        <AttributeRow label="1v1 Defensive" value={techOneVsOneDefense} onChange={setTechOneVsOneDefense} />
       </div>
 
       {/* ─── III. Tactic ─── */}
       <div className="space-y-1">
         <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">III. Tactic</h3>
-        <AttributeRow label="Positioning" ability={tacPositioning} potential={tacPositioningPot}
-          onAbilityChange={setTacPositioning} onPotentialChange={setTacPositioningPot} />
-        <AttributeRow label="Transition" ability={tacTransition} potential={tacTransitionPot}
-          onAbilityChange={setTacTransition} onPotentialChange={setTacTransitionPot} />
-        <AttributeRow label="Decisions" ability={tacDecisions} potential={tacDecisionsPot}
-          onAbilityChange={setTacDecisions} onPotentialChange={setTacDecisionsPot} />
-        <AttributeRow label="Anticipations" ability={tacAnticipations} potential={tacAnticipationsPot}
-          onAbilityChange={setTacAnticipations} onPotentialChange={setTacAnticipationsPot} />
-        <AttributeRow label="Duels" ability={tacDuels} potential={tacDuelsPot}
-          onAbilityChange={setTacDuels} onPotentialChange={setTacDuelsPot} />
-        <AttributeRow label="Set pieces" ability={tacSetPieces} potential={tacSetPiecesPot}
-          onAbilityChange={setTacSetPieces} onPotentialChange={setTacSetPiecesPot} />
+        <AttributeRow label="Positioning" value={tacPositioning} onChange={setTacPositioning} />
+        <AttributeRow label="Transition" value={tacTransition} onChange={setTacTransition} />
+        <AttributeRow label="Decisions" value={tacDecisions} onChange={setTacDecisions} />
+        <AttributeRow label="Anticipations" value={tacAnticipations} onChange={setTacAnticipations} />
+        <AttributeRow label="Duels" value={tacDuels} onChange={setTacDuels} />
+        <AttributeRow label="Set pieces" value={tacSetPieces} onChange={setTacSetPieces} />
+      </div>
+
+      {/* ─── OVERALL ABILITY & POTENTIAL ─── */}
+      <div className="p-4 bg-zinc-800 rounded-lg border-2 border-zinc-600 space-y-3">
+        <h3 className="text-base font-bold text-white">Overall Assessment</h3>
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <span className="text-sm font-semibold text-zinc-200">ABILITY</span>
+            <span className="text-xs text-zinc-500 ml-2">(1-5)</span>
+          </div>
+          <AbilityBadge value={ability} onChange={setAbility} />
+        </div>
+        <div className="flex items-center justify-between py-2 border-t border-zinc-700">
+          <div>
+            <span className="text-sm font-semibold text-zinc-200">POTENTIAL</span>
+            <span className="text-xs text-zinc-500 ml-2">(1-8)</span>
+          </div>
+          <PotentialBadge value={potential} onChange={setPotential} />
+        </div>
       </div>
 
       {/* ─── Scouting Tags (3 max) ─── */}
@@ -395,7 +329,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       <div>
         <label className="block text-xs text-zinc-500 mb-1">Role</label>
         <input type="text" value={role} onChange={(ev) => setRole(ev.target.value)}
-          placeholder="e.g. Box-to-box midfielder, False 9, Inverted fullback..."
+          placeholder="e.g. Box-to-box midfielder, False 9..."
           className="w-full px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white" />
       </div>
 

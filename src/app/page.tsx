@@ -40,27 +40,9 @@ function getPositionAbbrev(position: string): string {
   return position.substring(0, 2).toUpperCase();
 }
 
-// Average ability across all attributes (1-5)
-function getAvgAbility(g: PlayerGrade): number {
-  const vals = [
-    g.physStrength, g.physSpeed, g.physAgility, g.physCoordination,
-    g.techControl, g.techShortPasses, g.techLongPasses, g.techAerial,
-    g.techCrossing, g.techFinishing, g.techDribbling, g.techOneVsOneOffense, g.techOneVsOneDefense,
-    g.tacPositioning, g.tacTransition, g.tacDecisions, g.tacAnticipations, g.tacDuels, g.tacSetPieces,
-  ].filter(v => v && v > 0);
-  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 3;
-}
-
-// Average potential across all attributes (1-8)
-function getAvgPotential(g: PlayerGrade): number {
-  const vals = [
-    g.physStrengthPot, g.physSpeedPot, g.physAgilityPot, g.physCoordinationPot,
-    g.techControlPot, g.techShortPassesPot, g.techLongPassesPot, g.techAerialPot,
-    g.techCrossingPot, g.techFinishingPot, g.techDribblingPot, g.techOneVsOneOffensePot, g.techOneVsOneDefensePot,
-    g.tacPositioningPot, g.tacTransitionPot, g.tacDecisionsPot, g.tacAnticipationsPot, g.tacDuelsPot, g.tacSetPiecesPot,
-  ].filter(v => v && v > 0);
-  return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length * 10) / 10 : 4;
-}
+// Direct ability and potential from grade (overall scores set by scout)
+function getAbility(g: PlayerGrade): number { return g.ability || 3; }
+function getPotential(g: PlayerGrade): number { return g.potential || 4; }
 
 // Verdict badge
 function VerdictBadge({ verdict }: { verdict: string }) {
@@ -83,7 +65,7 @@ export default function Home() {
   const [search, setSearch] = useState('');
   const [verdictFilter, setVerdictFilter] = useState('');
   const [posFilter, setPosFilter] = useState('');
-  const [sortBy, setSortBy] = useState<'name' | 'avgAbility' | 'avgPotential' | 'date'>('date');
+  const [sortBy, setSortBy] = useState<'name' | 'ability' | 'potential' | 'date'>('date');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   useEffect(() => {
@@ -105,8 +87,8 @@ export default function Home() {
       let cmp = 0;
       switch (sortBy) {
         case 'name': cmp = a.playerName.localeCompare(b.playerName); break;
-        case 'avgAbility': cmp = getAvgAbility(a) - getAvgAbility(b); break;
-        case 'avgPotential': cmp = getAvgPotential(a) - getAvgPotential(b); break;
+        case 'ability': cmp = getAbility(a) - getAbility(b); break;
+        case 'potential': cmp = getPotential(a) - getPotential(b); break;
         case 'date': cmp = new Date(a.gradedAt).getTime() - new Date(b.gradedAt).getTime(); break;
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -206,11 +188,11 @@ export default function Home() {
                     </th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Club</th>
                     <th className="px-3 py-3 text-center font-medium text-zinc-400">Verdict</th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgAbility')}>
-                      Ability <SortIcon col="avgAbility" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('ability')}>
+                      Ability <SortIcon col="ability" />
                     </th>
-                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('avgPotential')}>
-                      Potential <SortIcon col="avgPotential" />
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('potential')}>
+                      Potential <SortIcon col="potential" />
                     </th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Est Salary</th>
                     <th className="px-3 py-3 text-left font-medium text-zinc-400">Scout</th>
@@ -235,13 +217,13 @@ export default function Home() {
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
                       <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAbilityColor(Math.round(getAvgAbility(grade)))}`}>
-                          {getAvgAbility(grade).toFixed(1)}
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getAbilityColor(getAbility(grade))}`}>
+                          {getAbility(grade)}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(Math.round(getAvgPotential(grade)))}`}>
-                          {getAvgPotential(grade).toFixed(1)}
+                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(getPotential(grade))}`}>
+                          {getPotential(grade)}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.salary || '-'}</td>
