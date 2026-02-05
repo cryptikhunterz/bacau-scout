@@ -138,7 +138,18 @@ export default function SearchPage() {
 
   const filteredPlayers = useMemo(() => {
     let result = players.filter(p => {
-      if (search && !p.name.toLowerCase().includes(search.toLowerCase())) return false;
+      if (search) {
+        // Support Transfermarkt URL search (any TLD: .com, .es, .de, .pt, etc.)
+        if (search.includes('transfermarkt') && search.includes('spieler')) {
+          const match = search.match(/spieler\/(\d+)/);
+          if (match) {
+            return p.player_id === match[1];
+          }
+          return false;
+        }
+        // Regular name search
+        if (!p.name.toLowerCase().includes(search.toLowerCase())) return false;
+      }
       if (positionFilter && p.position !== positionFilter) return false;
       if (leagueFilter && p.league !== leagueFilter) return false;
       if (minAge && p.age && p.age < parseInt(minAge)) return false;
