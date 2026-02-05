@@ -137,18 +137,28 @@ export default function SearchPage() {
   }, [players]);
 
   const filteredPlayers = useMemo(() => {
+    // Pre-compute URL player ID extraction once (not per player)
+    let urlPlayerId: string | null = null;
+    let searchLower = '';
+    if (search) {
+      if (search.includes('transfermarkt') && search.includes('spieler')) {
+        const match = search.match(/spieler\/(\d+)/);
+        urlPlayerId = match ? match[1] : null;
+      } else {
+        searchLower = search.toLowerCase();
+      }
+    }
+
     let result = players.filter(p => {
       if (search) {
-        // Support Transfermarkt URL search (any TLD: .com, .es, .de, .pt, etc.)
-        if (search.includes('transfermarkt') && search.includes('spieler')) {
-          const match = search.match(/spieler\/(\d+)/);
-          if (match) {
-            return p.player_id === match[1];
-          }
-          return false;
+        if (urlPlayerId !== null) {
+          return p.player_id === urlPlayerId;
+        }
+        if (urlPlayerId === null && search.includes('transfermarkt')) {
+          return false; // URL-like but no valid player ID
         }
         // Regular name search
-        if (!p.name.toLowerCase().includes(search.toLowerCase())) return false;
+        if (!p.name.toLowerCase().includes(searchLower)) return false;
       }
       if (positionFilter && p.position !== positionFilter) return false;
       if (leagueFilter && p.league !== leagueFilter) return false;
@@ -223,7 +233,7 @@ export default function SearchPage() {
             />
           </div>
 
-          <div className="text-sm text-zinc-400">15,969 players • 35 leagues</div>
+          <div className="text-sm text-zinc-400">{players.length.toLocaleString()} players • {leagues.length} leagues</div>
         </div>
       </header>
 
@@ -289,7 +299,7 @@ export default function SearchPage() {
               </thead>
               <tbody className="divide-y divide-zinc-700/50">
                 {paginatedPlayers.map((player, idx) => (
-                  <tr key={player.player_id || idx} className="hover:bg-zinc-700/30 transition-colors">
+                  <tr key={`${player.player_id}-${idx}`} className="hover:bg-zinc-700/30 transition-colors">
                     <td className="px-3 py-2">
                       <span className={`inline-block px-2 py-1 text-xs font-bold text-white rounded ${getPositionColor(player.position)}`}>
                         {getPositionAbbrev(player.position)}
