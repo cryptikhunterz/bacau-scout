@@ -11,6 +11,14 @@ import re
 import os
 import sys
 
+def get_current_season():
+    """Calculate Transfermarkt season year dynamically.
+    TM uses start year: Aug 2025 onward = 2025, before Aug 2025 = 2024."""
+    from datetime import datetime
+    now = datetime.now()
+    return now.year if now.month >= 8 else now.year - 1
+
+
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml',
@@ -71,7 +79,7 @@ def get_teams(league_code):
 def get_roster_data(team):
     """Get player age + position from roster table"""
     slug = team['slug'] or 'team'
-    url = f"{BASE_URL}/{slug}/kader/verein/{team['id']}/saison_id/2025/plus/1"
+    url = f"{BASE_URL}/{slug}/kader/verein/{team['id']}/saison_id/{get_current_season()}/plus/1"
     html = fetch(url)
     if not html:
         return {}
