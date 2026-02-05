@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   saveGrade,
   PlayerGrade,
@@ -93,6 +94,7 @@ function AttributeRow({
 // ─── Main Form ──────────────────────────────────────────────────────
 
 export function GradingForm({ player, existingGrade, onSave }: GradingFormProps) {
+  const { data: session } = useSession();
   const e = existingGrade;
 
   // Status
@@ -152,8 +154,14 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   // Verdict
   const [verdict, setVerdict] = useState<Verdict>(e?.verdict || 'Monitor');
 
-  // Scout name
+  // Scout name (auto-filled from session)
   const [scoutName, setScoutName] = useState<string>(e?.scoutName || '');
+
+  useEffect(() => {
+    if (session?.user?.name && !e?.scoutName) {
+      setScoutName(session.user.name);
+    }
+  }, [session, e?.scoutName]);
 
   // Text fields
   const [role, setRole] = useState<string>(e?.role || '');
@@ -196,7 +204,12 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       salary: salary || undefined,
     };
 
-    saveGrade(grade);
+    // Include scoutId from session
+    const gradeWithScout = {
+      ...grade,
+      scoutId: session?.user?.id,
+    };
+    saveGrade(gradeWithScout as PlayerGrade);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 2000);
     onSave();
@@ -267,9 +280,8 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
         </div>
         <div>
           <label className="block text-xs text-zinc-500 mb-1">Report done by</label>
-          <input type="text" value={scoutName} onChange={(ev) => setScoutName(ev.target.value)}
-            placeholder="Scout name..."
-            className="px-3 py-2 rounded border border-zinc-700 bg-zinc-800 text-sm text-white w-48" />
+          <input type="text" value={scoutName} readOnly
+            className="px-3 py-2 rounded border border-zinc-600 bg-zinc-700 text-sm text-zinc-300 w-48 cursor-not-allowed" />
         </div>
       </div>
 

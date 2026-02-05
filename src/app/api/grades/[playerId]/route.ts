@@ -82,6 +82,7 @@ export async function POST(
       status: body.status,
       scoutingLevel: body.scoutingLevel,
       scoutName: body.scoutName,
+      scoutId: body.scoutId,
       transferFee: body.transferFee,
       salary: body.salary,
     };
