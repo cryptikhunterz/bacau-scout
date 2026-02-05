@@ -25,6 +25,10 @@ export async function middleware(request: NextRequest) {
   });
 
   if (!token) {
+    // API routes get JSON 401, not HTML redirect
+    if (pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);

@@ -4,6 +4,32 @@ All notable changes to the Bacau Scout platform are documented here.
 
 ---
 
+## 2026-02-05 — Dashboard: Database-Backed Grades (`e2d3fe6`)
+
+### Problem
+Dashboard was reading scouting reports from localStorage (`getAllGrades()`), meaning each scout only saw their own reports. With 15 scouts, they need a shared view.
+
+### Root Cause
+Homepage was still using the legacy localStorage read path instead of the database API.
+
+### Fix
+- **Added `playerName`, `position`, `club` columns** to `ScoutingReport` Prisma model (migration: `add_player_info_to_report`)
+- **Updated POST route** (`/api/grades/[playerId]`) to persist player info alongside grades
+- **Updated GET routes** (`/api/grades` + `/api/grades/[playerId]`) to return player info
+- **Switched homepage** from `getAllGrades()` (localStorage) to `getAllGradesAsync()` (database fetch)
+- All scouts now see the same shared dashboard
+
+### Files Changed
+- `prisma/schema.prisma` — added playerName, position, club to ScoutingReport
+- `src/app/api/grades/route.ts` — returns player info in GET all
+- `src/app/api/grades/[playerId]/route.ts` — saves + returns player info, saves ability/potential
+- `src/app/page.tsx` — switched to `getAllGradesAsync()`
+
+### Note
+Existing grades in DB won't have playerName/position/club until re-saved. New grades will populate these fields automatically.
+
+---
+
 ## 2026-02-05 — Grading System Overhaul (v2)
 
 ### Complete Grading Restructure to Match FC Bacau Scout Report
