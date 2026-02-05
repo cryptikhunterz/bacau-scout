@@ -216,8 +216,8 @@ export function getAbilityColor(value: number): string {
 
 export function getPotentialColor(rating: number): string {
   switch (rating) {
-    case 8: return 'bg-purple-600 text-white';
-    case 7: return 'bg-indigo-500 text-white';
+    case 8: return 'bg-fuchsia-600 text-white';
+    case 7: return 'bg-purple-500 text-white';
     case 6: return 'bg-blue-500 text-white';
     case 5: return 'bg-green-500 text-white';
     case 4: return 'bg-green-400 text-black';
