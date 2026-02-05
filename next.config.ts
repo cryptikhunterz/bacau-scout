@@ -5,4 +5,4 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
-// Deploy trigger 1770294069
+// Deploy trigger: ${Date.now()} - force rebuild with enriched data
