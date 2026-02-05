@@ -2,54 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatMarketValue } from '@/types/player';
 import { PlayerGrading } from '@/components/PlayerGrading';
-
-interface PlayerData {
-  id: string;
-  name: string;
-  tmUrl: string;
-  position: string;
-  altPositions?: string[];
-  age: number;
-  nationality: string;
-  secondNationality?: string;
-  birthDate?: string;
-  birthplace?: string;
-  club: string;
-  league?: string;
-  marketValue: string | null;
-  height?: string;
-  foot?: string;
-  contractUntil?: string | null;
-  shirtNumber?: string;
-  photoUrl?: string | null;
-  stats: {
-    season: string;
-    competition: string;
-    matches: number;
-    goals: number;
-    assists: number;
-  }[];
-  careerTotals?: {
-    matches: number;
-    goals: number;
-    assists: number;
-    minutes: number;
-  } | null;
-}
-
-async function getPlayer(id: string): Promise<PlayerData | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  try {
-    const response = await fetch(`${baseUrl}/api/player/${encodeURIComponent(id)}`, {
-      cache: 'no-store',
-    });
-    if (!response.ok) return null;
-    return response.json();
-  } catch (error) {
-    console.error('Error fetching player:', error);
-    return null;
-  }
-}
+import { findPlayerById, PlayerDetail } from '@/lib/players';
 
 // Position colors
 const posColors: Record<string, string> = {
@@ -81,7 +34,7 @@ export default async function PlayerDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const player = await getPlayer(id);
+  const player = findPlayerById(id);
   if (!player) notFound();
 
   const posGradient = getPosGradient(player.position || '');
@@ -272,8 +225,8 @@ export default async function PlayerDetailPage({
                 player={{
                   id: player.id,
                   name: player.name,
-                  position: player.position,
-                  club: player.club,
+                  position: player.position || '',
+                  club: player.club || '',
                 }}
               />
             </div>
