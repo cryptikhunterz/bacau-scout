@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-02-12 (v9) — Radar Charts on Report View
+
+### Added
+- **Radar charts on report view page** (`/report/[playerId]`) — Two side-by-side radar/spider charts now appear above the attribute sections when viewing saved reports:
+  - **Position Web (left, green #22c55e):** Shows average score per attribute group
+  - **Overall Traits (right, blue #3b82f6):** Same data with different color for visual contrast
+- **Handles both data formats:**
+  - New system (positionAttributes): Computes group averages from position-specific template groups (up to 6 axes)
+  - Legacy reports (Physical/Technique/Tactic only): Derives 3 axes from category averages
+- **Position-specific attribute display:** Reports with positionAttributes now show attributes in a 2-column grid grouped by position template categories (e.g. Defensive Actions, Offensive Actions, Physical, etc.) with Roman numeral headers
+
+### Changed
+- **Improved attribute layout on report view:** Position-specific attributes render in a balanced 2-column grid (desktop) / single column (mobile); legacy attributes remain in their original 3-column layout
+
 ## 2026-02-12 (v8) — Radar Charts & Layout
 
 ### Added
