@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { GradingForm } from './GradingForm';
-import { getGrade, deleteGrade, PlayerGrade } from '@/lib/grades';
+import { getGradeAsync, deleteGrade, PlayerGrade } from '@/lib/grades';
 
 interface PlayerGradingProps {
   player: {
@@ -18,11 +18,11 @@ export function PlayerGrading({ player }: PlayerGradingProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    setExistingGrade(getGrade(player.id));
+    getGradeAsync(player.id).then(g => setExistingGrade(g));
   }, [player.id]);
 
   const handleSave = () => {
-    setExistingGrade(getGrade(player.id));
+    getGradeAsync(player.id).then(g => setExistingGrade(g));
   };
 
   const handleDelete = () => {

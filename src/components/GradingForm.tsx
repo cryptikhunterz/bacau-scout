@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import {
   saveGrade,
+  saveGradeAsync,
   PlayerGrade,
   POTENTIAL_LABELS,
   REPORT_LABELS,
@@ -166,6 +167,10 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       salary: salary || undefined,
     };
 
+    // Save to DB (primary) and localStorage (legacy fallback)
+    saveGradeAsync(grade).then(ok => {
+      if (!ok) console.error('DB save failed, localStorage only');
+    });
     saveGrade(grade);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 2000);
