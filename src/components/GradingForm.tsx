@@ -24,6 +24,7 @@ import {
   PositionCategory,
 } from '@/lib/positionAttributes';
 import { FileUpload } from '@/components/FileUpload';
+import { RadarChart } from '@/components/RadarChart';
 
 interface GradingFormProps {
   player: {
@@ -166,6 +167,18 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
 
   const [showSuccess, setShowSuccess] = useState(false);
 
+  // ─── Compute group averages for radar charts ──────────────────────
+  const groupAverages = useMemo(() => {
+    if (!hasPositionTemplate || positionTemplate.groups.length === 0) return { labels: [], values: [] };
+    const labels = positionTemplate.groups.map(g => g.title);
+    const values = positionTemplate.groups.map(g => {
+      if (g.attributes.length === 0) return 0;
+      const sum = g.attributes.reduce((acc, attr) => acc + (positionAttributes[attr] || 3), 0);
+      return sum / g.attributes.length;
+    });
+    return { labels, values };
+  }, [hasPositionTemplate, positionTemplate, positionAttributes]);
+
   // Scout identity: in admin edit mode, keep original scout; otherwise use session
   const scoutName = isAdminEdit
     ? (e?.scoutName || '')
@@ -279,22 +292,50 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
             <span className="text-xs text-zinc-500 ml-auto">{player.position}</span>
           </div>
 
-          {/* Render each attribute group */}
-          {positionTemplate.groups.map((group, gi) => (
-            <div key={gi} className="space-y-1">
-              <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
-                {toRoman(gi + 1)}. {group.title}
-              </h3>
-              {group.attributes.map(attr => (
-                <AttributeRow
-                  key={attr}
-                  label={attr}
-                  value={(positionAttributes[attr] || 3) as AbilityRating}
-                  onChange={(val) => setPositionAttribute(attr, val)}
+          {/* ─── Radar Charts (side by side) ─── */}
+          {groupAverages.labels.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-zinc-800/60 rounded-lg border border-zinc-700/50">
+                <RadarChart
+                  labels={groupAverages.labels}
+                  values={groupAverages.values}
+                  maxValue={5}
+                  color="#22c55e"
+                  fillOpacity={0.2}
+                  title="Position Web"
                 />
-              ))}
+              </div>
+              <div className="p-4 bg-zinc-800/60 rounded-lg border border-zinc-700/50">
+                <RadarChart
+                  labels={groupAverages.labels}
+                  values={groupAverages.values}
+                  maxValue={5}
+                  color="#3b82f6"
+                  fillOpacity={0.2}
+                  title="Overall Traits"
+                />
+              </div>
             </div>
-          ))}
+          )}
+
+          {/* Render attribute groups in 2-column layout on desktop */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+            {positionTemplate.groups.map((group, gi) => (
+              <div key={gi} className="space-y-1">
+                <h3 className="text-sm font-semibold text-zinc-300 border-b border-zinc-700 pb-2">
+                  {toRoman(gi + 1)}. {group.title}
+                </h3>
+                {group.attributes.map(attr => (
+                  <AttributeRow
+                    key={attr}
+                    label={attr}
+                    value={(positionAttributes[attr] || 3) as AbilityRating}
+                    onChange={(val) => setPositionAttribute(attr, val)}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
         </>
       ) : (
         <>

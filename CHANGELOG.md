@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-02-12 (v8) — Radar Charts & Layout
+
+### Added
+- **Radar/Spider Charts on Scouting Report** — Two SVG-based radar charts displayed side by side above the attribute sections
+  - **Position Web (left, green):** Shows average score per attribute group (e.g. Defensive Actions, Offensive Actions, Physical, Technical, Tactical, Mental) on a 1-5 scale
+  - **Overall Traits (right, blue):** Same category breakdown with a different color for visual contrast
+  - Charts update in real-time as the scout changes attribute ratings
+- **`RadarChart` reusable component** (`src/components/RadarChart.tsx`) — Pure SVG radar chart with configurable labels, values, maxValue, color, fillOpacity, title, and size
+  - Concentric grid polygons with axis lines
+  - Filled data polygon with dot markers
+  - Value labels at each data point, outer text labels for each axis
+  - Scale labels along the first axis
+  - Dark theme styling (zinc-700 grid, zinc-300/500 labels)
+
+### Changed
+- **Symmetrical 2-column attribute layout** — The 6 attribute groups now render in a 2-column grid on desktop (3 groups per column), single column on mobile
+- **Radar charts responsive** — Stack vertically on mobile, side by side on desktop
+
 ## 2026-02-12 (v7) — Bug Fix Batch II
 
 ### Fixed
