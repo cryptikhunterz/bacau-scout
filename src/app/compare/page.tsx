@@ -330,7 +330,7 @@ export default function ComparePage() {
   };
 
   const getPercentile = (m: RadarMetric) =>
-    compareMode === 'league' ? m.percentile : m.gp;
+    compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
   // Build metric keys for bar comparison — UNION of all players' metrics
   // Every player gets an entry for every metric (null if missing)

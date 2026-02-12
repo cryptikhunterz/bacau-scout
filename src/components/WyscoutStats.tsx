@@ -146,7 +146,7 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
   const { pg, comp, radar, allround } = data;
 
   const getPercentile = (m: RadarMetric) =>
-    compareMode === 'league' ? m.percentile : m.gp;
+    compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
   const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
   const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);

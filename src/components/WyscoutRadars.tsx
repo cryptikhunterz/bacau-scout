@@ -93,7 +93,7 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
 
     // Pick percentile field based on comparison mode
     const getPercentile = (m: RadarMetric) =>
-      compMode === 'league' ? m.percentile : m.gp;
+      compMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
     // Filter out metrics with no data (value=0 and percentile=50 means missing)
     const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
