@@ -2,27 +2,54 @@
 
 import { useMemo } from 'react';
 
+// ─── Percentile color zones ────────────────────────────────────────────────
+
+function percentileColor(p: number): string {
+  if (p >= 90) return '#22c55e';     // green – elite
+  if (p >= 65) return '#86efac';     // light green – above average
+  if (p >= 35) return '#a1a1aa';     // gray – average
+  return '#ef4444';                  // red – below average
+}
+
+function percentileZoneColor(p: number, opacity: number): string {
+  if (p >= 90) return `rgba(34,197,94,${opacity})`;
+  if (p >= 65) return `rgba(134,239,172,${opacity})`;
+  if (p >= 35) return `rgba(161,161,170,${opacity})`;
+  return `rgba(239,68,68,${opacity})`;
+}
+
+// ─── Types ──────────────────────────────────────────────────────────────────
+
 interface RadarChartProps {
   labels: string[];
   values: number[];
   maxValue: number;
-  color?: string;        // e.g. '#22c55e'
+  color?: string;
   title?: string;
-  size?: number;          // chart diameter in px, default 400
-  // Optional second dataset for comparison overlay
+  size?: number;
   comparisonValues?: number[];
   comparisonColor?: string;
-  /**
-   * Per-axis max values for independent scaling (e.g. Wyscout per-90 stats).
-   * When provided, each axis is scaled by its own max instead of the global maxValue.
-   * The raw value is displayed in labels instead of a scaled number.
-   */
   maxValues?: number[];
+  /**
+   * Percentile mode: values are treated as 0-100 percentiles.
+   * Shows color-coded zones, percentage grid rings, and dot colors by zone.
+   */
+  mode?: 'raw' | 'percentile';
+  /**
+   * Raw display values shown in labels (used in percentile mode to show
+   * the original metric value while the shape uses percentile).
+   */
+  displayValues?: number[];
+  /**
+   * Per-point percentiles for coloring dots/labels in percentile mode.
+   * If not provided, values are used directly as percentiles.
+   */
+  percentiles?: number[];
 }
 
 /**
- * Wyscout-quality SVG radar chart with circular concentric gridlines,
- * filled data polygon, dot markers, and external labels.
+ * SVG radar chart with circular gridlines, filled polygon, dot markers,
+ * and external labels. Supports both raw and percentile modes.
  */
 export function RadarChart({
   labels,
@@ -34,17 +61,20 @@ export function RadarChart({
   comparisonValues,
   comparisonColor = '#3b82f6',
   maxValues,
+  mode = 'raw',
+  displayValues,
+  percentiles,
 }: RadarChartProps) {
   const n = labels.length;
   if (n < 3) return null;
 
-  // Viewbox is larger than chart to accommodate labels outside
+  const isPercentile = mode === 'percentile';
+
   const viewBoxSize = size + 160;
   const cx = viewBoxSize / 2;
   const cy = viewBoxSize / 2;
   const chartRadius = size / 2 - 20;
 
-  // Pre-compute angle for each axis (start from top, go clockwise)
   const angles = useMemo(
     () =>
       Array.from({ length: n }, (_, i) => {
@@ -53,16 +83,16 @@ export function RadarChart({
     [n],
   );
 
-  /** Convert polar to cartesian */
   const toXY = (angle: number, radius: number) => ({
     x: cx + radius * Math.cos(angle),
     y: cy + radius * Math.sin(angle),
   });
 
-  /** Resolve effective max for axis i */
-  const axisMax = (i: number) => (maxValues && maxValues[i] > 0 ? maxValues[i] : maxValue);
+  const axisMax = (i: number) => {
+    if (isPercentile) return 100;
+    return maxValues && maxValues[i] > 0 ? maxValues[i] : maxValue;
+  };
 
-  /** Build SVG polygon points string for data values */
   const buildPolygonPoints = (vals: number[]) =>
     vals
       .map((v, i) => {
@@ -73,7 +103,6 @@ export function RadarChart({
       })
       .join(' ');
 
-  /** Build data points array for dot markers */
   const buildDataPoints = (vals: number[]) =>
     vals.map((v, i) => {
       const m = axisMax(i);
@@ -87,13 +116,24 @@ export function RadarChart({
   const comparisonPolygon = comparisonValues ? buildPolygonPoints(comparisonValues) : null;
   const comparisonPoints = comparisonValues ? buildDataPoints(comparisonValues) : null;
 
-  // Grid levels: when using per-axis maxValues, show percentage rings (25%, 50%, 75%, 100%)
-  // Otherwise, integer steps (1, 2, ..., maxValue)
-  const usePerAxisScaling = !!maxValues && maxValues.length === n;
+  // Grid rings
+  const usePerAxisScaling = isPercentile || (!!maxValues && maxValues.length === n);
   const gridLevels = usePerAxisScaling
     ? [0.25, 0.5, 0.75, 1.0]
     : Array.from({ length: maxValue }, (_, i) => i + 1);
   const gridMax = usePerAxisScaling ? 1.0 : maxValue;
+
+  // Percentile zone background wedges (drawn as colored ring segments)
+  const zoneRings = isPercentile
+    ? [
+        { from: 0, to: 0.35, color: 'rgba(239,68,68,0.06)' },     // red zone
+        { from: 0.35, to: 0.65, color: 'rgba(161,161,170,0.06)' }, // gray zone
+        { from: 0.65, to: 0.90, color: 'rgba(134,239,172,0.06)' }, // light green
+        { from: 0.90, to: 1.0, color: 'rgba(34,197,94,0.08)' },    // green zone
+      ]
+    : [];
+
+  const fillColor = isPercentile ? '#3b82f6' : color;
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -108,15 +148,23 @@ export function RadarChart({
         style={{ maxWidth: `${size + 160}px` }}
       >
         {/* Background circle */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={chartRadius + 8}
-          fill="#18181b"
-          opacity={0.6}
-        />
+        <circle cx={cx} cy={cy} r={chartRadius + 8} fill="#18181b" opacity={0.6} />
 
-        {/* Concentric CIRCULAR grid lines */}
+        {/* Percentile zone rings */}
+        {zoneRings.map((zone, zi) => (
+          <circle
+            key={`zone-${zi}`}
+            cx={cx}
+            cy={cy}
+            r={((zone.from + zone.to) / 2) * chartRadius}
+            fill="none"
+            stroke={zone.color}
+            strokeWidth={(zone.to - zone.from) * chartRadius * 2}
+            opacity={1}
+          />
+        ))}
+
+        {/* Concentric grid lines */}
         {gridLevels.map((level) => {
           const r = (level / gridMax) * chartRadius;
           return (
@@ -133,7 +181,7 @@ export function RadarChart({
           );
         })}
 
-        {/* Axis lines from center to each vertex */}
+        {/* Axis lines */}
         {angles.map((a, i) => {
           const { x, y } = toXY(a, chartRadius);
           return (
@@ -150,8 +198,28 @@ export function RadarChart({
           );
         })}
 
-        {/* Scale labels along the first axis (top) — hidden when using per-axis scaling */}
-        {!usePerAxisScaling && gridLevels.map((level) => {
+        {/* Scale labels */}
+        {isPercentile && gridLevels.map((level) => {
+          const r = (level / gridMax) * chartRadius;
+          const { x, y } = toXY(angles[0], r);
+          const pctLabel = Math.round(level * 100);
+          return (
+            <text
+              key={`scale-${level}`}
+              x={x + 10}
+              y={y + 1}
+              textAnchor="start"
+              dominantBaseline="central"
+              fill="#71717a"
+              fontSize={9}
+              fontFamily="system-ui, sans-serif"
+            >
+              {pctLabel}
+            </text>
+          );
+        })}
+
+        {!isPercentile && !usePerAxisScaling && gridLevels.map((level) => {
           const r = (level / gridMax) * chartRadius;
           const { x, y } = toXY(angles[0], r);
           return (
@@ -170,7 +238,7 @@ export function RadarChart({
           );
         })}
 
-        {/* Comparison data polygon (behind main) */}
+        {/* Comparison polygon */}
         {comparisonPolygon && (
           <>
             <polygon
@@ -183,62 +251,54 @@ export function RadarChart({
               strokeLinejoin="round"
             />
             {comparisonPoints!.map((p, i) => (
-              <circle
-                key={`comp-dot-${i}`}
-                cx={p.x}
-                cy={p.y}
-                r={3}
-                fill={comparisonColor}
-                opacity={0.7}
-              />
+              <circle key={`comp-dot-${i}`} cx={p.x} cy={p.y} r={3} fill={comparisonColor} opacity={0.7} />
             ))}
           </>
         )}
 
-        {/* Main data polygon fill */}
+        {/* Main data polygon */}
         <polygon
           points={dataPolygon}
-          fill={color}
+          fill={fillColor}
           fillOpacity={0.2}
-          stroke={color}
+          stroke={fillColor}
           strokeWidth={2}
           strokeLinejoin="round"
         />
 
-        {/* Data point dots */}
-        {dataPoints.map((p, i) => (
-          <circle
-            key={`dot-${i}`}
-            cx={p.x}
-            cy={p.y}
-            r={4}
-            fill={color}
-          />
-        ))}
+        {/* Data point dots — colored by percentile zone in percentile mode */}
+        {dataPoints.map((p, i) => {
+          const pctVal = percentiles ? percentiles[i] : values[i];
+          const dotColor = isPercentile ? percentileColor(pctVal) : color;
+          return (
+            <circle key={`dot-${i}`} cx={p.x} cy={p.y} r={4} fill={dotColor} />
+          );
+        })}
 
-        {/* Outer labels: attribute name + value */}
+        {/* External labels */}
         {angles.map((a, i) => {
           const labelR = chartRadius + 24;
           const { x, y } = toXY(a, labelR);
 
-          // Determine text anchor based on angle position
           let anchor: 'start' | 'middle' | 'end' = 'middle';
           const cosA = Math.cos(a);
           if (cosA > 0.25) anchor = 'start';
           else if (cosA < -0.25) anchor = 'end';
 
-          // Vertical offset for labels at top/bottom
           const sinA = Math.sin(a);
           const yOffset = sinA < -0.7 ? -6 : sinA > 0.7 ? 8 : 0;
 
-          const val = values[i];
-          const displayVal = val !== undefined && val !== null
-            ? (Number.isInteger(val) ? val.toString() : val.toFixed(1))
+          // In percentile mode, show raw value; in raw mode, show the chart value
+          const dv = displayValues ? displayValues[i] : values[i];
+          const displayStr = dv !== undefined && dv !== null
+            ? (Number.isInteger(dv) ? dv.toString() : dv.toFixed(1))
             : '0';
+
+          const pctVal = percentiles ? percentiles[i] : values[i];
+          const valueColor = isPercentile ? percentileColor(pctVal) : color;
 
           return (
             <g key={`label-${i}`}>
-              {/* Attribute name */}
               <text
                 x={x}
                 y={y + yOffset}
@@ -251,18 +311,17 @@ export function RadarChart({
               >
                 {labels[i]}
               </text>
-              {/* Value below the name */}
               <text
                 x={x}
                 y={y + yOffset + 14}
                 textAnchor={anchor}
                 dominantBaseline="central"
-                fill={color}
+                fill={valueColor}
                 fontSize={11}
                 fontWeight={700}
                 fontFamily="system-ui, sans-serif"
               >
-                {displayVal}
+                {displayStr}
               </text>
             </g>
           );

@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-12 (v12) — Percentile-Based Radar Charts
+
+### Added
+- **Percentile computation script** (`scripts/compute-wyscout-percentiles.py`) — pre-computes percentile rankings for 9,741 qualified players (≥3 matches, ≥180 minutes) across 7 position groups (GK, CB, WB, DM, CM, AM, FW) and 32 leagues. Outputs `public/wyscout-percentiles.json`.
+- **League vs Global percentiles** — each metric is ranked both within the player's position group + league (league percentile) and across all leagues for the same position group (global percentile).
+- **Percentile mode on `RadarChart`** — new `mode='percentile'` prop renders:
+  - Color-coded zones: green (≥90th), light green (65–89th), gray (35–64th), red (<35th)
+  - Percentage grid rings at 25%, 50%, 75%, 100%
+  - Dot colors change per percentile zone
+  - Raw metric values shown in labels while chart shape reflects percentile
+  - Blue polygon fill for percentile mode (vs green for raw mode)
+- **League/Global toggle** on `WyscoutRadars` — switches between league-specific and cross-league percentile comparisons with descriptive labels.
+- **Percentile legend** — visual color guide showing zone thresholds below the toggle.
+- **Position-specific metrics per group** — each position group uses tailored metrics matching professional scouting standards (e.g., CB: Defensive Duel %, Aerial %, Interceptions; FW: xG, Goals, SoT%, xA).
+- **Inverted metric support** — Fouls/90 is inverted (lower = better percentile).
+
+### Changed
+- **`WyscoutRadars` component** — automatically uses percentile mode when percentile data is available; falls back to legacy raw-value radars for players without percentile data. Backward compatible.
+- **API route** (`/api/players/[id]/wyscout`) — serves percentile data from `wyscout-percentiles.json` when available, with `hasPercentiles` flag. Falls back to legacy `wyscout-metrics.json`.
+- **`RadarChart` component** — extended with `mode`, `displayValues`, `percentiles` props while maintaining full backward compatibility for existing raw-mode usage.
+
 ## 2026-02-12 (v11) — Wyscout Advanced Metrics Integration
 
 ### Added

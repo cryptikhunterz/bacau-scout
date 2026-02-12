@@ -8,29 +8,56 @@ import {
   extractRadarData,
 } from '@/lib/wyscoutRadar';
 
-interface WyscoutData {
+// ─── Types ──────────────────────────────────────────────────────────────────
+
+interface RadarMetric {
+  key: string;
+  label: string;
+  value: number;
+  percentile: number;
+  gp: number;
+}
+
+interface PercentileWyscoutData {
+  hasPercentiles: true;
+  pg: string;
+  comp: string;
+  radar: RadarMetric[];
+  allround: RadarMetric[];
+}
+
+interface LegacyWyscoutData {
+  hasPercentiles: false;
   metrics: Record<string, string>;
   position: string;
   wyscoutPosition: string;
 }
 
+type WyscoutData = PercentileWyscoutData | LegacyWyscoutData;
+
+// ─── Position group labels ──────────────────────────────────────────────────
+
+const PG_LABELS: Record<string, string> = {
+  GK: 'GOALKEEPER',
+  CB: 'CENTRE-BACK',
+  WB: 'WING-BACK',
+  DM: 'DEF. MIDFIELD',
+  CM: 'CENTRAL MIDFIELD',
+  AM: 'ATT. MIDFIELD',
+  FW: 'FORWARD',
+};
+
+// ─── Component ──────────────────────────────────────────────────────────────
+
 interface WyscoutRadarsProps {
-  /** Transfermarkt player ID */
   playerId: string;
-  /** Transfermarkt position (e.g. "Centre-Back", "Central Midfield") */
   tmPosition?: string;
 }
 
-/**
- * Fetches Wyscout data for a player and renders two radar charts:
- * 1. Position-specific radar (green)
- * 2. Overall radar (blue)
- *
- * Renders nothing if no Wyscout data is available.
- */
 export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
   const [data, setData] = useState<WyscoutData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [compMode, setCompMode] = useState<'league' | 'global'>('league');
 
   useEffect(() => {
     if (!playerId) {
@@ -44,7 +71,7 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
         return res.json();
       })
       .then((json) => {
-        if (json && json.metrics) setData(json);
+        if (json) setData(json);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -56,11 +83,117 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
     );
   }
 
-  if (!data || !data.metrics) return null;
+  if (!data) return null;
 
-  // Use TM position if available, otherwise fall back to the one stored with Wyscout data
+  // ─── Percentile mode ────────────────────────────────────────────────────
+
+  if (data.hasPercentiles) {
+    const { pg, comp, radar, allround } = data;
+
+    // Pick percentile field based on comparison mode
+    const getPercentile = (m: RadarMetric) =>
+      compMode === 'league' ? m.percentile : m.gp;
+
+    // Filter out metrics with no data (value=0 and percentile=50 means missing)
+    const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
+    const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);
+
+    if (!hasPositionData && !hasAllroundData) return null;
+
+    const posLabel = PG_LABELS[pg] || pg;
+
+    return (
+      <div className="space-y-4">
+        {/* Section header */}
+        <div className="flex items-center gap-3 px-1">
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
+          <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-[0.2em]">
+            Advanced Metrics (Wyscout)
+          </h3>
+          <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
+        </div>
+
+        {/* Comparison toggle */}
+        <div className="flex items-center justify-center gap-2">
+          <button
+            onClick={() => setCompMode('league')}
+            className={`px-3 py-1 text-xs font-medium rounded-l-md border transition-colors ${
+              compMode === 'league'
+                ? 'bg-emerald-600 text-white border-emerald-600'
+                : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700'
+            }`}
+          >
+            🏆 League
+          </button>
+          <button
+            onClick={() => setCompMode('global')}
+            className={`px-3 py-1 text-xs font-medium rounded-r-md border transition-colors ${
+              compMode === 'global'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:bg-zinc-700'
+            }`}
+          >
+            🌍 Global
+          </button>
+          <span className="ml-2 text-[10px] text-zinc-500 max-w-[180px] truncate" title={comp}>
+            {compMode === 'league' ? comp : 'All leagues, same position'}
+          </span>
+        </div>
+
+        {/* Legend */}
+        <div className="flex items-center justify-center gap-4 text-[10px]">
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> ≥90th
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-green-300 inline-block" /> 65–89th
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-zinc-400 inline-block" /> 35–64th
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2 h-2 rounded-full bg-red-500 inline-block" /> &lt;35th
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Position Radar */}
+          {hasPositionData && (
+            <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+              <RadarChart
+                labels={radar.map((m) => m.label)}
+                values={radar.map((m) => getPercentile(m))}
+                maxValue={100}
+                mode="percentile"
+                displayValues={radar.map((m) => m.value)}
+                percentiles={radar.map((m) => getPercentile(m))}
+                title={`${posLabel} PROFILE`}
+              />
+            </div>
+          )}
+
+          {/* All-Round Radar */}
+          {hasAllroundData && (
+            <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+              <RadarChart
+                labels={allround.map((m) => m.label)}
+                values={allround.map((m) => getPercentile(m))}
+                maxValue={100}
+                mode="percentile"
+                displayValues={allround.map((m) => m.value)}
+                percentiles={allround.map((m) => getPercentile(m))}
+                title="ALL-ROUND PROFILE"
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Legacy raw mode (fallback) ─────────────────────────────────────────
+
   const position = tmPosition || data.position || '';
-
   const posConfig = getPositionMetrics(position);
   const posData = posConfig.metrics.length >= 3
     ? extractRadarData(data.metrics, posConfig.metrics)
@@ -68,7 +201,6 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
 
   const overallData = extractRadarData(data.metrics, OVERALL_METRICS);
 
-  // Don't render if we have no usable data (all zeros)
   const hasPositionData = posData && posData.values.some((v) => v > 0);
   const hasOverallData = overallData.values.some((v) => v > 0);
 
@@ -76,7 +208,6 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
 
   return (
     <div className="space-y-4">
-      {/* Section header */}
       <div className="flex items-center gap-3 px-1">
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
         <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-[0.2em]">
@@ -86,7 +217,6 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Position Radar */}
         {hasPositionData && posData && (
           <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
             <RadarChart
@@ -100,7 +230,6 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
           </div>
         )}
 
-        {/* Overall Radar */}
         {hasOverallData && (
           <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
             <RadarChart
