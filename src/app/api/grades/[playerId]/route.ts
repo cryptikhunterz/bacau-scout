@@ -36,9 +36,9 @@ export async function GET(
       gradedAt: grade.updatedAt.toISOString(),
       status: grade.status || 'WATCH',
       scoutingLevel: grade.scoutingLevel || 'Basic',
-      ability: grade.ability || 3,
-      potential: grade.potential || 4,
-      report: grade.report || 3,
+      ability: grade.ability ?? 3,
+      potential: grade.potential ?? 4,
+      report: grade.report ?? 3,
       scoutingTags: grade.scoutingTags || [],
       verdict: grade.verdict || grade.recommendation || 'Monitor',
       role: grade.role || '',
@@ -51,12 +51,12 @@ export async function GET(
 
     // Add ability fields (default 3)
     for (const key of ABILITY_KEYS) {
-      result[key] = (grade as any)[key] || 3;
+      result[key] = (grade as any)[key] ?? 3;
     }
 
     // Add potential fields (default 4)
     for (const key of POTENTIAL_KEYS) {
-      result[key] = (grade as any)[key] || 4;
+      result[key] = (grade as any)[key] ?? 4;
     }
 
     return NextResponse.json(result)
