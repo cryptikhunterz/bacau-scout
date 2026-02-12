@@ -168,17 +168,38 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
   const [showSuccess, setShowSuccess] = useState(false);
 
   // ─── Compute ALL individual attributes for radar chart ──────────────
-  const radarAttributes = useMemo(() => {
-    if (!hasPositionTemplate || positionTemplate.groups.length === 0) return { labels: [], values: [] };
-    const labels: string[] = [];
-    const values: number[] = [];
+  // Split attributes into Position Radar (first 3 groups: Defensive, Offensive, Technical)
+  // and Overall Radar (remaining: Physical, Tactical, Mental)
+  const { positionRadar, overallRadar } = useMemo(() => {
+    if (!hasPositionTemplate || positionTemplate.groups.length === 0)
+      return { positionRadar: { labels: [], values: [] }, overallRadar: { labels: [], values: [] } };
+    
+    // Position-specific groups (typically Defensive Actions, Offensive Actions, Technical)
+    const positionGroupTitles = ['Defensive Actions', 'Offensive Actions', 'Technical'];
+    const overallGroupTitles = ['Physical', 'Tactical', 'Mental'];
+    
+    const posLabels: string[] = [];
+    const posValues: number[] = [];
+    const ovLabels: string[] = [];
+    const ovValues: number[] = [];
+    
     for (const group of positionTemplate.groups) {
+      const isPosition = positionGroupTitles.includes(group.title);
       for (const attr of group.attributes) {
-        labels.push(attr);
-        values.push(positionAttributes[attr] || 3);
+        if (isPosition) {
+          posLabels.push(attr);
+          posValues.push(positionAttributes[attr] || 3);
+        } else {
+          ovLabels.push(attr);
+          ovValues.push(positionAttributes[attr] || 3);
+        }
       }
     }
-    return { labels, values };
+    
+    return {
+      positionRadar: { labels: posLabels, values: posValues },
+      overallRadar: { labels: ovLabels, values: ovValues },
+    };
   }, [hasPositionTemplate, positionTemplate, positionAttributes]);
 
   // Scout identity: in admin edit mode, keep original scout; otherwise use session
@@ -294,18 +315,31 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
             <span className="text-xs text-zinc-500 ml-auto">{player.position}</span>
           </div>
 
-          {/* ─── Player Radar Chart ─── */}
-          {radarAttributes.labels.length > 0 && (
-            <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
-              <RadarChart
-                labels={radarAttributes.labels}
-                values={radarAttributes.values}
-                maxValue={5}
-                color="#22c55e"
-                title={`${positionTemplate.badge} ${positionTemplate.label.toUpperCase()} RADAR`}
-              />
-            </div>
-          )}
+          {/* ─── Player Radar Charts (Side by Side) ─── */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {positionRadar.labels.length >= 3 && (
+              <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+                <RadarChart
+                  labels={positionRadar.labels}
+                  values={positionRadar.values}
+                  maxValue={5}
+                  color="#22c55e"
+                  title={`${positionTemplate.badge} POSITION RADAR`}
+                />
+              </div>
+            )}
+            {overallRadar.labels.length >= 3 && (
+              <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+                <RadarChart
+                  labels={overallRadar.labels}
+                  values={overallRadar.values}
+                  maxValue={5}
+                  color="#3b82f6"
+                  title="OVERALL TRAITS"
+                />
+              </div>
+            )}
+          </div>
 
           {/* Render attribute groups in 2-column layout on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">

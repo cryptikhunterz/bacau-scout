@@ -125,32 +125,44 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
 
   const isAdmin = session?.user?.role === 'admin';
 
-  // ─── Compute radar chart data from report (individual attributes) ──
-  const radarData = useMemo(() => {
-    if (!report) return null;
+  // ─── Compute radar chart data — split into Position Radar + Overall Radar ──
+  const { positionRadar, overallRadar } = useMemo(() => {
+    const empty = { positionRadar: null as { labels: string[]; values: number[]; title: string } | null, overallRadar: null as { labels: string[]; values: number[]; title: string } | null };
+    if (!report) return empty;
 
-    // Case 1: New system — positionAttributes present → show ALL individual attributes
+    const positionGroupTitles = ['Defensive Actions', 'Offensive Actions', 'Technical'];
+
+    // Case 1: New system — positionAttributes
     if (report.positionAttributes && Object.keys(report.positionAttributes).length > 0) {
       const template = getPositionTemplate(report.position);
-      if (template.groups.length === 0) return null;
-      const labels: string[] = [];
-      const values: number[] = [];
+      if (template.groups.length === 0) return empty;
+      
+      const posLabels: string[] = [];
+      const posValues: number[] = [];
+      const ovLabels: string[] = [];
+      const ovValues: number[] = [];
+      
       for (const group of template.groups) {
+        const isPosition = positionGroupTitles.includes(group.title);
         for (const attr of group.attributes) {
-          labels.push(attr);
-          values.push(report.positionAttributes[attr] || 0);
+          if (isPosition) {
+            posLabels.push(attr);
+            posValues.push(report.positionAttributes[attr] || 0);
+          } else {
+            ovLabels.push(attr);
+            ovValues.push(report.positionAttributes[attr] || 0);
+          }
         }
       }
-      if (labels.length === 0) return null;
-      return { labels, values, title: `${template.badge} ${template.label.toUpperCase()} RADAR` };
+      
+      return {
+        positionRadar: posLabels.length >= 3 ? { labels: posLabels, values: posValues, title: `${template.badge} POSITION RADAR` } : null,
+        overallRadar: ovLabels.length >= 3 ? { labels: ovLabels, values: ovValues, title: 'OVERALL TRAITS' } : null,
+      };
     }
 
-    // Case 2: Legacy attributes — show ALL individual attributes from Physical/Technique/Tactic
-    const legacyAttrs: { label: string; value: number }[] = [
-      { label: 'Strength', value: report.physStrength },
-      { label: 'Speed', value: report.physSpeed },
-      { label: 'Agility', value: report.physAgility },
-      { label: 'Coordination', value: report.physCoordination },
+    // Case 2: Legacy attributes — Physical = position-ish, Technique + Tactic = overall
+    const posAttrs: { label: string; value: number }[] = [
       { label: 'Control', value: report.techControl },
       { label: 'Short Passes', value: report.techShortPasses },
       { label: 'Long Passes', value: report.techLongPasses },
@@ -160,6 +172,12 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
       { label: 'Dribbling', value: report.techDribbling },
       { label: '1v1 Offense', value: report.techOneVsOneOffense },
       { label: '1v1 Defense', value: report.techOneVsOneDefense },
+    ];
+    const ovAttrs: { label: string; value: number }[] = [
+      { label: 'Strength', value: report.physStrength },
+      { label: 'Speed', value: report.physSpeed },
+      { label: 'Agility', value: report.physAgility },
+      { label: 'Coordination', value: report.physCoordination },
       { label: 'Positioning', value: report.tacPositioning },
       { label: 'Transition', value: report.tacTransition },
       { label: 'Decisions', value: report.tacDecisions },
@@ -168,13 +186,12 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
       { label: 'Set Pieces', value: report.tacSetPieces },
     ];
 
-    const validAttrs = legacyAttrs.filter(a => a.value && a.value > 0);
-    if (validAttrs.length === 0) return null;
+    const validPos = posAttrs.filter(a => a.value && a.value > 0);
+    const validOv = ovAttrs.filter(a => a.value && a.value > 0);
 
     return {
-      labels: validAttrs.map(a => a.label),
-      values: validAttrs.map(a => a.value),
-      title: 'PLAYER RADAR',
+      positionRadar: validPos.length >= 3 ? { labels: validPos.map(a => a.label), values: validPos.map(a => a.value), title: 'TECHNICAL RADAR' } : null,
+      overallRadar: validOv.length >= 3 ? { labels: validOv.map(a => a.label), values: validOv.map(a => a.value), title: 'PHYSICAL & TACTICAL' } : null,
     };
   }, [report]);
 
@@ -384,16 +401,31 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
           </div>
         </div>
 
-        {/* Radar Chart */}
-        {radarData && radarData.labels.length >= 3 && (
-          <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
-            <RadarChart
-              labels={radarData.labels}
-              values={radarData.values}
-              maxValue={5}
-              color="#22c55e"
-              title={radarData.title}
-            />
+        {/* Radar Charts — Side by Side */}
+        {(positionRadar || overallRadar) && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {positionRadar && (
+              <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
+                <RadarChart
+                  labels={positionRadar.labels}
+                  values={positionRadar.values}
+                  maxValue={5}
+                  color="#22c55e"
+                  title={positionRadar.title}
+                />
+              </div>
+            )}
+            {overallRadar && (
+              <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
+                <RadarChart
+                  labels={overallRadar.labels}
+                  values={overallRadar.values}
+                  maxValue={5}
+                  color="#3b82f6"
+                  title={overallRadar.title}
+                />
+              </div>
+            )}
           </div>
         )}
 
