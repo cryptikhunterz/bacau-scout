@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-02-12 (v17) — Dynamic Radar Supplementation & "Other" Metrics Category
+
+### Changed
+- **Sparse radar supplementation** — Position Radar and Overall Radar now guarantee at least 3 meaningful data points. When a player has fewer than 3 metrics with real data in their position template, the radar automatically supplements with the highest-percentile metrics from the other pool (allround → position or vice versa). Applied across all radar-showing components:
+  - `WyscoutStats` (player profile stat bars page)
+  - `WyscoutRadars` (report page radars)
+  - `WyscoutCompare` (2-player comparison radars)
+  - Compare page (`/compare`) — position template and allround template radars now supplement when template metrics lack coverage across selected players
+- **Compare page radar union** — Position and Allround overlay radars on the compare page now supplement with actual player metrics when canonical template keys (from `PG_RADAR_TEMPLATES` / `ALLROUND_TEMPLATE`) have fewer than 3 covered metrics across all selected players. Templates are KEPT — supplementation only adds to them.
+- **WyscoutCompare overlay radars** — Changed from intersection (shared metrics only) to union approach. Both players' metrics are shown; missing metrics default to 0 on the radar.
+
+### Added
+- **"📋 Other" metric category** in `WyscoutStats` stat bars — catches ALL player metrics that don't fall into the Attack, Defence, Passing, or Goalkeeping groups. Previously these metrics were invisible; now they appear in an "Other" section at the bottom. This ensures every metric the player has shows up somewhere.
+
+### Preserved (NOT removed)
+- `PG_RADAR_TEMPLATES` — all 7 position group templates kept intact
+- `ALLROUND_TEMPLATE` — 10-metric allround template kept intact
+- Radar Template dropdown on compare page — kept intact
+- `METRIC_GROUPS` in WyscoutStats — all 4 groups (Attack, Defence, Passing, Goalkeeping) kept intact
+
+### Test Players Verified
+- Cîrstean (940237) — AM with 2 position metrics → supplemented to 3+ with highest-percentile allround metrics
+- Chirilă (548417) — CB with 8 position metrics → no supplementation needed (already ≥3)
+- Cruceru (315448) — AM with 7 position metrics → no supplementation needed
+- Moukhliss (495622) — CM with 6 position metrics → no supplementation needed
+
 ## 2026-02-12 (v16) — Regenerated Wyscout Data with Wyscout Position Mapping
 
 ### Changed

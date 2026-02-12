@@ -87,18 +87,60 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
   const primaryData = data1 || data2;
   const posLabel = primaryData ? (PG_LABELS[primaryData.pg] || primaryData.pg) : '';
 
-  // Build comparison radar: find shared metrics between both players
-  const buildOverlayRadar = (metrics1: RadarMetric[], metrics2: RadarMetric[]) => {
-    // Use metrics from player 1 as the base template
-    const keyMap2 = new Map(metrics2.map(m => [m.key, m]));
-    const shared = metrics1.filter(m => keyMap2.has(m.key));
-    if (shared.length < 3) return null;
+  // Supplement sparse radars: ensure at least 3 meaningful data points each
+  const supplementRadar = (primary: RadarMetric[], pool: RadarMetric[]): RadarMetric[] => {
+    const MIN_RADAR_POINTS = 3;
+    const meaningful = primary.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50));
+    if (meaningful.length >= MIN_RADAR_POINTS) return primary;
 
-    const labels = shared.map(m => m.label);
-    const values1 = shared.map(m => getPercentile(m));
-    const values2 = shared.map(m => getPercentile(keyMap2.get(m.key)!));
-    const displayValues1 = shared.map(m => m.value);
-    const displayValues2 = shared.map(m => keyMap2.get(m.key)!.value);
+    const primaryKeys = new Set(primary.map(m => m.key));
+    const candidates = pool
+      .filter(m => !primaryKeys.has(m.key) && (m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)))
+      .sort((a, b) => getPercentile(b) - getPercentile(a));
+
+    const supplemented = [...primary];
+    for (const candidate of candidates) {
+      if (supplemented.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)).length >= MIN_RADAR_POINTS) break;
+      supplemented.push(candidate);
+    }
+    return supplemented;
+  };
+
+  // Build comparison radar: use UNION of metrics from both players (not just shared)
+  const buildOverlayRadar = (metrics1: RadarMetric[], metrics2: RadarMetric[]) => {
+    // Supplement each side individually first
+    const allPool1 = data1 ? [...data1.radar, ...data1.allround] : [];
+    const allPool2 = data2 ? [...data2.radar, ...data2.allround] : [];
+    const sup1 = supplementRadar(metrics1, allPool1.filter(m => !metrics1.some(r => r.key === m.key)));
+    const sup2 = supplementRadar(metrics2, allPool2.filter(m => !metrics2.some(r => r.key === m.key)));
+
+    // Use union of keys from both supplemented lists
+    const keyMap1 = new Map(sup1.map(m => [m.key, m]));
+    const keyMap2 = new Map(sup2.map(m => [m.key, m]));
+    const allKeys = new Set([...sup1.map(m => m.key), ...sup2.map(m => m.key)]);
+    const unionKeys = Array.from(allKeys);
+    if (unionKeys.length < 3) return null;
+
+    const labels = unionKeys.map(k => {
+      const m = keyMap1.get(k) || keyMap2.get(k);
+      return m?.label || k;
+    });
+    const values1 = unionKeys.map(k => {
+      const m = keyMap1.get(k);
+      return m ? getPercentile(m) : 0;
+    });
+    const values2 = unionKeys.map(k => {
+      const m = keyMap2.get(k);
+      return m ? getPercentile(m) : 0;
+    });
+    const displayValues1 = unionKeys.map(k => {
+      const m = keyMap1.get(k);
+      return m ? m.value : 0;
+    });
+    const displayValues2 = unionKeys.map(k => {
+      const m = keyMap2.get(k);
+      return m ? m.value : 0;
+    });
 
     return { labels, values1, values2, displayValues1, displayValues2 };
   };

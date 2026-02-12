@@ -95,9 +95,32 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
     const getPercentile = (m: RadarMetric) =>
       compMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
+    // Supplement sparse radars: ensure at least 3 meaningful data points each
+    const MIN_RADAR_POINTS = 3;
+
+    const supplementRadar = (primary: RadarMetric[], pool: RadarMetric[]): RadarMetric[] => {
+      const meaningful = primary.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50));
+      if (meaningful.length >= MIN_RADAR_POINTS) return primary;
+
+      const primaryKeys = new Set(primary.map(m => m.key));
+      const candidates = pool
+        .filter(m => !primaryKeys.has(m.key) && (m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)))
+        .sort((a, b) => getPercentile(b) - getPercentile(a));
+
+      const supplemented = [...primary];
+      for (const candidate of candidates) {
+        if (supplemented.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)).length >= MIN_RADAR_POINTS) break;
+        supplemented.push(candidate);
+      }
+      return supplemented;
+    };
+
+    const effectiveRadar = supplementRadar(radar, allround);
+    const effectiveAllround = supplementRadar(allround, radar);
+
     // Filter out metrics with no data (value=0 and percentile=50 means missing)
-    const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
-    const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);
+    const hasPositionData = effectiveRadar.length >= 3 && effectiveRadar.some((m) => m.value !== 0 || m.percentile !== 50);
+    const hasAllroundData = effectiveAllround.length >= 3 && effectiveAllround.some((m) => m.value !== 0 || m.percentile !== 50);
 
     if (!hasPositionData && !hasAllroundData) return null;
 
@@ -162,12 +185,12 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
           {hasPositionData && (
             <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
               <RadarChart
-                labels={radar.map((m) => m.label)}
-                values={radar.map((m) => getPercentile(m))}
+                labels={effectiveRadar.map((m) => m.label)}
+                values={effectiveRadar.map((m) => getPercentile(m))}
                 maxValue={100}
                 mode="percentile"
-                displayValues={radar.map((m) => m.value)}
-                percentiles={radar.map((m) => getPercentile(m))}
+                displayValues={effectiveRadar.map((m) => m.value)}
+                percentiles={effectiveRadar.map((m) => getPercentile(m))}
                 title={`${posLabel} PROFILE`}
               />
             </div>
@@ -177,10 +200,10 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
           {hasAllroundData && (
             <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
               <PercentileRadar
-                labels={allround.map((m) => m.label)}
-                values={allround.map((m) => getPercentile(m))}
-                displayValues={allround.map((m) => m.value)}
-                percentiles={allround.map((m) => getPercentile(m))}
+                labels={effectiveAllround.map((m) => m.label)}
+                values={effectiveAllround.map((m) => getPercentile(m))}
+                displayValues={effectiveAllround.map((m) => m.value)}
+                percentiles={effectiveAllround.map((m) => getPercentile(m))}
                 title="PERCENTILE PROFILE"
               />
             </div>

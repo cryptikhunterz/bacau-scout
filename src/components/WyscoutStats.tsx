@@ -148,8 +148,32 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
   const getPercentile = (m: RadarMetric) =>
     compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
-  const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
-  const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);
+  // Supplement sparse radars: ensure at least 3 data points each
+  const MIN_RADAR_POINTS = 3;
+
+  const supplementRadar = (primary: RadarMetric[], pool: RadarMetric[]): RadarMetric[] => {
+    const meaningful = primary.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50));
+    if (meaningful.length >= MIN_RADAR_POINTS) return primary;
+
+    // Need to supplement — pick highest-percentile metrics from pool not already in primary
+    const primaryKeys = new Set(primary.map(m => m.key));
+    const candidates = pool
+      .filter(m => !primaryKeys.has(m.key) && (m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)))
+      .sort((a, b) => getPercentile(b) - getPercentile(a));
+
+    const supplemented = [...primary];
+    for (const candidate of candidates) {
+      if (supplemented.filter(m => m.value !== 0 || (m.percentile !== undefined && m.percentile !== 50)).length >= MIN_RADAR_POINTS) break;
+      supplemented.push(candidate);
+    }
+    return supplemented;
+  };
+
+  const effectiveRadar = supplementRadar(radar, allround);
+  const effectiveAllround = supplementRadar(allround, radar);
+
+  const hasPositionData = effectiveRadar.length >= 3 && effectiveRadar.some((m) => m.value !== 0 || m.percentile !== 50);
+  const hasAllroundData = effectiveAllround.length >= 3 && effectiveAllround.some((m) => m.value !== 0 || m.percentile !== 50);
 
   if (!hasPositionData && !hasAllroundData) return null;
 
@@ -165,10 +189,23 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
   }
 
   // Build visible metric groups (only show groups with available data)
-  const visibleGroups = METRIC_GROUPS.map(group => ({
-    ...group,
-    metrics: group.keys.filter(key => metricMap.has(key)),
-  })).filter(group => group.metrics.length > 0);
+  const categorizedKeys = new Set(METRIC_GROUPS.flatMap(g => g.keys));
+  const uncategorizedKeys = Array.from(metricMap.keys()).filter(k => !categorizedKeys.has(k));
+
+  const visibleGroups = [
+    ...METRIC_GROUPS.map(group => ({
+      ...group,
+      metrics: group.keys.filter(key => metricMap.has(key)),
+    })),
+    // "Other" category catches all metrics not in the hardcoded groups
+    ...(uncategorizedKeys.length > 0
+      ? [{
+          title: '📋 Other',
+          keys: uncategorizedKeys,
+          metrics: uncategorizedKeys,
+        }]
+      : []),
+  ].filter(group => group.metrics.length > 0);
 
   return (
     <div className="space-y-6">
@@ -218,12 +255,12 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
         {hasPositionData && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
             <RadarChart
-              labels={radar.map((m) => m.label)}
-              values={radar.map((m) => getPercentile(m))}
+              labels={effectiveRadar.map((m) => m.label)}
+              values={effectiveRadar.map((m) => getPercentile(m))}
               maxValue={100}
               mode="percentile"
-              displayValues={radar.map((m) => m.value)}
-              percentiles={radar.map((m) => getPercentile(m))}
+              displayValues={effectiveRadar.map((m) => m.value)}
+              percentiles={effectiveRadar.map((m) => getPercentile(m))}
               title={`${posLabel.toUpperCase()} PROFILE`}
             />
           </div>
@@ -232,10 +269,10 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
         {hasAllroundData && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
             <PercentileRadar
-              labels={allround.map((m) => m.label)}
-              values={allround.map((m) => getPercentile(m))}
-              displayValues={allround.map((m) => m.value)}
-              percentiles={allround.map((m) => getPercentile(m))}
+              labels={effectiveAllround.map((m) => m.label)}
+              values={effectiveAllround.map((m) => getPercentile(m))}
+              displayValues={effectiveAllround.map((m) => m.value)}
+              percentiles={effectiveAllround.map((m) => getPercentile(m))}
               title="PERCENTILE PROFILE"
             />
           </div>

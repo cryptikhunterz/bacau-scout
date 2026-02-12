@@ -363,6 +363,7 @@ export default function ComparePage() {
   }, [players, wyscoutData, compareMode]);
 
   // Build radar overlay data using canonical position templates
+  // KEEPS PG_RADAR_TEMPLATES — supplements with player data when template metrics are missing
   const radarOverlayData = useMemo(() => {
     const playersWithData = players.filter(p => wyscoutData[p.id]);
     if (playersWithData.length < 2) return null;
@@ -374,8 +375,41 @@ export default function ComparePage() {
     const template = PG_RADAR_TEMPLATES[templatePg];
     if (!template || template.length < 3) return null;
 
-    const labels = template.map(t => t.label);
-    const keys = template.map(t => t.key);
+    // Start with template keys, then supplement if players lack those metrics
+    let keys = template.map(t => t.key);
+    let labels = template.map(t => t.label);
+
+    // Check how many template metrics any player actually has
+    const anyPlayerHas = (key: string) =>
+      playersWithData.some(p => {
+        const wd = wyscoutData[p.id];
+        return [...wd.radar, ...wd.allround].some(m => m.key === key);
+      });
+
+    const coveredKeys = keys.filter(anyPlayerHas);
+
+    // If fewer than 3 template keys have data, supplement with highest-percentile metrics from players
+    if (coveredKeys.length < 3) {
+      const templateKeySet = new Set(keys);
+      const extraMetrics: { key: string; label: string; avgPct: number }[] = [];
+      const seenKeys = new Set<string>();
+
+      for (const p of playersWithData) {
+        const wd = wyscoutData[p.id];
+        for (const m of [...wd.radar, ...wd.allround]) {
+          if (!templateKeySet.has(m.key) && !seenKeys.has(m.key)) {
+            seenKeys.add(m.key);
+            extraMetrics.push({ key: m.key, label: m.label, avgPct: getPercentile(m) });
+          }
+        }
+      }
+
+      extraMetrics.sort((a, b) => b.avgPct - a.avgPct);
+      const needed = 3 - coveredKeys.length;
+      const supplements = extraMetrics.slice(0, needed);
+      keys = [...keys, ...supplements.map(s => s.key)];
+      labels = [...labels, ...supplements.map(s => s.label)];
+    }
 
     const playerRadarValues = playersWithData.map(p => {
       const wd = wyscoutData[p.id];
@@ -396,13 +430,45 @@ export default function ComparePage() {
     return { labels, playerRadarValues, templatePg };
   }, [players, wyscoutData, compareMode, radarTemplate]);
 
-  // All-round radar overlay using canonical template
+  // All-round radar overlay using canonical template — KEEPS ALLROUND_TEMPLATE
+  // Supplements when fewer than 3 template metrics have data across all players
   const allroundOverlayData = useMemo(() => {
     const playersWithData = players.filter(p => wyscoutData[p.id]);
     if (playersWithData.length < 2) return null;
 
-    const labels = ALLROUND_TEMPLATE.map(t => t.label);
-    const keys = ALLROUND_TEMPLATE.map(t => t.key);
+    let keys = ALLROUND_TEMPLATE.map(t => t.key);
+    let labels = ALLROUND_TEMPLATE.map(t => t.label);
+
+    // Check coverage
+    const anyPlayerHas = (key: string) =>
+      playersWithData.some(p => {
+        const wd = wyscoutData[p.id];
+        return [...wd.radar, ...wd.allround].some(m => m.key === key);
+      });
+
+    const coveredKeys = keys.filter(anyPlayerHas);
+
+    if (coveredKeys.length < 3) {
+      const templateKeySet = new Set(keys);
+      const extraMetrics: { key: string; label: string; avgPct: number }[] = [];
+      const seenKeys = new Set<string>();
+
+      for (const p of playersWithData) {
+        const wd = wyscoutData[p.id];
+        for (const m of [...wd.radar, ...wd.allround]) {
+          if (!templateKeySet.has(m.key) && !seenKeys.has(m.key)) {
+            seenKeys.add(m.key);
+            extraMetrics.push({ key: m.key, label: m.label, avgPct: getPercentile(m) });
+          }
+        }
+      }
+
+      extraMetrics.sort((a, b) => b.avgPct - a.avgPct);
+      const needed = 3 - coveredKeys.length;
+      const supplements = extraMetrics.slice(0, needed);
+      keys = [...keys, ...supplements.map(s => s.key)];
+      labels = [...labels, ...supplements.map(s => s.label)];
+    }
 
     const playerRadarValues = playersWithData.map(p => {
       const wd = wyscoutData[p.id];
