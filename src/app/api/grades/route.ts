@@ -73,6 +73,7 @@ export async function GET() {
       transferFee: grade.transferFee || '',
       salary: grade.salary || '',
       scoutName: grade.scoutName,
+      scoutId: grade.scoutId,
       }
     })
 

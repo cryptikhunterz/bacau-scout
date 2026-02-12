@@ -16,57 +16,74 @@ const ABILITY_KEYS = [
 // Potential keys (ability key + "Pot" suffix)
 const POTENTIAL_KEYS = ABILITY_KEYS.map(k => `${k}Pot` as const);
 
-// GET a specific player's grade
+function gradeToResponse(grade: any): Record<string, any> {
+  const result: Record<string, any> = {
+    playerId: grade.playerId,
+    playerName: grade.playerName || '',
+    position: grade.position || '',
+    club: grade.club || '',
+    gradedAt: grade.updatedAt.toISOString(),
+    status: grade.status || 'WATCH',
+    scoutingLevel: grade.scoutingLevel || 'Basic',
+    ability: grade.ability ?? 3,
+    potential: grade.potential ?? 4,
+    report: grade.report ?? 3,
+    scoutingTags: grade.scoutingTags || [],
+    verdict: grade.verdict || grade.recommendation || 'Monitor',
+    role: grade.role || '',
+    conclusion: grade.conclusion || '',
+    notes: grade.notes || '',
+    transferFee: grade.transferFee || '',
+    salary: grade.salary || '',
+    scoutName: grade.scoutName,
+    scoutId: grade.scoutId,
+  };
+
+  for (const key of ABILITY_KEYS) {
+    result[key] = (grade as any)[key] ?? 3;
+  }
+  for (const key of POTENTIAL_KEYS) {
+    result[key] = (grade as any)[key] ?? 4;
+  }
+
+  return result;
+}
+
+// GET grades for a player
+// ?scoutId=xxx → returns single grade for that scout
+// no scoutId   → returns all grades for that player
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ playerId: string }> }
 ) {
   const { playerId } = await params
+  const scoutId = request.nextUrl.searchParams.get('scoutId')
 
   try {
-    const grade = await prisma.scoutingReport.findUnique({ where: { playerId } })
-    if (!grade) return NextResponse.json(null)
-
-    // Build response with all fields, defaulting ability to 3 and potential to 4
-    const result: Record<string, any> = {
-      playerId: grade.playerId,
-      playerName: grade.playerName || '',
-      position: grade.position || '',
-      club: grade.club || '',
-      gradedAt: grade.updatedAt.toISOString(),
-      status: grade.status || 'WATCH',
-      scoutingLevel: grade.scoutingLevel || 'Basic',
-      ability: grade.ability ?? 3,
-      potential: grade.potential ?? 4,
-      report: grade.report ?? 3,
-      scoutingTags: grade.scoutingTags || [],
-      verdict: grade.verdict || grade.recommendation || 'Monitor',
-      role: grade.role || '',
-      conclusion: grade.conclusion || '',
-      notes: grade.notes || '',
-      transferFee: grade.transferFee || '',
-      salary: grade.salary || '',
-      scoutName: grade.scoutName,
-    };
-
-    // Add ability fields (default 3)
-    for (const key of ABILITY_KEYS) {
-      result[key] = (grade as any)[key] ?? 3;
+    if (scoutId) {
+      // Single grade for this scout
+      const grade = await prisma.scoutingReport.findUnique({
+        where: { playerId_scoutId: { playerId, scoutId } }
+      })
+      if (!grade) return NextResponse.json(null)
+      return NextResponse.json(gradeToResponse(grade))
+    } else {
+      // All grades for this player
+      const grades = await prisma.scoutingReport.findMany({
+        where: { playerId },
+        orderBy: { updatedAt: 'desc' }
+      })
+      if (grades.length === 0) return NextResponse.json(null)
+      if (grades.length === 1) return NextResponse.json(gradeToResponse(grades[0]))
+      return NextResponse.json(grades.map(gradeToResponse))
     }
-
-    // Add potential fields (default 4)
-    for (const key of POTENTIAL_KEYS) {
-      result[key] = (grade as any)[key] ?? 4;
-    }
-
-    return NextResponse.json(result)
   } catch (error) {
     console.error('Failed to fetch grade:', error)
     return NextResponse.json({ error: 'Failed to fetch grade' }, { status: 500 })
   }
 }
 
-// POST/PUT - save a player's grade
+// POST - save a player's grade (upserts by playerId + scoutId)
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ playerId: string }> }
@@ -75,6 +92,11 @@ export async function POST(
 
   try {
     const body = await request.json()
+    const scoutId = body.scoutId
+
+    if (!scoutId) {
+      return NextResponse.json({ error: 'scoutId is required' }, { status: 400 })
+    }
 
     // Build data object from body
     const data: Record<string, any> = {
@@ -92,12 +114,11 @@ export async function POST(
       status: body.status,
       scoutingLevel: body.scoutingLevel,
       scoutName: body.scoutName,
-      scoutId: body.scoutId,
+      scoutId: scoutId,
       transferFee: body.transferFee,
       salary: body.salary,
     };
 
-    // Add all ability + potential fields
     for (const key of ABILITY_KEYS) {
       data[key] = body[key];
     }
@@ -106,7 +127,7 @@ export async function POST(
     }
 
     const grade = await prisma.scoutingReport.upsert({
-      where: { playerId },
+      where: { playerId_scoutId: { playerId, scoutId } },
       update: data,
       create: { playerId, ...data },
     })
@@ -118,14 +139,22 @@ export async function POST(
   }
 }
 
-// DELETE
+// DELETE (requires scoutId query param)
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ playerId: string }> }
 ) {
   const { playerId } = await params
+  const scoutId = request.nextUrl.searchParams.get('scoutId')
+
+  if (!scoutId) {
+    return NextResponse.json({ error: 'scoutId is required' }, { status: 400 })
+  }
+
   try {
-    await prisma.scoutingReport.delete({ where: { playerId } })
+    await prisma.scoutingReport.delete({
+      where: { playerId_scoutId: { playerId, scoutId } }
+    })
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error('Failed to delete grade:', error)

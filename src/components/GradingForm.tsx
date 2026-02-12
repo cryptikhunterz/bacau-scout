@@ -138,8 +138,9 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // Scout name from session
+  // Scout name and ID from session
   const scoutName = session?.user?.name || e?.scoutName || '';
+  const scoutId = (session?.user as any)?.id || e?.scoutId || '';
 
   const toggleScoutingTag = (tag: string) => {
     if (scoutingTags.includes(tag)) {
@@ -162,7 +163,7 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       techCrossing, techFinishing, techDribbling, techOneVsOneOffense, techOneVsOneDefense,
       tacPositioning, tacTransition, tacDecisions, tacAnticipations, tacDuels, tacSetPieces,
       ability, potential,
-      scoutingTags, verdict, role, conclusion, notes, scoutName,
+      scoutingTags, verdict, role, conclusion, notes, scoutName, scoutId,
       transferFee: transferFee || undefined,
       salary: salary || undefined,
     };

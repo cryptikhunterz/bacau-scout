@@ -127,7 +127,8 @@ model ScoutingReport {
   discipline     Int?
   recommendation String?
 
-  @@unique([playerId])
+  @@unique([playerId, scoutId])
   @@index([playerId])
+  @@index([scoutId])
   @@index([verdict])
 }

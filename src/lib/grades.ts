@@ -78,6 +78,7 @@ export interface PlayerGrade {
 
   // Scout & Optional
   scoutName: string;
+  scoutId?: string;
   transferFee?: string;
   salary?: string;
 }
@@ -245,9 +246,10 @@ export async function getAllGradesAsync(): Promise<PlayerGrade[]> {
   }
 }
 
-export async function getGradeAsync(playerId: string): Promise<PlayerGrade | null> {
+export async function getGradeAsync(playerId: string, scoutId?: string): Promise<PlayerGrade | null> {
   try {
-    const response = await fetch(`/api/grades/${playerId}`);
+    const url = scoutId ? `/api/grades/${playerId}?scoutId=${scoutId}` : `/api/grades/${playerId}`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch grade');
     const data = await response.json();
     return data || null;
@@ -271,9 +273,10 @@ export async function saveGradeAsync(grade: PlayerGrade): Promise<boolean> {
   }
 }
 
-export async function deleteGradeAsync(playerId: string): Promise<boolean> {
+export async function deleteGradeAsync(playerId: string, scoutId?: string): Promise<boolean> {
   try {
-    const response = await fetch(`/api/grades/${playerId}`, { method: 'DELETE' });
+    const url = scoutId ? `/api/grades/${playerId}?scoutId=${scoutId}` : `/api/grades/${playerId}`;
+    const response = await fetch(url, { method: 'DELETE' });
     return response.ok;
   } catch (error) {
     console.error('Failed to delete grade:', error);

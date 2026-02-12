@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { GradingForm } from './GradingForm';
-import { getGradeAsync, deleteGrade, PlayerGrade, getAbilityColor, getPotentialColor, POTENTIAL_LABELS } from '@/lib/grades';
+import { getGradeAsync, deleteGradeAsync, PlayerGrade, getAbilityColor, getPotentialColor, POTENTIAL_LABELS } from '@/lib/grades';
 
 interface PlayerGradingProps {
   player: {
@@ -44,32 +44,37 @@ export function PlayerGrading({ player }: PlayerGradingProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const isAdmin = (session?.user as any)?.role === 'admin';
+  const currentScoutId = (session?.user as any)?.id || '';
   const currentScoutName = session?.user?.name || '';
 
   useEffect(() => {
+    if (!currentScoutId) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
-    getGradeAsync(player.id).then(g => {
+    getGradeAsync(player.id, currentScoutId).then(g => {
       setExistingGrade(g);
       setLoading(false);
     }).catch(() => setLoading(false));
-  }, [player.id]);
+  }, [player.id, currentScoutId]);
 
   const handleSave = () => {
-    getGradeAsync(player.id).then(g => {
+    getGradeAsync(player.id, currentScoutId).then(g => {
       setExistingGrade(g);
       setEditing(false);
     });
   };
 
   const handleDelete = () => {
-    deleteGrade(player.id);
+    deleteGradeAsync(player.id, currentScoutId);
     setExistingGrade(null);
     setShowDeleteConfirm(false);
     setEditing(false);
   };
 
   // Can edit if admin OR if this scout created the report
-  const canEdit = isAdmin || (existingGrade?.scoutName === currentScoutName);
+  const canEdit = isAdmin || (existingGrade?.scoutId === currentScoutId);
 
   // ─── Loading State ────────────────────────────────────────────────
   if (loading) {
