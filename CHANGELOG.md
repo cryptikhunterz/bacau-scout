@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-12 (v16) — Regenerated Wyscout Data with Wyscout Position Mapping
+
+### Changed
+- **Regenerated `wyscout-metrics.json` and `wyscout-percentiles.json`** from the enrichment platform's correctly matched data (16,261 entries → 12,105 with metrics → 9,742 qualifying for percentiles)
+- **Position mapping now uses Wyscout positions** instead of Transfermarkt positions — more accurate grouping since Wyscout positions (DMF, LCMF, LW, CF, etc.) reflect actual on-pitch roles rather than Transfermarkt's broader categories
+- Position groups: AM 1,515 | CB 1,880 | CM 1,300 | DM 702 | FW 1,754 | GK 756 | WB 1,835
+
+### Added
+- **`scripts/regenerate-wyscout-from-enrichment.py`** — Unified script that generates both data files in one run:
+  - Reads from `wyscout-enrichment/data/matched/matches.json`
+  - Extracts primary Wyscout position from compound strings (e.g., `"DMF, RDMFDMF (69%)RDMF (11%)"` → DMF)
+  - Maps Wyscout positions to 7 position groups (GK/CB/WB/DM/CM/AM/FW)
+  - Falls back to Transfermarkt position when Wyscout position can't be parsed
+  - Computes league percentiles (within position group + competition) and global percentiles (within position group across all leagues)
+  - Includes verification of specific players and metric coverage stats
+  - Cross-checks all metric keys against `wyscoutRadar.ts` definitions
+
+### Notes
+- Chirilă (1073380) is correctly matched to Cincinnati II / MLS Next Pro — his Wyscout profile has 34 metrics but only attacking stats (no defensive duels data from Wyscout)
+- Cruceru (315448) now correctly mapped to CM (from Wyscout LCMF) instead of AM (from Transfermarkt "Attacking Midfield")
+
 ## 2026-02-12 (v15) — Enrichment Radar, Compare Fixes & Scout Reference Data
 
 ### Changed
