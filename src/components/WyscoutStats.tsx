@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { RadarChart } from '@/components/RadarChart';
+import { PercentileRadar } from '@/components/PercentileRadar';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -230,14 +231,12 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
 
         {hasAllroundData && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
-            <RadarChart
+            <PercentileRadar
               labels={allround.map((m) => m.label)}
               values={allround.map((m) => getPercentile(m))}
-              maxValue={100}
-              mode="percentile"
               displayValues={allround.map((m) => m.value)}
               percentiles={allround.map((m) => getPercentile(m))}
-              title="ALL-ROUND PROFILE"
+              title="PERCENTILE PROFILE"
             />
           </div>
         )}

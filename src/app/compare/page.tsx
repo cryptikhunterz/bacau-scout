@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import { RadarChart } from '@/components/RadarChart';
+import { PercentileRadar } from '@/components/PercentileRadar';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -84,6 +85,87 @@ const PG_LABELS: Record<string, string> = {
 };
 
 const POSITION_GROUPS = ['GK', 'CB', 'WB', 'DM', 'CM', 'AM', 'FW'];
+
+/** Canonical radar templates per position group — used when switching templates */
+const PG_RADAR_TEMPLATES: Record<string, { key: string; label: string }[]> = {
+  GK: [
+    { key: 'Save rate, %', label: 'Save %' },
+    { key: 'xG against per 90', label: 'xGA /90' },
+    { key: 'Shots against per 90', label: 'ShotA /90' },
+    { key: 'Exits per 90', label: 'Exits /90' },
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Conceded goals per 90', label: 'GA /90' },
+  ],
+  CB: [
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Interceptions per 90', label: 'Intercept /90' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Defensive duels per 90', label: 'Def Duels /90' },
+    { key: 'Shots blocked per 90', label: 'Blocks /90' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  WB: [
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Offensive duels won, %', label: 'Off Duels %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Crosses per 90', label: 'Crosses /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  DM: [
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Passes per 90', label: 'Passes /90' },
+    { key: 'Accurate long passes, %', label: 'Long Pass %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  CM: [
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'Passes per 90', label: 'Passes /90' },
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Interceptions per 90', label: 'Intercept /90' },
+  ],
+  AM: [
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Progressive passes per 90', label: 'Prog Pass /90' },
+    { key: 'Progressive runs per 90', label: 'Prog Runs /90' },
+    { key: 'Shots on target, %', label: 'SoT %' },
+    { key: 'Passes to penalty area per 90', label: 'PA Pass /90' },
+  ],
+  FW: [
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Goals per 90', label: 'Goals /90' },
+    { key: 'Shots on target, %', label: 'SoT %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Crosses per 90', label: 'Crosses /90' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'xA per 90', label: 'xA /90' },
+  ],
+};
+
+const ALLROUND_TEMPLATE: { key: string; label: string }[] = [
+  { key: 'Passes per 90', label: 'Passes /90' },
+  { key: 'Accurate passes, %', label: 'Pass Acc %' },
+  { key: 'Progressive passes per 90', label: 'Prog Pass /90' },
+  { key: 'Crosses per 90', label: 'Crosses /90' },
+  { key: 'Offensive duels won, %', label: 'Off Duels %' },
+  { key: 'Defensive duels per 90', label: 'Def Duels /90' },
+  { key: 'Aerial duels per 90', label: 'Aerial /90' },
+  { key: 'Touches in box per 90', label: 'Box Touch /90' },
+  { key: 'Fouls per 90', label: 'Fouls /90' },
+  { key: 'Key passes per 90', label: 'Key Pass /90' },
+];
 
 /* ------------------------------------------------------------------ */
 /*  Utility                                                            */
@@ -250,10 +332,12 @@ export default function ComparePage() {
   const getPercentile = (m: RadarMetric) =>
     compareMode === 'league' ? m.percentile : m.gp;
 
-  // Build metric keys for bar comparison from all selected players' wyscout data
+  // Build metric keys for bar comparison — UNION of all players' metrics
+  // Every player gets an entry for every metric (null if missing)
   const allMetrics = useMemo(() => {
-    const metricsMap = new Map<string, { label: string; data: { playerId: string; value: number; percentile: number | null }[] }>();
+    const metricsMap = new Map<string, { label: string; data: Map<string, { value: number; percentile: number }> }>();
     
+    // First pass: collect all metric keys from all players
     for (const player of players) {
       const wd = wyscoutData[player.id];
       if (!wd) continue;
@@ -266,10 +350,9 @@ export default function ComparePage() {
         seen.add(m.key);
         
         if (!metricsMap.has(m.key)) {
-          metricsMap.set(m.key, { label: m.label, data: [] });
+          metricsMap.set(m.key, { label: m.label, data: new Map() });
         }
-        metricsMap.get(m.key)!.data.push({
-          playerId: player.id,
+        metricsMap.get(m.key)!.data.set(player.id, {
           value: m.value,
           percentile: getPercentile(m),
         });
@@ -279,24 +362,20 @@ export default function ComparePage() {
     return metricsMap;
   }, [players, wyscoutData, compareMode]);
 
-  // Build radar overlay data
+  // Build radar overlay data using canonical position templates
   const radarOverlayData = useMemo(() => {
     const playersWithData = players.filter(p => wyscoutData[p.id]);
     if (playersWithData.length < 2) return null;
 
-    // Use the radarTemplate position group to pick metrics
+    // Use canonical template for the selected position group
     const templatePg = radarTemplate || wyscoutData[playersWithData[0].id]?.pg;
     if (!templatePg) return null;
 
-    // Find a player with this position group for template, fallback to first
-    const templatePlayer = playersWithData.find(p => wyscoutData[p.id]?.pg === templatePg) || playersWithData[0];
-    const templateWd = wyscoutData[templatePlayer.id];
-    
-    const templateRadar = templateWd.radar;
-    if (templateRadar.length < 3) return null;
+    const template = PG_RADAR_TEMPLATES[templatePg];
+    if (!template || template.length < 3) return null;
 
-    const labels = templateRadar.map(m => m.label);
-    const keys = templateRadar.map(m => m.key);
+    const labels = template.map(t => t.label);
+    const keys = template.map(t => t.key);
 
     const playerRadarValues = playersWithData.map(p => {
       const wd = wyscoutData[p.id];
@@ -314,20 +393,16 @@ export default function ComparePage() {
       };
     });
 
-    return { labels, playerRadarValues };
+    return { labels, playerRadarValues, templatePg };
   }, [players, wyscoutData, compareMode, radarTemplate]);
 
-  // All-round radar overlay
+  // All-round radar overlay using canonical template
   const allroundOverlayData = useMemo(() => {
     const playersWithData = players.filter(p => wyscoutData[p.id]);
     if (playersWithData.length < 2) return null;
 
-    const templateWd = wyscoutData[playersWithData[0].id];
-    const templateAllround = templateWd.allround;
-    if (templateAllround.length < 3) return null;
-
-    const labels = templateAllround.map(m => m.label);
-    const keys = templateAllround.map(m => m.key);
+    const labels = ALLROUND_TEMPLATE.map(t => t.label);
+    const keys = ALLROUND_TEMPLATE.map(t => t.key);
 
     const playerRadarValues = playersWithData.map(p => {
       const wd = wyscoutData[p.id];
@@ -508,7 +583,7 @@ export default function ComparePage() {
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
                   <h2 className="text-lg font-semibold text-white mb-1">📊 Percentile Radar</h2>
                   <p className="text-xs text-zinc-500 mb-4">
-                    Using {radarTemplate || wyscoutData[players[0].id]?.pg || '—'} position metrics · Percentile values
+                    Using {PG_LABELS[radarOverlayData.templatePg] || radarOverlayData.templatePg} template · Percentile values
                   </p>
                   {(() => {
                     const d = radarOverlayData;
@@ -546,12 +621,12 @@ export default function ComparePage() {
                 </div>
               )}
 
-              {/* All-Round Radar */}
+              {/* Enrichment-style Percentile Radar */}
               {allroundOverlayData && (
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold text-white mb-1">📈 All-Round Profile</h2>
+                  <h2 className="text-lg font-semibold text-white mb-1">📈 Percentile Profile</h2>
                   <p className="text-xs text-zinc-500 mb-4">
-                    Percentile values · Overlay comparison
+                    All-round metrics · Enrichment-style radar
                   </p>
                   {(() => {
                     const d = allroundOverlayData;
@@ -559,11 +634,9 @@ export default function ComparePage() {
                     const comparison = d.playerRadarValues[1];
                     return (
                       <>
-                        <RadarChart
+                        <PercentileRadar
                           labels={d.labels}
                           values={primary.values}
-                          maxValue={100}
-                          mode="percentile"
                           displayValues={primary.displayValues}
                           percentiles={primary.values}
                           comparisonValues={comparison.values}
@@ -589,11 +662,11 @@ export default function ComparePage() {
               )}
             </div>
 
-            {/* Stat Comparison — stacked horizontal bars */}
+            {/* Stat Comparison — stacked horizontal bars (fixed 0-100% percentile scale) */}
             {allMetrics.size > 0 && (
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-white mb-1">📊 Stat Comparison</h2>
-                <p className="text-xs text-zinc-500 mb-4">Side-by-side bar graphs for each metric</p>
+                <p className="text-xs text-zinc-500 mb-4">Side-by-side bars · Fixed 0–100% percentile scale</p>
                 <div className="space-y-3">
                   {Array.from(allMetrics.entries()).map(([key, { label, data }]) => {
                     const barColors = ['bg-blue-500', 'bg-red-500', 'bg-green-500'];
@@ -606,12 +679,13 @@ export default function ComparePage() {
                         </div>
                         <div className="space-y-1">
                           {players.map((p, idx) => {
-                            const d = data.find(d => d.playerId === p.id);
+                            const d = data.get(p.id);
                             const val = d?.value;
                             const pct = d?.percentile ?? null;
                             // Fixed 0-100% scale based on percentile rank
                             const width = pct !== null ? pct : 0;
                             const shortName = p.name.split(' ').pop() || p.name;
+                            const hasData = d !== undefined;
 
                             return (
                               <div key={p.id} className="flex items-center gap-2">
@@ -619,19 +693,19 @@ export default function ComparePage() {
                                   {shortName}
                                 </span>
                                 <div className="flex-1 h-4 bg-zinc-800 rounded overflow-hidden">
-                                  <div
-                                    className={`h-full rounded ${barColors[idx]} transition-all`}
-                                    style={{ width: `${Math.max(width, 0.5)}%` }}
-                                  />
+                                  {hasData && (
+                                    <div
+                                      className={`h-full rounded ${barColors[idx]} transition-all`}
+                                      style={{ width: `${Math.max(width, 0.5)}%` }}
+                                    />
+                                  )}
                                 </div>
                                 <span className="text-xs font-mono text-white w-12 text-right">
                                   {val !== undefined ? val : '—'}
                                 </span>
-                                {pct !== null && (
-                                  <span className={`text-[10px] font-mono w-8 text-right ${percentileTextColor(pct)}`}>
-                                    p{pct}
-                                  </span>
-                                )}
+                                <span className={`text-[10px] font-mono w-8 text-right ${pct !== null ? percentileTextColor(pct) : 'text-zinc-600'}`}>
+                                  {pct !== null ? `p${pct}` : '—'}
+                                </span>
                               </div>
                             );
                           })}
@@ -679,13 +753,12 @@ export default function ComparePage() {
                           </td>
                         ))}
                       </tr>
-                      {/* Wyscout metrics */}
+                      {/* Wyscout metrics — shows ALL metrics, "—" for missing */}
                       {Array.from(allMetrics.entries()).map(([key, { label, data }]) => {
                         const values = players.map(p => {
-                          const d = data.find(d => d.playerId === p.id);
+                          const d = data.get(p.id);
                           return { val: d?.value, pct: d?.percentile ?? null };
                         });
-                        if (values.every(v => v.val === undefined)) return null;
 
                         const validPcts = values.filter(v => v.pct !== null).map(v => v.pct!);
                         const maxPct = validPcts.length > 0 ? Math.max(...validPcts) : null;
@@ -698,10 +771,12 @@ export default function ComparePage() {
                                 <span className={`font-mono ${v.pct === maxPct && maxPct !== null ? 'font-bold text-white' : 'text-zinc-300'}`}>
                                   {v.val !== undefined ? v.val : '—'}
                                 </span>
-                                {v.pct !== null && (
+                                {v.pct !== null ? (
                                   <span className={`text-xs ml-1.5 ${percentileTextColor(v.pct)}`}>
                                     p{v.pct}
                                   </span>
+                                ) : (
+                                  <span className="text-xs ml-1.5 text-zinc-600">—</span>
                                 )}
                               </td>
                             ))}

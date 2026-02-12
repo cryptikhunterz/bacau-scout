@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-02-12 (v15) — Enrichment Radar, Compare Fixes & Scout Reference Data
+
+### Changed
+- **Enrichment-style Percentile Radar** — New `PercentileRadar` component replaces the "All-Around Profile" radar across the app:
+  - Circular green-zone backgrounds: Top 10% (dark green outer ring), Above Avg (medium green), Average (dark muted), Below Avg (dark innermost)
+  - Blue polygon for the player's percentile stats with zone-colored dots
+  - Optional dashed comparison overlay for second player
+  - Metric labels around outside with color-coded raw values (green for high, red for low)
+  - Built-in legend: Top 10%, Above Avg, Average, Below Avg
+  - Applied on: Player profile radars (`WyscoutRadars`), player stats (`WyscoutStats`), and compare page
+  - Position-specific radar (left) kept unchanged — scouts love it
+
+### Fixed
+- **Compare page: Missing stats for partial-data players (Cruceru fix)** — Previously, only shared metrics between compared players were shown. Now ALL metrics from ALL players appear, with "—" displayed for any metric a player doesn't have. Uses a union approach instead of intersection.
+- **Compare page: Radar template switching** — Position template selector (GK/CB/WB/DM/CM/AM/FW) now uses canonical metric definitions per position group rather than depending on player data. Switching templates correctly re-renders radars with the new position's metrics regardless of which players are selected.
+- **Compare page: Bar scaling** — Confirmed bars use FIXED 0–100% scale based on percentile. If p84 → bar fills 84%. If p30 → bar fills 30%. Never relative to best player. Also shows "—" for missing percentiles instead of hiding.
+
+### Added
+- **`PercentileRadar` component** (`src/components/PercentileRadar.tsx`) — Standalone enrichment-style SVG radar with green zone backgrounds, fully reusable
+- **Canonical position templates** — Hardcoded radar metric definitions for all 7 position groups (GK, CB, WB, DM, CM, AM, FW) plus all-round template on compare page, ensuring template switching works even without matching player data
+
 ## 2026-02-12 (v14) — Compare Pages Redesign (Enrichment Platform Style)
 
 ### Changed
