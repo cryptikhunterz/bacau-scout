@@ -22,6 +22,10 @@ interface PlayerAvatarProps {
 /**
  * Player photo avatar with graceful fallback to initials.
  * Works as a client component for onError handling.
+ *
+ * NOTE (MAJ-23): Not all players have photos on Transfermarkt. The initial-letter
+ * fallback is expected behavior — it's a data limitation, not a bug. The fallback
+ * is styled with a consistent slate-blue gradient background and centered text.
  */
 export function PlayerAvatar({
   photoUrl,
@@ -30,12 +34,16 @@ export function PlayerAvatar({
   size = 'w-12 h-12',
   rounded = 'rounded-full',
   gradient,
-  fallbackBg = 'bg-zinc-700',
+  fallbackBg,
   fallbackTextSize = 'text-sm',
 }: PlayerAvatarProps) {
   const [imgError, setImgError] = useState(false);
   const initial = fallbackText || name?.charAt(0)?.toUpperCase() || '?';
   const hasPhoto = photoUrl && !imgError;
+
+  // Consistent fallback style: slate-blue gradient for all avatars without photos
+  const defaultFallbackClasses = 'bg-gradient-to-br from-zinc-600 to-zinc-700';
+  const fbBg = fallbackBg || defaultFallbackClasses;
 
   // If gradient border is requested, wrap in a gradient container
   if (gradient) {
@@ -49,7 +57,7 @@ export function PlayerAvatar({
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className={`w-full h-full ${rounded === 'rounded-xl' ? 'rounded-[10px]' : rounded} ${fallbackBg} flex items-center justify-center text-white font-bold ${fallbackTextSize}`}>
+          <div className={`w-full h-full ${rounded === 'rounded-xl' ? 'rounded-[10px]' : rounded} ${fbBg} flex items-center justify-center leading-none text-white/90 font-bold ${fallbackTextSize} select-none`}>
             {initial}
           </div>
         )}
@@ -70,7 +78,7 @@ export function PlayerAvatar({
   }
 
   return (
-    <div className={`${size} ${rounded} ${fallbackBg} flex items-center justify-center text-white font-bold ${fallbackTextSize} shrink-0`}>
+    <div className={`${size} ${rounded} ${fbBg} flex items-center justify-center leading-none text-white/90 font-bold ${fallbackTextSize} shrink-0 select-none`}>
       {initial}
     </div>
   );

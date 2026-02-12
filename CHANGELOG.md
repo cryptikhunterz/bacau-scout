@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-02-12 (v7) — Bug Fix Batch II
+
+### Fixed
+- **MAJ-22: Better empty state for season comparison** — Replaced bare "No season data available" text with an informative empty state including a calendar icon, explanation that season-by-season breakdown isn't available, and a note that career totals are shown above.
+- **MAJ-23: Improved fallback avatar for players without photos** — Fallback initials now use a consistent slate-blue gradient background (`from-zinc-600 to-zinc-700`), `leading-none` for proper vertical centering, and `select-none` to prevent text selection. This is by design — not all players have photos on Transfermarkt.
+- **MAJ-26: GK stats context on player profiles** — Goalkeeper profiles now show relabeled stat cards ("Goals (rare for GK)", "Assists (rare for GK)") with a 🧤 icon, a yellow info banner explaining that saves/clean sheets aren't available from Transfermarkt, and a simplified ratio section showing Min/App instead of Goals/Game. Season table headers also show asterisks for Goals*/Assists* on GK profiles.
+
 ## 2026-02-12 (v6) — Bug Fix Batch
 
 ### Fixed

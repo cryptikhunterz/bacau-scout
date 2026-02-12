@@ -286,8 +286,18 @@ function SeasonComparison({
 
   if (allSeasons.length === 0) {
     return (
-      <div className="text-center text-zinc-500 py-4">
-        No season data available
+      <div className="text-center py-8 px-4">
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-800 mb-3">
+          <svg className="w-6 h-6 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+        <p className="text-zinc-400 text-sm font-medium mb-1">
+          Season-by-season breakdown is not available for these players.
+        </p>
+        <p className="text-zinc-600 text-xs">
+          Career totals are shown above.
+        </p>
       </div>
     );
   }

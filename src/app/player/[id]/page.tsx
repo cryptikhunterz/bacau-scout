@@ -41,6 +41,7 @@ export default async function PlayerDetailPage({
   const posGradient = getPosGradient(player.position || '');
   const totals = player.careerTotals;
   const hasStats = player.stats && player.stats.length > 0;
+  const isGoalkeeper = player.position?.toLowerCase().includes('goalkeeper') ?? false;
 
   // Group stats by season
   const seasonGroups = new Map<string, typeof player.stats>();
@@ -139,11 +140,18 @@ export default async function PlayerDetailPage({
                 </h2>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <StatCard label="Appearances" value={totals.matches} icon="⚽" />
-                  <StatCard label="Goals" value={totals.goals} icon="🥅" highlight />
-                  <StatCard label="Assists" value={totals.assists} icon="🅰️" />
+                  <StatCard label={isGoalkeeper ? 'Goals (rare for GK)' : 'Goals'} value={totals.goals} icon={isGoalkeeper ? '🧤' : '🥅'} highlight={!isGoalkeeper} />
+                  <StatCard label={isGoalkeeper ? 'Assists (rare for GK)' : 'Assists'} value={totals.assists} icon={isGoalkeeper ? '🧤' : '🅰️'} />
                   <StatCard label="Minutes" value={totals.minutes.toLocaleString()} icon="⏱️" />
                 </div>
-                {totals.matches > 0 && totals.goals > 0 && (
+                {isGoalkeeper && (
+                  <div className="mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                    <p className="text-xs text-yellow-400/80">
+                      ℹ️ Goalkeeper stats — saves, clean sheets, and other GK-specific metrics are not available from Transfermarkt. Only appearances, goals, assists, and minutes are provided.
+                    </p>
+                  </div>
+                )}
+                {totals.matches > 0 && totals.goals > 0 && !isGoalkeeper && (
                   <div className="mt-4 pt-4 border-t border-zinc-800">
                     <div className="flex gap-6 text-sm">
                       <div>
@@ -175,6 +183,18 @@ export default async function PlayerDetailPage({
                     </div>
                   </div>
                 )}
+                {totals.matches > 0 && isGoalkeeper && (
+                  <div className="mt-4 pt-4 border-t border-zinc-800">
+                    <div className="flex gap-6 text-sm">
+                      <div>
+                        <span className="text-zinc-500">Min/App: </span>
+                        <span className="text-white font-semibold">
+                          {totals.minutes > 0 ? Math.round(totals.minutes / totals.matches) : '-'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 
@@ -193,8 +213,8 @@ export default async function PlayerDetailPage({
                         <th className="px-4 py-2.5 text-left text-xs font-medium text-zinc-500 uppercase">Season</th>
                         <th className="px-4 py-2.5 text-left text-xs font-medium text-zinc-500 uppercase">Competition</th>
                         <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">Apps</th>
-                        <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">Goals</th>
-                        <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">Assists</th>
+                        <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">{isGoalkeeper ? 'Goals*' : 'Goals'}</th>
+                        <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">{isGoalkeeper ? 'Assists*' : 'Assists'}</th>
                         <th className="px-4 py-2.5 text-center text-xs font-medium text-zinc-500 uppercase">G+A</th>
                       </tr>
                     </thead>
