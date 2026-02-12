@@ -65,20 +65,39 @@ for internal_id, p in all_players.items():
         metrics = p.get("m", {}) or {}
         radar_config = p.get("r", []) or []
         
-        # Position-specific radar from enrichment platform's config
-        for rm in radar_config:
-            key = rm.get("key", "")
-            radar_metrics.append({
-                "key": key,
-                "label": rm.get("label", key),
-                "value": rm.get("value", 0),
-                "percentile": league_p.get(key),
-                "gp": global_p.get(key),
-                "invert": rm.get("invert", False)
-            })
+        # Position-specific radar: use enrichment config if it has enough,
+        # otherwise use ALL metrics with percentiles (like enrichment frontend does)
+        if len(radar_config) >= 5:
+            for rm in radar_config:
+                key = rm.get("key", "")
+                radar_metrics.append({
+                    "key": key,
+                    "label": rm.get("label", key),
+                    "value": rm.get("value", 0),
+                    "percentile": league_p.get(key),
+                    "gp": global_p.get(key),
+                    "invert": rm.get("invert", False)
+                })
+        else:
+            # Use ALL available percentiled metrics for radar (like enrichment frontend)
+            radar_keys_used = set()
+            for key in sorted(league_p.keys()):
+                if league_p.get(key) is not None and key in metrics:
+                    label = key.replace(" per 90", " /90").replace(", %", " %").replace("Successful ", "")
+                    radar_metrics.append({
+                        "key": key,
+                        "label": label,
+                        "value": metrics.get(key, 0),
+                        "percentile": league_p.get(key),
+                        "gp": global_p.get(key),
+                        "invert": False
+                    })
+                    radar_keys_used.add(key)
+                    if len(radar_metrics) >= 16:  # max 16 axes
+                        break
         
-        # All-round metrics: use all available metric percentiles
-        # Pick top 10 non-radar metrics for allround, or use standard set
+        # All-round metrics: use all available metrics NOT in radar
+        radar_key_set = {m["key"] for m in radar_metrics}
         ALLROUND_KEYS = [
             "Passes per 90", "Accurate passes, %", "Progressive passes per 90",
             "Crosses per 90", "Offensive duels won, %", "Defensive duels per 90",
@@ -87,7 +106,7 @@ for internal_id, p in all_players.items():
         ]
         
         for key in ALLROUND_KEYS:
-            if key in metrics:
+            if key in metrics and key not in radar_key_set:
                 allround_metrics.append({
                     "key": key,
                     "label": key,
