@@ -1,5 +1,37 @@
 # Changelog
 
+## 2026-02-12 (v14) — Compare Pages Redesign (Enrichment Platform Style)
+
+### Changed
+- **Player Compare page** — Complete redesign to match the Wyscout Enrichment Platform's compare layout:
+  - Support for up to 3 players (was 2)
+  - Unified search bar instead of separate Player 1 / Player 2 search boxes
+  - Player cards show name, position, club, age, minutes, market value, and Wyscout position group
+  - Position template selector for radar view (GK, CB, WB, DM, CM, AM, FW)
+  - League/Global percentile toggle
+  - Two overlay radar charts side by side: Position-specific + All-Round profiles
+  - Stacked horizontal bar graphs for each Wyscout metric (one bar per player, colored blue/red/green)
+  - Raw value shown on right, percentile badge ("p79", "p83") on far right of each bar
+  - Full metrics comparison table with best-value highlighting
+  - Removed old Career Totals, Per-90, and Season-by-Season sections (replaced by Wyscout data)
+  - Removed separate `WyscoutCompare` component (functionality integrated directly)
+- **Team Compare page** — Complete redesign to match the Enrichment Platform:
+  - Support for up to 3 teams (was 2)
+  - Unified search bar instead of separate Team 1 / Team 2 boxes
+  - Team cards show club, league, squad size, total market value, Wyscout data count
+  - Two overlay radar charts: Percentile + Raw stats (squad-averaged)
+  - Stacked horizontal bars for 10 all-round metrics with percentile annotations
+  - Full metrics comparison table
+  - League/Global percentile toggle
+  - Full squad lists preserved at the bottom
+  - Removed old Squad Overview, Position Breakdown, Squad Performance bar sections (replaced by Wyscout data)
+  - Removed separate `WyscoutTeamCompare` component (functionality integrated directly)
+
+### Visual Style
+- Dark theme (zinc-950/900 backgrounds) matching enrichment platform
+- Bar colors: blue for player/team 1, red for 2, green for 3
+- Percentile annotations shown as colored "p79" text using standard color scale
+
 ## 2026-02-12 (v13) — Enrichment Platform Stats Integration
 
 ### Added

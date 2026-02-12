@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { WyscoutTeamCompare } from '@/components/WyscoutTeamCompare';
+import { RadarChart } from '@/components/RadarChart';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -38,22 +38,72 @@ interface TeamData {
   players: TeamPlayer[];
 }
 
+interface RadarMetric {
+  key: string;
+  label: string;
+  value: number;
+  percentile: number;
+  gp: number;
+}
+
+interface PercentileWyscoutData {
+  hasPercentiles: true;
+  pg: string;
+  comp: string;
+  radar: RadarMetric[];
+  allround: RadarMetric[];
+}
+
+type CompareMode = 'league' | 'global';
+
 /* ------------------------------------------------------------------ */
-/*  Team Search Autocomplete                                           */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
+
+const MAX_COMPARE = 3;
+
+const COMPARE_COLORS = [
+  { label: 'blue', text: 'text-blue-400', bg: 'bg-blue-500/20', border: 'border-blue-500/40', bar: 'bg-blue-500', dot: '#3b82f6' },
+  { label: 'red', text: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/40', bar: 'bg-red-500', dot: '#ef4444' },
+  { label: 'green', text: 'text-green-400', bg: 'bg-green-500/20', border: 'border-green-500/40', bar: 'bg-green-500', dot: '#22c55e' },
+];
+
+const ALLROUND_KEYS = [
+  'Passes per 90', 'Accurate passes, %', 'Progressive passes per 90',
+  'Crosses per 90', 'Offensive duels won, %', 'Defensive duels per 90',
+  'Aerial duels per 90', 'Touches in box per 90', 'Fouls per 90',
+  'Key passes per 90',
+];
+
+const ALLROUND_LABELS = [
+  'Passes /90', 'Pass Acc %', 'Prog Pass /90',
+  'Crosses /90', 'Off Duels %', 'Def Duels /90',
+  'Aerial /90', 'Box Touch /90', 'Fouls /90',
+  'Key Pass /90',
+];
+
+/* ------------------------------------------------------------------ */
+/*  Utility                                                            */
+/* ------------------------------------------------------------------ */
+
+function percentileTextColor(pct: number): string {
+  if (pct >= 81) return 'text-emerald-400';
+  if (pct >= 61) return 'text-green-400';
+  if (pct >= 41) return 'text-yellow-400';
+  if (pct >= 21) return 'text-amber-400';
+  return 'text-red-400';
+}
+
+/* ------------------------------------------------------------------ */
+/*  Team Search                                                        */
 /* ------------------------------------------------------------------ */
 
 function TeamSearch({
-  label,
   onSelect,
-  selectedTeam,
-  onClear,
-  color,
+  disabled,
 }: {
-  label: string;
   onSelect: (club: string) => void;
-  selectedTeam: TeamData | null;
-  onClear: () => void;
-  color: 'blue' | 'red';
+  disabled: boolean;
 }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<string[]>([]);
@@ -61,10 +111,6 @@ function TeamSearch({
   const [loading, setLoading] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const borderColor = color === 'blue' ? 'border-blue-500' : 'border-red-500';
-  const ringColor = color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-red-500';
-  const labelColor = color === 'blue' ? 'text-blue-400' : 'text-red-400';
 
   const search = useCallback(async (q: string) => {
     if (q.length < 2) {
@@ -100,51 +146,22 @@ function TeamSearch({
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  if (selectedTeam) {
-    return (
-      <div className={`border-2 ${borderColor} rounded-xl bg-zinc-900 p-4`}>
-        <div className="flex items-center justify-between mb-2">
-          <span className={`text-xs font-bold uppercase tracking-wider ${labelColor}`}>{label}</span>
-          <button
-            onClick={onClear}
-            className="text-zinc-500 hover:text-white text-sm transition-colors"
-          >
-            ✕ Change
-          </button>
-        </div>
-        <div>
-          <div className="font-bold text-white text-lg">{selectedTeam.club}</div>
-          <div className="text-sm text-zinc-400">
-            {selectedTeam.league || 'Unknown league'} • {selectedTeam.squadSize} players
-          </div>
-          <div className="text-green-400 text-sm font-medium mt-1">
-            {selectedTeam.totalMarketValueFormatted}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div ref={containerRef} className="relative">
-      <span className={`text-xs font-bold uppercase tracking-wider ${labelColor} mb-1 block`}>
-        {label}
-      </span>
       <input
         type="text"
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        placeholder="Search team/club name..."
-        className={`w-full px-4 py-3 bg-zinc-900 border-2 ${borderColor} rounded-xl
-                   text-white placeholder-zinc-500
-                   focus:outline-none focus:ring-2 ${ringColor} transition-all`}
+        placeholder={disabled ? 'Maximum teams reached' : 'Search team to add...'}
+        disabled={disabled}
+        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
       />
       {loading && (
-        <div className="absolute right-3 top-9 text-zinc-500 text-sm">...</div>
+        <div className="absolute right-3 top-3 text-zinc-500 text-sm">...</div>
       )}
       {open && results.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[300px] overflow-auto z-50">
           {results.map((club) => (
             <button
               key={club}
@@ -154,15 +171,15 @@ function TeamSearch({
                 setResults([]);
                 setOpen(false);
               }}
-              className="w-full text-left px-4 py-3 hover:bg-zinc-700 transition-colors"
+              className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-800 text-left transition-colors"
             >
-              <span className="text-white font-medium">{club}</span>
+              <span className="text-white text-sm font-medium">{club}</span>
             </button>
           ))}
         </div>
       )}
       {open && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl p-4 text-center text-zinc-500">
+        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl p-4 text-center text-zinc-500">
           No teams found
         </div>
       )}
@@ -171,104 +188,45 @@ function TeamSearch({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Comparison Bar (same as player comparison)                         */
+/*  Aggregate team Wyscout data                                        */
 /* ------------------------------------------------------------------ */
 
-function ComparisonBar({
-  label,
-  value1,
-  value2,
-  maxValue,
-  format = 'number',
-}: {
-  label: string;
-  value1: number;
-  value2: number;
-  maxValue: number;
-  format?: 'number' | 'decimal' | 'currency' | 'percentage';
-}) {
-  const pct1 = maxValue > 0 ? Math.min((value1 / maxValue) * 100, 100) : 0;
-  const pct2 = maxValue > 0 ? Math.min((value2 / maxValue) * 100, 100) : 0;
+function aggregateTeamData(
+  playerData: PercentileWyscoutData[],
+  compareMode: CompareMode,
+) {
+  if (playerData.length === 0) return null;
 
-  const fmt = (v: number) => {
-    switch (format) {
-      case 'decimal':
-        return v.toFixed(1);
-      case 'currency':
-        if (v >= 1_000_000) return `€${(v / 1_000_000).toFixed(1)}M`;
-        if (v >= 1_000) return `€${(v / 1_000).toFixed(0)}K`;
-        return v > 0 ? `€${v}` : '-';
-      case 'percentage':
-        return `${v.toFixed(1)}%`;
-      default:
-        return v.toLocaleString();
+  const avgPercentiles: number[] = ALLROUND_KEYS.map((key) => {
+    let sum = 0;
+    let count = 0;
+    for (const player of playerData) {
+      const m = player.allround.find(a => a.key === key);
+      if (m) {
+        const pct = compareMode === 'league' ? m.percentile : m.gp;
+        if (m.value !== 0 || pct !== 50) {
+          sum += pct;
+          count++;
+        }
+      }
     }
-  };
+    return count > 0 ? Math.round(sum / count) : 0;
+  });
 
-  return (
-    <div className="mb-3">
-      <div className="text-center text-sm font-medium text-zinc-300 mb-1">{label}</div>
-      <div className="flex items-center gap-2">
-        <div className="w-20 text-right text-sm font-mono text-blue-400">{fmt(value1)}</div>
-        <div className="flex-1 h-6 bg-zinc-800 rounded-l overflow-hidden flex justify-end">
-          <div
-            className="h-full bg-blue-500 rounded-l transition-all duration-500"
-            style={{ width: `${pct1}%` }}
-          />
-        </div>
-        <div className="w-px h-6 bg-zinc-600" />
-        <div className="flex-1 h-6 bg-zinc-800 rounded-r overflow-hidden">
-          <div
-            className="h-full bg-red-500 rounded-r transition-all duration-500"
-            style={{ width: `${pct2}%` }}
-          />
-        </div>
-        <div className="w-20 text-left text-sm font-mono text-red-400">{fmt(value2)}</div>
-      </div>
-    </div>
-  );
-}
+  const avgValues: number[] = ALLROUND_KEYS.map((key) => {
+    let sum = 0;
+    let count = 0;
+    for (const player of playerData) {
+      const m = player.allround.find(a => a.key === key);
+      if (m && (m.value !== 0 || m.percentile !== 50)) {
+        sum += m.value;
+        count++;
+      }
+    }
+    return count > 0 ? Math.round((sum / count) * 100) / 100 : 0;
+  });
 
-/* ------------------------------------------------------------------ */
-/*  Position Breakdown Bar                                             */
-/* ------------------------------------------------------------------ */
-
-function PositionBar({
-  label,
-  value1,
-  value2,
-  maxValue,
-}: {
-  label: string;
-  value1: number;
-  value2: number;
-  maxValue: number;
-}) {
-  const pct1 = maxValue > 0 ? Math.min((value1 / maxValue) * 100, 100) : 0;
-  const pct2 = maxValue > 0 ? Math.min((value2 / maxValue) * 100, 100) : 0;
-
-  return (
-    <div className="mb-2">
-      <div className="text-center text-sm font-medium text-zinc-300 mb-1">{label}</div>
-      <div className="flex items-center gap-2">
-        <div className="w-10 text-right text-sm font-mono text-blue-400">{value1}</div>
-        <div className="flex-1 h-5 bg-zinc-800 rounded-l overflow-hidden flex justify-end">
-          <div
-            className="h-full bg-blue-500/70 rounded-l transition-all duration-500"
-            style={{ width: `${pct1}%` }}
-          />
-        </div>
-        <div className="w-px h-5 bg-zinc-600" />
-        <div className="flex-1 h-5 bg-zinc-800 rounded-r overflow-hidden">
-          <div
-            className="h-full bg-red-500/70 rounded-r transition-all duration-500"
-            style={{ width: `${pct2}%` }}
-          />
-        </div>
-        <div className="w-10 text-left text-sm font-mono text-red-400">{value2}</div>
-      </div>
-    </div>
-  );
+  return { avgPercentiles, avgValues, playerCount: playerData.length };
 }
 
 /* ------------------------------------------------------------------ */
@@ -287,11 +245,11 @@ function SquadList({
   color,
 }: {
   team: TeamData;
-  color: 'blue' | 'red';
+  color: 'blue' | 'red' | 'green';
 }) {
-  const borderColor = color === 'blue' ? 'border-blue-500/30' : 'border-red-500/30';
-  const headerBg = color === 'blue' ? 'bg-blue-500/10' : 'bg-red-500/10';
-  const headerText = color === 'blue' ? 'text-blue-400' : 'text-red-400';
+  const borderColor = color === 'blue' ? 'border-blue-500/30' : color === 'red' ? 'border-red-500/30' : 'border-green-500/30';
+  const headerBg = color === 'blue' ? 'bg-blue-500/10' : color === 'red' ? 'bg-red-500/10' : 'bg-green-500/10';
+  const headerText = color === 'blue' ? 'text-blue-400' : color === 'red' ? 'text-red-400' : 'text-green-400';
 
   return (
     <div className={`border ${borderColor} rounded-xl overflow-hidden`}>
@@ -341,23 +299,39 @@ function SquadList({
 /* ------------------------------------------------------------------ */
 
 export default function CompareTeamsPage() {
-  const [team1, setTeam1] = useState<TeamData | null>(null);
-  const [team2, setTeam2] = useState<TeamData | null>(null);
-  const [loading1, setLoading1] = useState(false);
-  const [loading2, setLoading2] = useState(false);
+  const [teams, setTeams] = useState<TeamData[]>([]);
+  const [teamWyscoutData, setTeamWyscoutData] = useState<Record<string, PercentileWyscoutData[]>>({});
+  const [loading, setLoading] = useState(false);
+  const [compareMode, setCompareMode] = useState<CompareMode>('global');
 
-  const loadTeam = async (
-    club: string,
-    setter: (t: TeamData) => void,
-    setLoading: (v: boolean) => void
-  ) => {
+  const loadTeam = async (club: string) => {
+    if (teams.length >= MAX_COMPARE) return;
     setLoading(true);
     try {
       const res = await fetch(`/api/teams/${encodeURIComponent(club)}`);
-      if (res.ok) {
-        const data = await res.json();
-        setter(data);
+      if (!res.ok) return;
+      const teamData: TeamData = await res.json();
+      setTeams(prev => [...prev, teamData]);
+
+      // Fetch Wyscout data for all players in the team
+      const playerIds = teamData.players.filter(p => p.playerId).map(p => p.playerId!);
+      const wyscoutResults: PercentileWyscoutData[] = [];
+      
+      for (let i = 0; i < playerIds.length; i += 10) {
+        const batch = playerIds.slice(i, i + 10);
+        const responses = await Promise.all(
+          batch.map(id =>
+            fetch(`/api/players/${id}/wyscout`)
+              .then(r => r.ok ? r.json() : null)
+              .catch(() => null)
+          )
+        );
+        for (const r of responses) {
+          if (r?.hasPercentiles) wyscoutResults.push(r);
+        }
       }
+      
+      setTeamWyscoutData(prev => ({ ...prev, [club]: wyscoutResults }));
     } catch (err) {
       console.error('Failed to load team:', err);
     } finally {
@@ -365,27 +339,26 @@ export default function CompareTeamsPage() {
     }
   };
 
-  // Compute bar maxima
-  const maxSquad = Math.max(team1?.squadSize || 0, team2?.squadSize || 0, 1);
-  const maxAge = Math.max(team1?.avgAge || 0, team2?.avgAge || 0, 1);
-  const maxAvgVal = Math.max(team1?.avgMarketValue || 0, team2?.avgMarketValue || 0, 1);
-  const maxTotalVal = Math.max(team1?.totalMarketValue || 0, team2?.totalMarketValue || 0, 1);
-  const maxApps = Math.max(team1?.totalAppearances || 0, team2?.totalAppearances || 0, 1);
-  const maxGoals = Math.max(team1?.totalGoals || 0, team2?.totalGoals || 0, 1);
-  const maxAssists = Math.max(team1?.totalAssists || 0, team2?.totalAssists || 0, 1);
+  const removeTeam = (club: string) => {
+    setTeams(prev => prev.filter(t => t.club !== club));
+    setTeamWyscoutData(prev => {
+      const next = { ...prev };
+      delete next[club];
+      return next;
+    });
+  };
 
-  // Position breakdown max
-  const maxPos = Math.max(
-    team1?.positionBreakdown.GK || 0,
-    team1?.positionBreakdown.DEF || 0,
-    team1?.positionBreakdown.MID || 0,
-    team1?.positionBreakdown.FWD || 0,
-    team2?.positionBreakdown.GK || 0,
-    team2?.positionBreakdown.DEF || 0,
-    team2?.positionBreakdown.MID || 0,
-    team2?.positionBreakdown.FWD || 0,
-    1
-  );
+  // Aggregate data for each team
+  const teamAggregates = useMemo(() => {
+    const result: Record<string, ReturnType<typeof aggregateTeamData>> = {};
+    for (const team of teams) {
+      const wd = teamWyscoutData[team.club] || [];
+      result[team.club] = aggregateTeamData(wd, compareMode);
+    }
+    return result;
+  }, [teams, teamWyscoutData, compareMode]);
+
+  const hasAllAggregates = teams.length >= 2 && teams.every(t => teamAggregates[t.club]);
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -394,7 +367,7 @@ export default function CompareTeamsPage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">Team Comparison</h1>
-            <p className="text-sm text-zinc-500">Compare two clubs side by side</p>
+            <p className="text-sm text-zinc-500">Compare up to {MAX_COMPARE} teams side by side</p>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -435,167 +408,298 @@ export default function CompareTeamsPage() {
       </div>
 
       <div className="max-w-5xl mx-auto p-4 space-y-6">
-        {/* Team Selectors */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TeamSearch
-            label="Team 1"
-            color="blue"
-            selectedTeam={team1}
-            onSelect={(club) => loadTeam(club, setTeam1, setLoading1)}
-            onClear={() => setTeam1(null)}
-          />
-          <TeamSearch
-            label="Team 2"
-            color="red"
-            selectedTeam={team2}
-            onSelect={(club) => loadTeam(club, setTeam2, setLoading2)}
-            onClear={() => setTeam2(null)}
-          />
-        </div>
+        {/* Search */}
+        <TeamSearch
+          onSelect={loadTeam}
+          disabled={teams.length >= MAX_COMPARE}
+        />
 
         {/* Loading */}
-        {(loading1 || loading2) && (
-          <div className="flex justify-center py-8">
+        {loading && (
+          <div className="flex justify-center py-4">
             <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
           </div>
         )}
 
-        {/* Comparison */}
-        {team1 && team2 && !loading1 && !loading2 && (
-          <div className="space-y-6">
-            {/* Team Headers */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                <div className="font-bold text-white text-lg">{team1.club}</div>
-                <div className="text-sm text-zinc-400">{team1.league || 'Unknown league'}</div>
-                <div className="text-sm text-zinc-500">{team1.squadSize} players</div>
-                <div className="text-green-400 text-sm font-medium mt-1">
-                  {team1.totalMarketValueFormatted}
+        {/* Selected Team Cards */}
+        {teams.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {teams.map((t, idx) => {
+              const color = COMPARE_COLORS[idx];
+              const agg = teamAggregates[t.club];
+              return (
+                <div
+                  key={t.club}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${color.bg} ${color.border}`}
+                >
+                  <div>
+                    <div className={`text-sm font-bold ${color.text}`}>{t.club}</div>
+                    <div className="text-xs text-zinc-500">
+                      {t.league || 'Unknown league'} • {t.squadSize} players
+                    </div>
+                    <div className="text-xs text-green-400 font-medium">{t.totalMarketValueFormatted}</div>
+                    {agg && (
+                      <div className="text-[10px] text-zinc-600">{agg.playerCount} with Wyscout data</div>
+                    )}
+                  </div>
+                  <button
+                    onClick={() => removeTeam(t.club)}
+                    className="ml-2 text-zinc-500 hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
                 </div>
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                <div className="font-bold text-white text-lg">{team2.club}</div>
-                <div className="text-sm text-zinc-400">{team2.league || 'Unknown league'}</div>
-                <div className="text-sm text-zinc-500">{team2.squadSize} players</div>
-                <div className="text-green-400 text-sm font-medium mt-1">
-                  {team2.totalMarketValueFormatted}
-                </div>
-              </div>
-            </div>
-
-            {/* Squad Overview */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Squad Overview</h3>
-              <ComparisonBar
-                label="Squad Size"
-                value1={team1.squadSize}
-                value2={team2.squadSize}
-                maxValue={maxSquad}
-              />
-              <ComparisonBar
-                label="Average Age"
-                value1={team1.avgAge}
-                value2={team2.avgAge}
-                maxValue={maxAge}
-                format="decimal"
-              />
-              <ComparisonBar
-                label="Avg Market Value"
-                value1={team1.avgMarketValue}
-                value2={team2.avgMarketValue}
-                maxValue={maxAvgVal}
-                format="currency"
-              />
-              <ComparisonBar
-                label="Total Market Value"
-                value1={team1.totalMarketValue}
-                value2={team2.totalMarketValue}
-                maxValue={maxTotalVal}
-                format="currency"
-              />
-            </div>
-
-            {/* Position Breakdown */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Position Breakdown</h3>
-              <PositionBar
-                label="🧤 Goalkeepers"
-                value1={team1.positionBreakdown.GK}
-                value2={team2.positionBreakdown.GK}
-                maxValue={maxPos}
-              />
-              <PositionBar
-                label="🛡️ Defenders"
-                value1={team1.positionBreakdown.DEF}
-                value2={team2.positionBreakdown.DEF}
-                maxValue={maxPos}
-              />
-              <PositionBar
-                label="⚙️ Midfielders"
-                value1={team1.positionBreakdown.MID}
-                value2={team2.positionBreakdown.MID}
-                maxValue={maxPos}
-              />
-              <PositionBar
-                label="⚽ Forwards"
-                value1={team1.positionBreakdown.FWD}
-                value2={team2.positionBreakdown.FWD}
-                maxValue={maxPos}
-              />
-            </div>
-
-            {/* Squad Performance */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Squad Performance</h3>
-              <ComparisonBar
-                label="Total Appearances"
-                value1={team1.totalAppearances}
-                value2={team2.totalAppearances}
-                maxValue={maxApps}
-              />
-              <ComparisonBar
-                label="Total Goals"
-                value1={team1.totalGoals}
-                value2={team2.totalGoals}
-                maxValue={maxGoals}
-              />
-              <ComparisonBar
-                label="Total Assists"
-                value1={team1.totalAssists}
-                value2={team2.totalAssists}
-                maxValue={maxAssists}
-              />
-            </div>
-
-            {/* Wyscout Team Metrics Comparison */}
-            <WyscoutTeamCompare
-              team1PlayerIds={team1.players.filter(p => p.playerId).map(p => p.playerId!)}
-              team2PlayerIds={team2.players.filter(p => p.playerId).map(p => p.playerId!)}
-              team1Name={team1.club}
-              team2Name={team2.club}
-            />
-
-            {/* Squad Lists */}
-            <div>
-              <h3 className="text-lg font-bold text-white mb-4">Full Squads</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <SquadList team={team1} color="blue" />
-                <SquadList team={team2} color="red" />
-              </div>
-            </div>
+              );
+            })}
           </div>
         )}
 
         {/* Empty State */}
-        {!team1 && !team2 && (
-          <div className="text-center py-16">
+        {teams.length === 0 && !loading && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
             <div className="text-4xl mb-4">🏟️ vs 🏟️</div>
-            <h2 className="text-xl font-bold text-zinc-400 mb-2">
-              Select two teams to compare
-            </h2>
-            <p className="text-zinc-600">
-              Use the search boxes above to find clubs from the player database.
-            </p>
+            <div className="text-zinc-500 text-lg mb-2">No teams selected</div>
+            <div className="text-zinc-600 text-sm">Search and add up to {MAX_COMPARE} teams to compare</div>
+          </div>
+        )}
+
+        {/* Comparison content */}
+        {teams.length >= 2 && (
+          <div className="space-y-6">
+            {/* Percentile mode toggle */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <div className="text-xs text-zinc-500">
+                  {teams.map((t, i) => {
+                    const agg = teamAggregates[t.club];
+                    return (agg ? `${t.club}: ${agg.playerCount} players with Wyscout data` : '');
+                  }).filter(Boolean).join(' · ')}
+                </div>
+                <div className="flex bg-zinc-800 rounded-lg p-0.5">
+                  <button
+                    onClick={() => setCompareMode('league')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      compareMode === 'league'
+                        ? 'bg-blue-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    🏆 League
+                  </button>
+                  <button
+                    onClick={() => setCompareMode('global')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      compareMode === 'global'
+                        ? 'bg-purple-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    🌍 Global
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Radar Charts */}
+            {hasAllAggregates && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Percentile Radar */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                  <h2 className="text-lg font-semibold text-white mb-1">📊 Percentile Radar</h2>
+                  <p className="text-xs text-zinc-500 mb-4">
+                    {compareMode === 'global' ? 'Global percentile values' : 'League percentile values'} · Squad averages
+                  </p>
+                  {(() => {
+                    const agg1 = teamAggregates[teams[0].club]!;
+                    const agg2 = teamAggregates[teams[1].club]!;
+                    return (
+                      <>
+                        <RadarChart
+                          labels={ALLROUND_LABELS}
+                          values={agg1.avgPercentiles}
+                          maxValue={100}
+                          mode="percentile"
+                          displayValues={agg1.avgValues}
+                          percentiles={agg1.avgPercentiles}
+                          comparisonValues={agg2.avgPercentiles}
+                          comparisonColor={COMPARE_COLORS[1].dot}
+                        />
+                        <div className="flex justify-center gap-6 mt-2 text-xs">
+                          {teams.slice(0, 2).map((t, idx) => (
+                            <span key={t.club} className="flex items-center gap-1.5">
+                              <span
+                                className="w-3 h-0.5 inline-block rounded"
+                                style={{ backgroundColor: COMPARE_COLORS[idx].dot }}
+                              />
+                              <span className={COMPARE_COLORS[idx].text}>{t.club}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+
+                {/* Raw Stats Radar */}
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                  <h2 className="text-lg font-semibold text-white mb-1">📈 Raw Stats</h2>
+                  <p className="text-xs text-zinc-500 mb-4">
+                    Actual values · Each axis scaled independently
+                  </p>
+                  {(() => {
+                    const agg1 = teamAggregates[teams[0].club]!;
+                    const agg2 = teamAggregates[teams[1].club]!;
+                    // Build per-axis max values for raw mode
+                    const maxValues = ALLROUND_KEYS.map((_, i) => {
+                      const v1 = agg1.avgValues[i];
+                      const v2 = agg2.avgValues[i];
+                      const max = Math.max(v1, v2);
+                      if (max <= 0) return 1;
+                      if (max <= 1) return Math.ceil(max * 10) / 10;
+                      if (max <= 10) return Math.ceil(max);
+                      return Math.ceil(max / 5) * 5;
+                    });
+                    return (
+                      <>
+                        <RadarChart
+                          labels={ALLROUND_LABELS}
+                          values={agg1.avgValues}
+                          maxValue={1}
+                          maxValues={maxValues}
+                          mode="raw"
+                          color="#3b82f6"
+                          comparisonValues={agg2.avgValues}
+                          comparisonColor={COMPARE_COLORS[1].dot}
+                        />
+                        <div className="flex justify-center gap-6 mt-2 text-xs">
+                          {teams.slice(0, 2).map((t, idx) => (
+                            <span key={t.club} className="flex items-center gap-1.5">
+                              <span
+                                className="w-3 h-0.5 inline-block rounded"
+                                style={{ backgroundColor: COMPARE_COLORS[idx].dot }}
+                              />
+                              <span className={COMPARE_COLORS[idx].text}>{t.club}</span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            )}
+
+            {/* Stat Comparison — stacked horizontal bars */}
+            {hasAllAggregates && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-white mb-1">📊 Stat Comparison</h2>
+                <p className="text-xs text-zinc-500 mb-4">Squad-averaged per-90 values and percentiles</p>
+                <div className="space-y-3">
+                  {ALLROUND_KEYS.map((key, i) => {
+                    const values = teams.map(t => {
+                      const agg = teamAggregates[t.club];
+                      return {
+                        val: agg?.avgValues[i] ?? 0,
+                        pct: agg?.avgPercentiles[i] ?? 0,
+                      };
+                    });
+                    const maxVal = Math.max(...values.map(v => v.val), 0.01);
+                    const barColors = ['bg-blue-500', 'bg-red-500', 'bg-green-500'];
+                    const textColors = ['text-blue-400', 'text-red-400', 'text-green-400'];
+
+                    return (
+                      <div key={key} className="group">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs text-zinc-400">{ALLROUND_LABELS[i]}</span>
+                        </div>
+                        <div className="space-y-1">
+                          {teams.map((t, idx) => {
+                            const v = values[idx];
+                            const width = v.val > 0 ? (v.val / maxVal) * 100 : 0;
+                            return (
+                              <div key={t.club} className="flex items-center gap-2">
+                                <span className={`text-[10px] font-medium w-20 truncate ${textColors[idx]}`}>{t.club}</span>
+                                <div className="flex-1 h-4 bg-zinc-800 rounded overflow-hidden">
+                                  <div
+                                    className={`h-full rounded ${barColors[idx]} transition-all`}
+                                    style={{ width: `${Math.max(width, 0.5)}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs font-mono text-white w-14 text-right">{v.val}</span>
+                                <span className={`text-[10px] font-mono w-8 text-right ${percentileTextColor(v.pct)}`}>
+                                  p{v.pct}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Metrics Table */}
+            {hasAllAggregates && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <h3 className="font-semibold text-white">Metrics Comparison</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wider">
+                        <th className="text-left px-4 py-2">Metric</th>
+                        {teams.map((t, idx) => (
+                          <th key={t.club} className={`text-right px-4 py-2 ${COMPARE_COLORS[idx].text}`}>
+                            {t.club}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {ALLROUND_KEYS.map((key, i) => {
+                        const values = teams.map(t => {
+                          const agg = teamAggregates[t.club];
+                          return {
+                            val: agg?.avgValues[i] ?? 0,
+                            pct: agg?.avgPercentiles[i] ?? 0,
+                          };
+                        });
+                        const maxPct = Math.max(...values.map(v => v.pct));
+
+                        return (
+                          <tr key={key} className="border-b border-zinc-800/30 hover:bg-zinc-800/30">
+                            <td className="px-4 py-2 text-zinc-400">{ALLROUND_LABELS[i]}</td>
+                            {values.map((v, idx) => (
+                              <td key={idx} className="px-4 py-2 text-right">
+                                <span className={`font-mono ${v.pct === maxPct ? 'font-bold text-white' : 'text-zinc-300'}`}>
+                                  {v.val}
+                                </span>
+                                <span className={`text-xs ml-1.5 ${percentileTextColor(v.pct)}`}>
+                                  p{v.pct}
+                                </span>
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Squad Lists */}
+            <div>
+              <h3 className="text-lg font-bold text-white mb-4">Full Squads</h3>
+              <div className={`grid grid-cols-1 ${teams.length === 3 ? 'lg:grid-cols-3' : 'md:grid-cols-2'} gap-4`}>
+                {teams.map((t, idx) => (
+                  <SquadList key={t.club} team={t} color={['blue', 'red', 'green'][idx] as 'blue' | 'red' | 'green'} />
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

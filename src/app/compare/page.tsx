@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
-import { WyscoutCompare } from '@/components/WyscoutCompare';
+import { RadarChart } from '@/components/RadarChart';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -43,22 +43,70 @@ interface PlayerDetail {
   }>;
 }
 
+interface RadarMetric {
+  key: string;
+  label: string;
+  value: number;
+  percentile: number;
+  gp: number;
+}
+
+interface PercentileWyscoutData {
+  hasPercentiles: true;
+  pg: string;
+  comp: string;
+  radar: RadarMetric[];
+  allround: RadarMetric[];
+}
+
+type CompareMode = 'league' | 'global';
+
+/* ------------------------------------------------------------------ */
+/*  Constants                                                          */
+/* ------------------------------------------------------------------ */
+
+const MAX_COMPARE = 3;
+
+const COMPARE_COLORS = [
+  { label: 'blue', text: 'text-blue-400', bg: 'bg-blue-500/20', border: 'border-blue-500/40', bar: 'bg-blue-500', dot: '#3b82f6' },
+  { label: 'red', text: 'text-red-400', bg: 'bg-red-500/20', border: 'border-red-500/40', bar: 'bg-red-500', dot: '#ef4444' },
+  { label: 'green', text: 'text-green-400', bg: 'bg-green-500/20', border: 'border-green-500/40', bar: 'bg-green-500', dot: '#22c55e' },
+];
+
+const PG_LABELS: Record<string, string> = {
+  GK: 'Goalkeeper',
+  CB: 'Centre-Back',
+  WB: 'Wing-Back',
+  DM: 'Def. Midfield',
+  CM: 'Central Midfield',
+  AM: 'Att. Midfield',
+  FW: 'Forward',
+};
+
+const POSITION_GROUPS = ['GK', 'CB', 'WB', 'DM', 'CM', 'AM', 'FW'];
+
+/* ------------------------------------------------------------------ */
+/*  Utility                                                            */
+/* ------------------------------------------------------------------ */
+
+function percentileTextColor(pct: number): string {
+  if (pct >= 81) return 'text-emerald-400';
+  if (pct >= 61) return 'text-green-400';
+  if (pct >= 41) return 'text-yellow-400';
+  if (pct >= 21) return 'text-amber-400';
+  return 'text-red-400';
+}
+
 /* ------------------------------------------------------------------ */
 /*  Player Search Autocomplete                                         */
 /* ------------------------------------------------------------------ */
 
 function PlayerSearch({
-  label,
   onSelect,
-  selectedPlayer,
-  onClear,
-  color,
+  disabled,
 }: {
-  label: string;
   onSelect: (p: SearchResult) => void;
-  selectedPlayer: PlayerDetail | null;
-  onClear: () => void;
-  color: 'blue' | 'red';
+  disabled: boolean;
 }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -66,10 +114,6 @@ function PlayerSearch({
   const [loading, setLoading] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const borderColor = color === 'blue' ? 'border-blue-500' : 'border-red-500';
-  const ringColor = color === 'blue' ? 'focus:ring-blue-500' : 'focus:ring-red-500';
-  const labelColor = color === 'blue' ? 'text-blue-400' : 'text-red-400';
 
   const search = useCallback(async (q: string) => {
     if (q.length < 2) {
@@ -95,7 +139,6 @@ function PlayerSearch({
     timerRef.current = setTimeout(() => search(value), 250);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -106,58 +149,22 @@ function PlayerSearch({
     return () => document.removeEventListener('mousedown', handleClick);
   }, []);
 
-  if (selectedPlayer) {
-    return (
-      <div className={`border-2 ${borderColor} rounded-xl bg-zinc-900 p-4`}>
-        <div className="flex items-center justify-between mb-2">
-          <span className={`text-xs font-bold uppercase tracking-wider ${labelColor}`}>{label}</span>
-          <button
-            onClick={onClear}
-            className="text-zinc-500 hover:text-white text-sm transition-colors"
-          >
-            ✕ Change
-          </button>
-        </div>
-        <div className="flex items-center gap-3">
-          {selectedPlayer.photoUrl && (
-            <img
-              src={selectedPlayer.photoUrl}
-              alt={selectedPlayer.name}
-              className="w-12 h-12 rounded-full object-cover bg-zinc-800"
-            />
-          )}
-          <div>
-            <div className="font-bold text-white text-lg">{selectedPlayer.name}</div>
-            <div className="text-sm text-zinc-400">
-              {selectedPlayer.position} • {selectedPlayer.club || 'Unknown club'}
-              {selectedPlayer.age ? ` • ${selectedPlayer.age}y` : ''}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div ref={containerRef} className="relative">
-      <span className={`text-xs font-bold uppercase tracking-wider ${labelColor} mb-1 block`}>
-        {label}
-      </span>
       <input
         type="text"
         value={query}
         onChange={(e) => handleChange(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        placeholder="Search player name..."
-        className={`w-full px-4 py-3 bg-zinc-900 border-2 ${borderColor} rounded-xl
-                   text-white placeholder-zinc-500
-                   focus:outline-none focus:ring-2 ${ringColor} transition-all`}
+        placeholder={disabled ? 'Maximum players reached' : 'Search player to add...'}
+        disabled={disabled}
+        className="w-full bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-3 text-sm text-white placeholder-zinc-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 disabled:opacity-50"
       />
       {loading && (
-        <div className="absolute right-3 top-9 text-zinc-500 text-sm">...</div>
+        <div className="absolute right-3 top-3 text-zinc-500 text-sm">...</div>
       )}
       {open && results.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-1 bg-zinc-900 border border-zinc-800 rounded-lg shadow-xl max-h-[300px] overflow-auto z-50">
           {results.map((r) => (
             <button
               key={r.playerId}
@@ -167,179 +174,24 @@ function PlayerSearch({
                 setResults([]);
                 setOpen(false);
               }}
-              className="w-full text-left px-4 py-3 hover:bg-zinc-700 transition-colors flex justify-between items-center"
+              className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-zinc-800 text-left transition-colors"
             >
-              <div>
-                <span className="text-white font-medium">{r.name}</span>
-                <span className="text-zinc-500 text-sm ml-2">
-                  {r.position || ''}
+              {r.position && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium border bg-zinc-700/50 text-zinc-300 border-zinc-600/50">
+                  {r.position}
                 </span>
-              </div>
-              <span className="text-zinc-500 text-sm">{r.club || ''}</span>
+              )}
+              <span className="text-white text-sm font-medium">{r.name}</span>
+              <span className="text-zinc-500 text-xs ml-auto">{r.club || ''}</span>
             </button>
           ))}
         </div>
       )}
       {open && results.length === 0 && query.length >= 2 && !loading && (
-        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-xl shadow-2xl p-4 text-center text-zinc-500">
+        <div className="absolute z-50 w-full mt-1 bg-zinc-800 border border-zinc-700 rounded-lg shadow-2xl p-4 text-center text-zinc-500">
           No players found
         </div>
       )}
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Comparison Bar                                                     */
-/* ------------------------------------------------------------------ */
-
-function ComparisonBar({
-  label,
-  value1,
-  value2,
-  maxValue,
-  isPercentage = false,
-}: {
-  label: string;
-  value1: number;
-  value2: number;
-  maxValue: number;
-  isPercentage?: boolean;
-}) {
-  const pct1 = maxValue > 0 ? Math.min((value1 / maxValue) * 100, 100) : 0;
-  const pct2 = maxValue > 0 ? Math.min((value2 / maxValue) * 100, 100) : 0;
-
-  const fmt = (v: number) =>
-    isPercentage ? `${v.toFixed(1)}%` : v.toLocaleString();
-
-  return (
-    <div className="mb-3">
-      <div className="text-center text-sm font-medium text-zinc-300 mb-1">{label}</div>
-      <div className="flex items-center gap-2">
-        {/* Player 1 value */}
-        <div className="w-16 text-right text-sm font-mono text-blue-400">{fmt(value1)}</div>
-        {/* Player 1 bar (right-to-left) */}
-        <div className="flex-1 h-6 bg-zinc-800 rounded-l overflow-hidden flex justify-end">
-          <div
-            className="h-full bg-blue-500 rounded-l transition-all duration-500"
-            style={{ width: `${pct1}%` }}
-          />
-        </div>
-        {/* Divider */}
-        <div className="w-px h-6 bg-zinc-600" />
-        {/* Player 2 bar (left-to-right) */}
-        <div className="flex-1 h-6 bg-zinc-800 rounded-r overflow-hidden">
-          <div
-            className="h-full bg-red-500 rounded-r transition-all duration-500"
-            style={{ width: `${pct2}%` }}
-          />
-        </div>
-        {/* Player 2 value */}
-        <div className="w-16 text-left text-sm font-mono text-red-400">{fmt(value2)}</div>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Season Stats Table                                                 */
-/* ------------------------------------------------------------------ */
-
-function SeasonComparison({
-  player1,
-  player2,
-}: {
-  player1: PlayerDetail;
-  player2: PlayerDetail;
-}) {
-  // Find overlapping seasons
-  const p1Seasons = new Map<string, { matches: number; goals: number; assists: number }>();
-  const p2Seasons = new Map<string, { matches: number; goals: number; assists: number }>();
-
-  for (const s of player1.stats) {
-    const key = s.season;
-    const existing = p1Seasons.get(key);
-    if (existing) {
-      existing.matches += s.matches;
-      existing.goals += s.goals;
-      existing.assists += s.assists;
-    } else {
-      p1Seasons.set(key, { matches: s.matches, goals: s.goals, assists: s.assists });
-    }
-  }
-
-  for (const s of player2.stats) {
-    const key = s.season;
-    const existing = p2Seasons.get(key);
-    if (existing) {
-      existing.matches += s.matches;
-      existing.goals += s.goals;
-      existing.assists += s.assists;
-    } else {
-      p2Seasons.set(key, { matches: s.matches, goals: s.goals, assists: s.assists });
-    }
-  }
-
-  // Get all seasons from both players, sorted descending
-  const allSeasons = Array.from(new Set([...p1Seasons.keys(), ...p2Seasons.keys()])).sort(
-    (a, b) => b.localeCompare(a)
-  );
-
-  if (allSeasons.length === 0) {
-    return (
-      <div className="text-center py-8 px-4">
-        <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-zinc-800 mb-3">
-          <svg className="w-6 h-6 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </div>
-        <p className="text-zinc-400 text-sm font-medium mb-1">
-          Season-by-season breakdown is not available for these players.
-        </p>
-        <p className="text-zinc-600 text-xs">
-          Career totals are shown above.
-        </p>
-      </div>
-    );
-  }
-
-  return (
-    <div>
-      <h3 className="text-lg font-bold text-white mb-4">Season-by-Season Comparison</h3>
-      {allSeasons.map((season) => {
-        const s1 = p1Seasons.get(season) || { matches: 0, goals: 0, assists: 0 };
-        const s2 = p2Seasons.get(season) || { matches: 0, goals: 0, assists: 0 };
-        // Fixed max scales for season stats
-        const SEASON_MAX_MATCHES = 60;
-        const SEASON_MAX_GOALS = 40;
-        const SEASON_MAX_ASSISTS = 25;
-
-        return (
-          <div key={season} className="mb-6">
-            <div className="text-sm font-bold text-zinc-400 mb-2 text-center border-b border-zinc-800 pb-1">
-              {season}
-            </div>
-            <ComparisonBar
-              label="Appearances"
-              value1={s1.matches}
-              value2={s2.matches}
-              maxValue={SEASON_MAX_MATCHES}
-            />
-            <ComparisonBar
-              label="Goals"
-              value1={s1.goals}
-              value2={s2.goals}
-              maxValue={SEASON_MAX_GOALS}
-            />
-            <ComparisonBar
-              label="Assists"
-              value1={s1.assists}
-              value2={s2.assists}
-              maxValue={SEASON_MAX_ASSISTS}
-            />
-          </div>
-        );
-      })}
     </div>
   );
 }
@@ -349,22 +201,35 @@ function SeasonComparison({
 /* ------------------------------------------------------------------ */
 
 export default function ComparePage() {
-  const [player1, setPlayer1] = useState<PlayerDetail | null>(null);
-  const [player2, setPlayer2] = useState<PlayerDetail | null>(null);
-  const [loading1, setLoading1] = useState(false);
-  const [loading2, setLoading2] = useState(false);
+  const [players, setPlayers] = useState<PlayerDetail[]>([]);
+  const [wyscoutData, setWyscoutData] = useState<Record<string, PercentileWyscoutData>>({});
+  const [loading, setLoading] = useState(false);
+  const [compareMode, setCompareMode] = useState<CompareMode>('league');
+  const [radarTemplate, setRadarTemplate] = useState<string>('');
 
-  const loadPlayer = async (
-    playerId: string,
-    setter: (p: PlayerDetail) => void,
-    setLoading: (v: boolean) => void
-  ) => {
+  const loadPlayer = async (searchResult: SearchResult) => {
+    if (players.length >= MAX_COMPARE) return;
     setLoading(true);
     try {
-      const res = await fetch(`/api/players/${playerId}`);
-      if (res.ok) {
-        const data = await res.json();
-        setter(data);
+      const [playerRes, wyscoutRes] = await Promise.all([
+        fetch(`/api/players/${searchResult.playerId}`),
+        fetch(`/api/players/${searchResult.playerId}/wyscout`),
+      ]);
+      
+      if (playerRes.ok) {
+        const playerData = await playerRes.json();
+        setPlayers(prev => [...prev, playerData]);
+      }
+      
+      if (wyscoutRes.ok) {
+        const wData = await wyscoutRes.json();
+        if (wData?.hasPercentiles) {
+          setWyscoutData(prev => ({ ...prev, [searchResult.playerId]: wData }));
+          // Set default radar template from first player's position group
+          if (players.length === 0 && wData.pg) {
+            setRadarTemplate(wData.pg);
+          }
+        }
       }
     } catch (err) {
       console.error('Failed to load player:', err);
@@ -373,40 +238,115 @@ export default function ComparePage() {
     }
   };
 
-  // Career stat maxima for the bars — FIXED max scales (not relative to better player)
-  const career1 = player1?.careerTotals;
-  const career2 = player2?.careerTotals;
+  const removePlayer = (id: string) => {
+    setPlayers(prev => prev.filter(p => p.id !== id));
+    setWyscoutData(prev => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+  };
 
-  // Fixed max scales for career stats
-  const FIXED_MAX_APPS = 500;
-  const FIXED_MAX_GOALS = 200;
-  const FIXED_MAX_ASSISTS = 150;
-  const FIXED_MAX_MINUTES = 40000;
+  const getPercentile = (m: RadarMetric) =>
+    compareMode === 'league' ? m.percentile : m.gp;
 
-  // Check if either player has valid minutes data
-  const hasMinutes = (career1?.minutes && career1.minutes > 0) || (career2?.minutes && career2.minutes > 0);
+  // Build metric keys for bar comparison from all selected players' wyscout data
+  const allMetrics = useMemo(() => {
+    const metricsMap = new Map<string, { label: string; data: { playerId: string; value: number; percentile: number | null }[] }>();
+    
+    for (const player of players) {
+      const wd = wyscoutData[player.id];
+      if (!wd) continue;
+      
+      const allWyscoutMetrics = [...wd.radar, ...wd.allround];
+      const seen = new Set<string>();
+      
+      for (const m of allWyscoutMetrics) {
+        if (seen.has(m.key)) continue;
+        seen.add(m.key);
+        
+        if (!metricsMap.has(m.key)) {
+          metricsMap.set(m.key, { label: m.label, data: [] });
+        }
+        metricsMap.get(m.key)!.data.push({
+          playerId: player.id,
+          value: m.value,
+          percentile: getPercentile(m),
+        });
+      }
+    }
+    
+    return metricsMap;
+  }, [players, wyscoutData, compareMode]);
 
-  // Per-90 stats (use fixed max of 1.0 for per-90 ratios)
-  const goalsP90_1 =
-    career1 && career1.minutes > 0 ? (career1.goals / career1.minutes) * 90 : 0;
-  const goalsP90_2 =
-    career2 && career2.minutes > 0 ? (career2.goals / career2.minutes) * 90 : 0;
-  const assistsP90_1 =
-    career1 && career1.minutes > 0 ? (career1.assists / career1.minutes) * 90 : 0;
-  const assistsP90_2 =
-    career2 && career2.minutes > 0 ? (career2.assists / career2.minutes) * 90 : 0;
+  // Build radar overlay data
+  const radarOverlayData = useMemo(() => {
+    const playersWithData = players.filter(p => wyscoutData[p.id]);
+    if (playersWithData.length < 2) return null;
 
-  const FIXED_MAX_PER90 = 1.0;
+    // Use the radarTemplate position group to pick metrics
+    const templatePg = radarTemplate || wyscoutData[playersWithData[0].id]?.pg;
+    if (!templatePg) return null;
 
-  // Goal involvement %
-  const gi1 =
-    career1 && career1.matches > 0
-      ? ((career1.goals + career1.assists) / career1.matches) * 100
-      : 0;
-  const gi2 =
-    career2 && career2.matches > 0
-      ? ((career2.goals + career2.assists) / career2.matches) * 100
-      : 0;
+    // Find a player with this position group for template, fallback to first
+    const templatePlayer = playersWithData.find(p => wyscoutData[p.id]?.pg === templatePg) || playersWithData[0];
+    const templateWd = wyscoutData[templatePlayer.id];
+    
+    const templateRadar = templateWd.radar;
+    if (templateRadar.length < 3) return null;
+
+    const labels = templateRadar.map(m => m.label);
+    const keys = templateRadar.map(m => m.key);
+
+    const playerRadarValues = playersWithData.map(p => {
+      const wd = wyscoutData[p.id];
+      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
+      return {
+        player: p,
+        values: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? getPercentile(m) : 0;
+        }),
+        displayValues: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? m.value : 0;
+        }),
+      };
+    });
+
+    return { labels, playerRadarValues };
+  }, [players, wyscoutData, compareMode, radarTemplate]);
+
+  // All-round radar overlay
+  const allroundOverlayData = useMemo(() => {
+    const playersWithData = players.filter(p => wyscoutData[p.id]);
+    if (playersWithData.length < 2) return null;
+
+    const templateWd = wyscoutData[playersWithData[0].id];
+    const templateAllround = templateWd.allround;
+    if (templateAllround.length < 3) return null;
+
+    const labels = templateAllround.map(m => m.label);
+    const keys = templateAllround.map(m => m.key);
+
+    const playerRadarValues = playersWithData.map(p => {
+      const wd = wyscoutData[p.id];
+      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
+      return {
+        player: p,
+        values: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? getPercentile(m) : 0;
+        }),
+        displayValues: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? m.value : 0;
+        }),
+      };
+    });
+
+    return { labels, playerRadarValues };
+  }, [players, wyscoutData, compareMode]);
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -415,7 +355,7 @@ export default function ComparePage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white">Player Comparison</h1>
-            <p className="text-sm text-zinc-500">Compare two players side by side</p>
+            <p className="text-sm text-zinc-500">Compare up to {MAX_COMPARE} players side by side</p>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -450,160 +390,329 @@ export default function ComparePage() {
       </div>
 
       <div className="max-w-5xl mx-auto p-4 space-y-6">
-        {/* Player Selectors */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <PlayerSearch
-            label="Player 1"
-            color="blue"
-            selectedPlayer={player1}
-            onSelect={(r) => loadPlayer(r.playerId, setPlayer1, setLoading1)}
-            onClear={() => setPlayer1(null)}
-          />
-          <PlayerSearch
-            label="Player 2"
-            color="red"
-            selectedPlayer={player2}
-            onSelect={(r) => loadPlayer(r.playerId, setPlayer2, setLoading2)}
-            onClear={() => setPlayer2(null)}
-          />
-        </div>
+        {/* Search */}
+        <PlayerSearch
+          onSelect={loadPlayer}
+          disabled={players.length >= MAX_COMPARE}
+        />
 
         {/* Loading */}
-        {(loading1 || loading2) && (
-          <div className="flex justify-center py-8">
+        {loading && (
+          <div className="flex justify-center py-4">
             <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
           </div>
         )}
 
-        {/* Comparison */}
-        {player1 && player2 && !loading1 && !loading2 && (
-          <div className="space-y-6">
-            {/* Player Headers */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                {player1.photoUrl && (
-                  <img
-                    src={player1.photoUrl}
-                    alt={player1.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-2 object-cover bg-zinc-800"
-                  />
-                )}
-                <div className="font-bold text-white text-lg">{player1.name}</div>
-                <div className="text-sm text-zinc-400">{player1.position}</div>
-                <div className="text-sm text-zinc-500">
-                  {player1.club} • {player1.age}y
-                </div>
-                {player1.marketValue && (
-                  <div className="text-green-400 text-sm font-medium mt-1">
-                    {player1.marketValue}
+        {/* Selected Player Cards */}
+        {players.length > 0 && (
+          <div className="flex flex-wrap gap-3">
+            {players.map((p, idx) => {
+              const color = COMPARE_COLORS[idx];
+              const wd = wyscoutData[p.id];
+              return (
+                <div
+                  key={p.id}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg border ${color.bg} ${color.border}`}
+                >
+                  {p.photoUrl && (
+                    <img
+                      src={p.photoUrl}
+                      alt={p.name}
+                      className="w-10 h-10 rounded-full object-cover bg-zinc-800"
+                    />
+                  )}
+                  <div>
+                    <div className={`text-sm font-bold ${color.text}`}>{p.name}</div>
+                    <div className="text-xs text-zinc-500">
+                      {p.position} • {p.club || 'Unknown'}
+                      {p.age ? ` • ${p.age}y` : ''}
+                      {p.careerTotals ? ` • ${p.careerTotals.minutes.toLocaleString()} min` : ''}
+                    </div>
+                    {p.marketValue && (
+                      <div className="text-xs text-green-400 font-medium">{p.marketValue}</div>
+                    )}
+                    {wd && (
+                      <div className="text-[10px] text-zinc-600">{PG_LABELS[wd.pg] || wd.pg} • {wd.comp}</div>
+                    )}
                   </div>
-                )}
-              </div>
-              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 text-center">
-                {player2.photoUrl && (
-                  <img
-                    src={player2.photoUrl}
-                    alt={player2.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-2 object-cover bg-zinc-800"
-                  />
-                )}
-                <div className="font-bold text-white text-lg">{player2.name}</div>
-                <div className="text-sm text-zinc-400">{player2.position}</div>
-                <div className="text-sm text-zinc-500">
-                  {player2.club} • {player2.age}y
+                  <button
+                    onClick={() => removePlayer(p.id)}
+                    className="ml-2 text-zinc-500 hover:text-white transition-colors"
+                  >
+                    ✕
+                  </button>
                 </div>
-                {player2.marketValue && (
-                  <div className="text-green-400 text-sm font-medium mt-1">
-                    {player2.marketValue}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Career Totals */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Career Totals</h3>
-              <ComparisonBar
-                label="Appearances"
-                value1={career1?.matches || 0}
-                value2={career2?.matches || 0}
-                maxValue={FIXED_MAX_APPS}
-              />
-              <ComparisonBar
-                label="Goals"
-                value1={career1?.goals || 0}
-                value2={career2?.goals || 0}
-                maxValue={FIXED_MAX_GOALS}
-              />
-              <ComparisonBar
-                label="Assists"
-                value1={career1?.assists || 0}
-                value2={career2?.assists || 0}
-                maxValue={FIXED_MAX_ASSISTS}
-              />
-              {hasMinutes ? (
-                <ComparisonBar
-                  label="Minutes"
-                  value1={career1?.minutes || 0}
-                  value2={career2?.minutes || 0}
-                  maxValue={FIXED_MAX_MINUTES}
-                />
-              ) : (
-                <div className="mb-3">
-                  <div className="text-center text-sm font-medium text-zinc-500 mb-1">Minutes — N/A</div>
-                </div>
-              )}
-            </div>
-
-            {/* Per-90 & Ratios */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Per-90 & Ratios</h3>
-              <ComparisonBar
-                label="Goals per 90"
-                value1={goalsP90_1}
-                value2={goalsP90_2}
-                maxValue={FIXED_MAX_PER90}
-              />
-              <ComparisonBar
-                label="Assists per 90"
-                value1={assistsP90_1}
-                value2={assistsP90_2}
-                maxValue={FIXED_MAX_PER90}
-              />
-              <ComparisonBar
-                label="G+A per Match (%)"
-                value1={gi1}
-                value2={gi2}
-                maxValue={100}
-                isPercentage
-              />
-            </div>
-
-            {/* Season by Season */}
-            <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-              <SeasonComparison player1={player1} player2={player2} />
-            </div>
-
-            {/* Wyscout Advanced Metrics Comparison */}
-            <WyscoutCompare
-              player1Id={player1.id}
-              player2Id={player2.id}
-              player1Name={player1.name.split(' ').pop() || player1.name}
-              player2Name={player2.name.split(' ').pop() || player2.name}
-            />
+              );
+            })}
           </div>
         )}
 
         {/* Empty State */}
-        {!player1 && !player2 && (
-          <div className="text-center py-16">
+        {players.length === 0 && !loading && (
+          <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-12 text-center">
             <div className="text-4xl mb-4">⚽ vs ⚽</div>
-            <h2 className="text-xl font-bold text-zinc-400 mb-2">
-              Select two players to compare
-            </h2>
-            <p className="text-zinc-600">
-              Use the search boxes above to find and select players from the database.
-            </p>
+            <div className="text-zinc-500 text-lg mb-2">No players selected</div>
+            <div className="text-zinc-600 text-sm">Search and add up to {MAX_COMPARE} players to compare</div>
+          </div>
+        )}
+
+        {/* Comparison content */}
+        {players.length >= 2 && (
+          <div className="space-y-6">
+            {/* Radar Template Selector */}
+            <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-4">
+                  <label className="text-sm text-zinc-400 whitespace-nowrap">Radar Template</label>
+                  <select
+                    value={radarTemplate || (wyscoutData[players[0].id]?.pg ?? '')}
+                    onChange={e => setRadarTemplate(e.target.value)}
+                    className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  >
+                    {POSITION_GROUPS.map(pg => (
+                      <option key={pg} value={pg}>
+                        {pg} — {PG_LABELS[pg] || pg}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="flex bg-zinc-800 rounded-lg p-0.5">
+                  <button
+                    onClick={() => setCompareMode('league')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      compareMode === 'league'
+                        ? 'bg-blue-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    🏆 League
+                  </button>
+                  <button
+                    onClick={() => setCompareMode('global')}
+                    className={`px-4 py-1.5 text-sm font-medium rounded-md transition-all ${
+                      compareMode === 'global'
+                        ? 'bg-purple-600 text-white shadow'
+                        : 'text-zinc-400 hover:text-white'
+                    }`}
+                  >
+                    🌍 Global
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Radar Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Position Radar */}
+              {radarOverlayData && (
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                  <h2 className="text-lg font-semibold text-white mb-1">📊 Percentile Radar</h2>
+                  <p className="text-xs text-zinc-500 mb-4">
+                    Using {radarTemplate || wyscoutData[players[0].id]?.pg || '—'} position metrics · Percentile values
+                  </p>
+                  {(() => {
+                    const d = radarOverlayData;
+                    // First player is primary, second is comparison overlay
+                    const primary = d.playerRadarValues[0];
+                    const comparison = d.playerRadarValues[1];
+                    return (
+                      <>
+                        <RadarChart
+                          labels={d.labels}
+                          values={primary.values}
+                          maxValue={100}
+                          mode="percentile"
+                          displayValues={primary.displayValues}
+                          percentiles={primary.values}
+                          comparisonValues={comparison.values}
+                          comparisonColor={COMPARE_COLORS[1].dot}
+                        />
+                        <div className="flex justify-center gap-6 mt-2 text-[10px]">
+                          {d.playerRadarValues.map((prd, idx) => (
+                            <span key={prd.player.id} className="flex items-center gap-1">
+                              <span
+                                className="w-3 h-0.5 inline-block rounded"
+                                style={{ backgroundColor: COMPARE_COLORS[idx].dot }}
+                              />
+                              <span className={COMPARE_COLORS[idx].text}>
+                                {prd.player.name.split(' ').pop()}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+
+              {/* All-Round Radar */}
+              {allroundOverlayData && (
+                <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                  <h2 className="text-lg font-semibold text-white mb-1">📈 All-Round Profile</h2>
+                  <p className="text-xs text-zinc-500 mb-4">
+                    Percentile values · Overlay comparison
+                  </p>
+                  {(() => {
+                    const d = allroundOverlayData;
+                    const primary = d.playerRadarValues[0];
+                    const comparison = d.playerRadarValues[1];
+                    return (
+                      <>
+                        <RadarChart
+                          labels={d.labels}
+                          values={primary.values}
+                          maxValue={100}
+                          mode="percentile"
+                          displayValues={primary.displayValues}
+                          percentiles={primary.values}
+                          comparisonValues={comparison.values}
+                          comparisonColor={COMPARE_COLORS[1].dot}
+                        />
+                        <div className="flex justify-center gap-6 mt-2 text-[10px]">
+                          {d.playerRadarValues.map((prd, idx) => (
+                            <span key={prd.player.id} className="flex items-center gap-1">
+                              <span
+                                className="w-3 h-0.5 inline-block rounded"
+                                style={{ backgroundColor: COMPARE_COLORS[idx].dot }}
+                              />
+                              <span className={COMPARE_COLORS[idx].text}>
+                                {prd.player.name.split(' ').pop()}
+                              </span>
+                            </span>
+                          ))}
+                        </div>
+                      </>
+                    );
+                  })()}
+                </div>
+              )}
+            </div>
+
+            {/* Stat Comparison — stacked horizontal bars */}
+            {allMetrics.size > 0 && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-white mb-1">📊 Stat Comparison</h2>
+                <p className="text-xs text-zinc-500 mb-4">Side-by-side bar graphs for each metric</p>
+                <div className="space-y-3">
+                  {Array.from(allMetrics.entries()).map(([key, { label, data }]) => {
+                    const maxVal = Math.max(...data.map(d => d.value), 0.01);
+                    const barColors = ['bg-blue-500', 'bg-red-500', 'bg-green-500'];
+                    const textColors = ['text-blue-400', 'text-red-400', 'text-green-400'];
+
+                    return (
+                      <div key={key} className="group">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs text-zinc-400 truncate max-w-[250px]">{label}</span>
+                        </div>
+                        <div className="space-y-1">
+                          {players.map((p, idx) => {
+                            const d = data.find(d => d.playerId === p.id);
+                            const val = d?.value;
+                            const pct = d?.percentile ?? null;
+                            const width = val !== undefined ? (val / maxVal) * 100 : 0;
+                            const shortName = p.name.split(' ').pop() || p.name;
+
+                            return (
+                              <div key={p.id} className="flex items-center gap-2">
+                                <span className={`text-[10px] font-medium w-16 truncate ${textColors[idx]}`}>
+                                  {shortName}
+                                </span>
+                                <div className="flex-1 h-4 bg-zinc-800 rounded overflow-hidden">
+                                  <div
+                                    className={`h-full rounded ${barColors[idx]} transition-all`}
+                                    style={{ width: `${Math.max(width, 0.5)}%` }}
+                                  />
+                                </div>
+                                <span className="text-xs font-mono text-white w-12 text-right">
+                                  {val !== undefined ? val : '—'}
+                                </span>
+                                {pct !== null && (
+                                  <span className={`text-[10px] font-mono w-8 text-right ${percentileTextColor(pct)}`}>
+                                    p{pct}
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Metrics Table */}
+            {allMetrics.size > 0 && (
+              <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <h3 className="font-semibold text-white">Metrics Comparison</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-zinc-800 text-xs text-zinc-500 uppercase tracking-wider">
+                        <th className="text-left px-4 py-2">Metric</th>
+                        {players.map((p, idx) => (
+                          <th key={p.id} className={`text-right px-4 py-2 ${COMPARE_COLORS[idx].text}`}>
+                            {p.name.split(' ').pop()}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Bio rows */}
+                      <tr className="border-b border-zinc-800/50 bg-zinc-800/20">
+                        <td className="px-4 py-2 text-zinc-400 font-medium">Market Value</td>
+                        {players.map(p => (
+                          <td key={p.id} className="px-4 py-2 text-right text-green-400 font-medium">
+                            {p.marketValue || '—'}
+                          </td>
+                        ))}
+                      </tr>
+                      <tr className="border-b border-zinc-800/50 bg-zinc-800/20">
+                        <td className="px-4 py-2 text-zinc-400 font-medium">Minutes / Matches</td>
+                        {players.map(p => (
+                          <td key={p.id} className="px-4 py-2 text-right text-zinc-300">
+                            {p.careerTotals ? `${p.careerTotals.minutes.toLocaleString()} / ${p.careerTotals.matches}` : '—'}
+                          </td>
+                        ))}
+                      </tr>
+                      {/* Wyscout metrics */}
+                      {Array.from(allMetrics.entries()).map(([key, { label, data }]) => {
+                        const values = players.map(p => {
+                          const d = data.find(d => d.playerId === p.id);
+                          return { val: d?.value, pct: d?.percentile ?? null };
+                        });
+                        if (values.every(v => v.val === undefined)) return null;
+
+                        const validPcts = values.filter(v => v.pct !== null).map(v => v.pct!);
+                        const maxPct = validPcts.length > 0 ? Math.max(...validPcts) : null;
+
+                        return (
+                          <tr key={key} className="border-b border-zinc-800/30 hover:bg-zinc-800/30">
+                            <td className="px-4 py-2 text-zinc-400">{label}</td>
+                            {values.map((v, idx) => (
+                              <td key={idx} className="px-4 py-2 text-right">
+                                <span className={`font-mono ${v.pct === maxPct && maxPct !== null ? 'font-bold text-white' : 'text-zinc-300'}`}>
+                                  {v.val !== undefined ? v.val : '—'}
+                                </span>
+                                {v.pct !== null && (
+                                  <span className={`text-xs ml-1.5 ${percentileTextColor(v.pct)}`}>
+                                    p{v.pct}
+                                  </span>
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
