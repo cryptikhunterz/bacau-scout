@@ -405,33 +405,7 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
         {/* Wyscout Advanced Metrics (above scout evaluation) */}
         <WyscoutRadars playerId={playerId} tmPosition={report.position} />
 
-        {/* Scout Evaluation Radar Charts — Side by Side */}
-        {(positionRadar || overallRadar) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {positionRadar && (
-              <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
-                <RadarChart
-                  labels={positionRadar.labels}
-                  values={positionRadar.values}
-                  maxValue={5}
-                  color="#22c55e"
-                  title={positionRadar.title}
-                />
-              </div>
-            )}
-            {overallRadar && (
-              <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
-                <RadarChart
-                  labels={overallRadar.labels}
-                  values={overallRadar.values}
-                  maxValue={5}
-                  color="#3b82f6"
-                  title={overallRadar.title}
-                />
-              </div>
-            )}
-          </div>
-        )}
+        {/* Scout evaluation radars removed — Wyscout radars above are sufficient */}
 
         {/* Position-Specific Attributes (new system) */}
         {report.positionAttributes && Object.keys(report.positionAttributes).length > 0 && (() => {

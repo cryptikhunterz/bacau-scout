@@ -319,31 +319,7 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
             <span className="text-xs text-zinc-500 ml-auto">{player.position}</span>
           </div>
 
-          {/* ─── Player Radar Charts (Side by Side) ─── */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {positionRadar.labels.length >= 3 && (
-              <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
-                <RadarChart
-                  labels={positionRadar.labels}
-                  values={positionRadar.values}
-                  maxValue={5}
-                  color="#22c55e"
-                  title={`${positionTemplate.badge} POSITION RADAR`}
-                />
-              </div>
-            )}
-            {overallRadar.labels.length >= 3 && (
-              <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
-                <RadarChart
-                  labels={overallRadar.labels}
-                  values={overallRadar.values}
-                  maxValue={5}
-                  color="#3b82f6"
-                  title="OVERALL TRAITS"
-                />
-              </div>
-            )}
-          </div>
+          {/* Scout evaluation radars removed — Wyscout radars above are sufficient */}
 
           {/* Render attribute groups in 2-column layout on desktop */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
