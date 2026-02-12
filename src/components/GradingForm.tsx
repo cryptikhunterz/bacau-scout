@@ -195,10 +195,10 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
             </div>
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Overall Ability & Potential (1-8)</p>
+            <p className="text-[10px] font-semibold text-zinc-400 mb-1">Overall Ability & Potential</p>
             <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-xs text-zinc-500">
-              {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
-                <div key={num}><span className="font-bold text-zinc-300">{num}</span> = {label}</div>
+              {Object.entries(POTENTIAL_LABELS).map(([, label]) => (
+                <div key={label}>{label}</div>
               ))}
             </div>
           </div>
@@ -268,21 +268,33 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
       </div>
 
       {/* ─── OVERALL ABILITY & POTENTIAL ─── */}
-      <div className="p-4 bg-zinc-800 rounded-lg border-2 border-zinc-600 space-y-3">
+      <div className="p-4 bg-zinc-800 rounded-lg border-2 border-zinc-600 space-y-4">
         <h3 className="text-base font-bold text-white">Overall Assessment</h3>
-        <div className="flex items-center justify-between py-2">
-          <div>
-            <span className="text-sm font-semibold text-zinc-200">ABILITY</span>
-            <span className="text-xs text-zinc-500 ml-2">(1-8)</span>
+        <div>
+          <p className="text-sm font-semibold text-zinc-200 mb-2">ABILITY</p>
+          <div className="flex flex-wrap gap-1.5">
+            {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
+              <button key={num} type="button" onClick={() => setAbility(Number(num) as PotentialRating)}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                  ability === Number(num) ? 'bg-green-600 text-white' : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}>
+                {label}
+              </button>
+            ))}
           </div>
-          <PotentialBadge value={ability} onChange={setAbility} />
         </div>
-        <div className="flex items-center justify-between py-2 border-t border-zinc-700">
-          <div>
-            <span className="text-sm font-semibold text-zinc-200">POTENTIAL</span>
-            <span className="text-xs text-zinc-500 ml-2">(1-8)</span>
+        <div>
+          <p className="text-sm font-semibold text-zinc-200 mb-2">POTENTIAL</p>
+          <div className="flex flex-wrap gap-1.5">
+            {Object.entries(POTENTIAL_LABELS).map(([num, label]) => (
+              <button key={num} type="button" onClick={() => setPotential(Number(num) as PotentialRating)}
+                className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+                  potential === Number(num) ? 'bg-green-600 text-white' : 'bg-zinc-700 text-zinc-400 hover:bg-zinc-600'
+                }`}>
+                {label}
+              </button>
+            ))}
           </div>
-          <PotentialBadge value={potential} onChange={setPotential} />
         </div>
       </div>
 
