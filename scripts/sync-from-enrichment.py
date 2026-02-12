@@ -96,23 +96,31 @@ for internal_id, p in all_players.items():
                     if len(radar_metrics) >= 16:  # max 16 axes
                         break
         
-        # All-round metrics: use all available metrics NOT in radar
+        # All-round metrics: use ALL available metrics with percentiles
+        # This ensures both radars have enough data to render
         radar_key_set = {m["key"] for m in radar_metrics}
-        ALLROUND_KEYS = [
-            "Passes per 90", "Accurate passes, %", "Progressive passes per 90",
-            "Crosses per 90", "Offensive duels won, %", "Defensive duels per 90",
-            "Aerial duels per 90", "Touches in box per 90", "Fouls per 90",
-            "Key passes per 90"
-        ]
-        
-        for key in ALLROUND_KEYS:
-            if key in metrics and key not in radar_key_set:
+        for key in sorted(metrics.keys()):
+            if key not in radar_key_set and (league_p.get(key) is not None or global_p.get(key) is not None):
                 allround_metrics.append({
                     "key": key,
                     "label": key,
                     "value": metrics.get(key, 0),
                     "percentile": league_p.get(key),
                     "gp": global_p.get(key)
+                })
+                if len(allround_metrics) >= 10:
+                    break
+        
+        # If allround is still too small (<3), move some from radar
+        if len(allround_metrics) < 3 and len(radar_metrics) > 6:
+            while len(allround_metrics) < 5 and len(radar_metrics) > 6:
+                moved = radar_metrics.pop()
+                allround_metrics.insert(0, {
+                    "key": moved["key"],
+                    "label": moved.get("label", moved["key"]),
+                    "value": moved["value"],
+                    "percentile": moved.get("percentile"),
+                    "gp": moved.get("gp")
                 })
         
         pctl_entry = {
