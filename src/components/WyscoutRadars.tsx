@@ -1,8 +1,13 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { RadarChart } from '@/components/RadarChart';
 import { PercentileRadar } from '@/components/PercentileRadar';
+import {
+  getPositionMetrics,
+  OVERALL_METRICS,
+  extractRadarData,
+} from '@/lib/wyscoutRadar';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -50,7 +55,7 @@ interface WyscoutRadarsProps {
   tmPosition?: string;
 }
 
-export function WyscoutRadars({ playerId }: WyscoutRadarsProps) {
+export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
   const [data, setData] = useState<WyscoutData | null>(null);
   const [loading, setLoading] = useState(true);
   const [compMode, setCompMode] = useState<'league' | 'global'>('league');
@@ -73,43 +78,6 @@ export function WyscoutRadars({ playerId }: WyscoutRadarsProps) {
       .catch(() => setLoading(false));
   }, [playerId]);
 
-  // Build dynamic radar data from API response
-  const { positionRadar, allroundRadar } = useMemo(() => {
-    if (!data || !data.hasPercentiles) {
-      return { positionRadar: [] as RadarMetric[], allroundRadar: [] as RadarMetric[] };
-    }
-
-    const { radar, allround } = data;
-    const allMetrics = [...radar, ...allround];
-
-    // Position radar: use radar[] from API
-    // If < 3 metrics, dynamically build from all available
-    let posRadar = radar;
-    if (posRadar.length < 3 && allMetrics.length >= 3) {
-      const radarKeys = radar.map(m => m.key);
-      posRadar = [...allMetrics]
-        .sort((a, b) => {
-          const aInPos = radarKeys.includes(a.key) ? 0 : 1;
-          const bInPos = radarKeys.includes(b.key) ? 0 : 1;
-          return aInPos - bInPos;
-        })
-        .slice(0, 16);
-    }
-
-    // Allround radar: use allround[] from API
-    // If < 3, build from remaining metrics
-    let allroundR = allround;
-    if (allroundR.length < 3) {
-      const posKeys = new Set(posRadar.map(m => m.key));
-      const remaining = allMetrics.filter(m => !posKeys.has(m.key));
-      if (remaining.length >= 3) {
-        allroundR = remaining.slice(0, 16);
-      }
-    }
-
-    return { positionRadar: posRadar, allroundRadar: allroundR };
-  }, [data]);
-
   if (loading) {
     return (
       <div className="animate-pulse h-20 bg-zinc-900 rounded-xl border border-zinc-800" />
@@ -121,13 +89,15 @@ export function WyscoutRadars({ playerId }: WyscoutRadarsProps) {
   // ─── Percentile mode ────────────────────────────────────────────────────
 
   if (data.hasPercentiles) {
-    const { pg, comp } = data;
+    const { pg, comp, radar, allround } = data;
 
+    // Pick percentile field based on comparison mode
     const getPercentile = (m: RadarMetric) =>
       compMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
-    const hasPositionData = positionRadar.length >= 3 && positionRadar.some((m) => m.value !== 0 || m.percentile !== 50);
-    const hasAllroundData = allroundRadar.length >= 3 && allroundRadar.some((m) => m.value !== 0 || m.percentile !== 50);
+    // Filter out metrics with no data (value=0 and percentile=50 means missing)
+    const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
+    const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);
 
     if (!hasPositionData && !hasAllroundData) return null;
 
@@ -192,25 +162,25 @@ export function WyscoutRadars({ playerId }: WyscoutRadarsProps) {
           {hasPositionData && (
             <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
               <RadarChart
-                labels={positionRadar.map((m) => m.label)}
-                values={positionRadar.map((m) => getPercentile(m))}
+                labels={radar.map((m) => m.label)}
+                values={radar.map((m) => getPercentile(m))}
                 maxValue={100}
                 mode="percentile"
-                displayValues={positionRadar.map((m) => m.value)}
-                percentiles={positionRadar.map((m) => getPercentile(m))}
+                displayValues={radar.map((m) => m.value)}
+                percentiles={radar.map((m) => getPercentile(m))}
                 title={`${posLabel} PROFILE`}
               />
             </div>
           )}
 
-          {/* Percentile Radar */}
+          {/* Enrichment-style Percentile Radar */}
           {hasAllroundData && (
             <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
               <PercentileRadar
-                labels={allroundRadar.map((m) => m.label)}
-                values={allroundRadar.map((m) => getPercentile(m))}
-                displayValues={allroundRadar.map((m) => m.value)}
-                percentiles={allroundRadar.map((m) => getPercentile(m))}
+                labels={allround.map((m) => m.label)}
+                values={allround.map((m) => getPercentile(m))}
+                displayValues={allround.map((m) => m.value)}
+                percentiles={allround.map((m) => getPercentile(m))}
                 title="PERCENTILE PROFILE"
               />
             </div>
@@ -220,7 +190,58 @@ export function WyscoutRadars({ playerId }: WyscoutRadarsProps) {
     );
   }
 
-  // ─── Legacy raw mode — no longer uses hardcoded templates ───────────────
+  // ─── Legacy raw mode (fallback) ─────────────────────────────────────────
 
-  return null;
+  const position = tmPosition || data.position || '';
+  const posConfig = getPositionMetrics(position);
+  const posData = posConfig.metrics.length >= 3
+    ? extractRadarData(data.metrics, posConfig.metrics)
+    : null;
+
+  const overallData = extractRadarData(data.metrics, OVERALL_METRICS);
+
+  const hasPositionData = posData && posData.values.some((v) => v > 0);
+  const hasOverallData = overallData.values.some((v) => v > 0);
+
+  if (!hasPositionData && !hasOverallData) return null;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-3 px-1">
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
+        <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-[0.2em]">
+          Advanced Metrics (Wyscout)
+        </h3>
+        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-emerald-800/50 to-transparent" />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {hasPositionData && posData && (
+          <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+            <RadarChart
+              labels={posData.labels}
+              values={posData.values}
+              maxValue={1}
+              maxValues={posData.maxValues}
+              color="#22c55e"
+              title={`${posConfig.groupLabel} PROFILE`}
+            />
+          </div>
+        )}
+
+        {hasOverallData && (
+          <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+            <RadarChart
+              labels={overallData.labels}
+              values={overallData.values}
+              maxValue={1}
+              maxValues={overallData.maxValues}
+              color="#3b82f6"
+              title="ALL-ROUND PROFILE"
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }

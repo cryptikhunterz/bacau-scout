@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { RadarChart } from '@/components/RadarChart';
 import { PercentileRadar } from '@/components/PercentileRadar';
 
@@ -63,92 +63,49 @@ const PG_LABELS: Record<string, string> = {
   FW: 'Forward',
 };
 
-// ─── Metric Group categorization (for stat bar sections) ────────────────────
-// These define which CATEGORY a metric belongs to for display purposes.
-// The actual metrics shown are dynamic — only metrics present in the data appear.
+// ─── Metric Groups (from enrichment platform) ───────────────────────────────
 
-const METRIC_CATEGORY_MAP: Record<string, string> = {
-  // Attack
-  'Goals per 90': '⚔️ Attack',
-  'xG per 90': '⚔️ Attack',
-  'Non-penalty goals per 90': '⚔️ Attack',
-  'Head goals per 90': '⚔️ Attack',
-  'Shots per 90': '⚔️ Attack',
-  'Shots on target, %': '⚔️ Attack',
-  'Assists per 90': '⚔️ Attack',
-  'xA per 90': '⚔️ Attack',
-  'Key passes per 90': '⚔️ Attack',
-  'Crosses per 90': '⚔️ Attack',
-  'Accurate crosses, %': '⚔️ Attack',
-  'Dribbles per 90': '⚔️ Attack',
-  'Successful dribbles, %': '⚔️ Attack',
-  'Offensive duels per 90': '⚔️ Attack',
-  'Offensive duels won, %': '⚔️ Attack',
-  'Touches in box per 90': '⚔️ Attack',
-  'Progressive runs per 90': '⚔️ Attack',
-  'Received passes per 90': '⚔️ Attack',
-  'Received long passes per 90': '⚔️ Attack',
-  // Defence
-  'Defensive duels per 90': '🛡️ Defence',
-  'Defensive duels won, %': '🛡️ Defence',
-  'Aerial duels per 90': '🛡️ Defence',
-  'Aerial duels won, %': '🛡️ Defence',
-  'Interceptions per 90': '🛡️ Defence',
-  'Successful defensive actions per 90': '🛡️ Defence',
-  'Sliding tackles per 90': '🛡️ Defence',
-  'Fouls per 90': '🛡️ Defence',
-  'Shots blocked per 90': '🛡️ Defence',
-  'PAdj Sliding tackles': '🛡️ Defence',
-  'PAdj Interceptions': '🛡️ Defence',
-  // Passing
-  'Passes per 90': '🔧 Passing',
-  'Accurate passes, %': '🔧 Passing',
-  'Long passes per 90': '🔧 Passing',
-  'Accurate long passes, %': '🔧 Passing',
-  'Progressive passes per 90': '🔧 Passing',
-  'Accurate progressive passes, %': '🔧 Passing',
-  'Forward passes per 90': '🔧 Passing',
-  'Accurate forward passes, %': '🔧 Passing',
-  'Passes to final third per 90': '🔧 Passing',
-  'Passes to penalty area per 90': '🔧 Passing',
-  'Deep completions per 90': '🔧 Passing',
-  'Smart passes per 90': '🔧 Passing',
-  'Accurate smart passes, %': '🔧 Passing',
-  'Through passes per 90': '🔧 Passing',
-  'Accurate through passes, %': '🔧 Passing',
-  'Lateral passes per 90': '🔧 Passing',
-  'Accurate lateral passes, %': '🔧 Passing',
-  'Back passes per 90': '🔧 Passing',
-  'Accurate back passes, %': '🔧 Passing',
-  'Second assists per 90': '🔧 Passing',
-  'Third assists per 90': '🔧 Passing',
-  // Goalkeeping
-  'Save rate, %': '🧤 Goalkeeping',
-  'Conceded goals per 90': '🧤 Goalkeeping',
-  'Shots against per 90': '🧤 Goalkeeping',
-  'xG against per 90': '🧤 Goalkeeping',
-  'Prevented goals per 90': '🧤 Goalkeeping',
-  'Exits per 90': '🧤 Goalkeeping',
-  'Clean sheets, %': '🧤 Goalkeeping',
-};
+const METRIC_GROUPS = [
+  {
+    title: '⚔️ Attack',
+    keys: [
+      'Goals per 90', 'xG per 90', 'Shots per 90', 'Shots on target, %',
+      'Assists per 90', 'xA per 90', 'Key passes per 90', 'Crosses per 90',
+      'Dribbles per 90', 'Successful dribbles, %',
+      'Offensive duels per 90', 'Offensive duels won, %',
+      'Touches in box per 90', 'Progressive runs per 90',
+    ],
+  },
+  {
+    title: '🛡️ Defence',
+    keys: [
+      'Defensive duels per 90', 'Defensive duels won, %',
+      'Aerial duels per 90', 'Aerial duels won, %',
+      'Interceptions per 90', 'Successful defensive actions per 90',
+      'Sliding tackles per 90', 'Fouls per 90', 'Shots blocked per 90',
+    ],
+  },
+  {
+    title: '🔧 Passing',
+    keys: [
+      'Passes per 90', 'Accurate passes, %',
+      'Long passes per 90', 'Accurate long passes, %',
+      'Progressive passes per 90', 'Accurate progressive passes, %',
+      'Forward passes per 90', 'Accurate forward passes, %',
+      'Passes to final third per 90', 'Passes to penalty area per 90',
+      'Deep completions per 90', 'Smart passes per 90',
+    ],
+  },
+  {
+    title: '🧤 Goalkeeping',
+    keys: [
+      'Save rate, %', 'Conceded goals per 90', 'Shots against per 90',
+      'xG against per 90', 'Prevented goals per 90', 'Exits per 90',
+    ],
+  },
+];
 
 const INVERT_METRICS = new Set(['Fouls per 90', 'Conceded goals per 90', 'xG against per 90']);
-
-// ─── Dynamic radar builder (like enrichment platform) ───────────────────────
-
-function buildDynamicRadar(
-  allMetrics: RadarMetric[],
-  positionKeys: string[],
-  maxAxes: number = 16,
-): RadarMetric[] {
-  // Sort: position-specific keys first, then rest
-  const sorted = [...allMetrics].sort((a, b) => {
-    const aInPos = positionKeys.includes(a.key) ? 0 : 1;
-    const bInPos = positionKeys.includes(b.key) ? 0 : 1;
-    return aInPos - bInPos;
-  });
-  return sorted.slice(0, maxAxes);
-}
 
 // ─── Component ──────────────────────────────────────────────────────────────
 
@@ -178,41 +135,6 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
       .catch(() => setLoading(false));
   }, [playerId]);
 
-  // Build dynamic radar data
-  const { positionRadarMetrics, allroundRadarMetrics, allMetricsList } = useMemo(() => {
-    if (!data || !data.hasPercentiles) {
-      return { positionRadarMetrics: [], allroundRadarMetrics: [], allMetricsList: [] };
-    }
-
-    const { radar, allround } = data;
-    const allMetrics = [...radar, ...allround];
-
-    // Position radar: use radar[] from API data
-    // If radar has fewer than 3 metrics, dynamically build from ALL available
-    let posRadar = radar;
-    if (posRadar.length < 3) {
-      const radarKeys = radar.map(m => m.key);
-      posRadar = buildDynamicRadar(allMetrics, radarKeys, 16);
-    }
-
-    // Allround radar: use allround[] from API data
-    // If allround has fewer than 3 metrics, dynamically build from remaining
-    let allroundRadar = allround;
-    if (allroundRadar.length < 3) {
-      const posKeys = new Set(posRadar.map(m => m.key));
-      const remaining = allMetrics.filter(m => !posKeys.has(m.key));
-      if (remaining.length >= 3) {
-        allroundRadar = remaining.slice(0, 16);
-      }
-    }
-
-    return {
-      positionRadarMetrics: posRadar,
-      allroundRadarMetrics: allroundRadar,
-      allMetricsList: allMetrics,
-    };
-  }, [data]);
-
   if (loading) {
     return (
       <div className="animate-pulse h-20 bg-zinc-900 rounded-xl border border-zinc-800" />
@@ -221,15 +143,13 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
 
   if (!data || !data.hasPercentiles) return null;
 
-  const { pg, comp } = data;
+  const { pg, comp, radar, allround } = data;
 
   const getPercentile = (m: RadarMetric) =>
     compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
-  const hasPositionData = positionRadarMetrics.length >= 3 && 
-    positionRadarMetrics.some((m) => m.value !== 0 || m.percentile !== 50);
-  const hasAllroundData = allroundRadarMetrics.length >= 3 && 
-    allroundRadarMetrics.some((m) => m.value !== 0 || m.percentile !== 50);
+  const hasPositionData = radar.length >= 3 && radar.some((m) => m.value !== 0 || m.percentile !== 50);
+  const hasAllroundData = allround.length >= 3 && allround.some((m) => m.value !== 0 || m.percentile !== 50);
 
   if (!hasPositionData && !hasAllroundData) return null;
 
@@ -238,26 +158,17 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
     ? `vs. same position in ${comp}`
     : `vs. same position across all leagues`;
 
-  // Build metric lookup from ALL metrics for the bar graphs (dynamic, not hardcoded)
+  // Build metric lookup from radar + allround for the bar graphs
   const metricMap = new Map<string, RadarMetric>();
-  for (const m of allMetricsList) {
+  for (const m of [...radar, ...allround]) {
     if (!metricMap.has(m.key)) metricMap.set(m.key, m);
   }
 
-  // Build visible metric groups dynamically from ALL available metrics
-  const groupedMetrics = new Map<string, { key: string; metric: RadarMetric }[]>();
-  for (const [key, metric] of metricMap.entries()) {
-    const category = METRIC_CATEGORY_MAP[key] || '📋 Other';
-    if (!groupedMetrics.has(category)) {
-      groupedMetrics.set(category, []);
-    }
-    groupedMetrics.get(category)!.push({ key, metric });
-  }
-
-  // Convert to array, filter empty groups
-  const visibleGroups = Array.from(groupedMetrics.entries())
-    .filter(([, metrics]) => metrics.length > 0)
-    .map(([title, metrics]) => ({ title, metrics }));
+  // Build visible metric groups (only show groups with available data)
+  const visibleGroups = METRIC_GROUPS.map(group => ({
+    ...group,
+    metrics: group.keys.filter(key => metricMap.has(key)),
+  })).filter(group => group.metrics.length > 0);
 
   return (
     <div className="space-y-6">
@@ -307,12 +218,12 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
         {hasPositionData && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
             <RadarChart
-              labels={positionRadarMetrics.map((m) => m.label)}
-              values={positionRadarMetrics.map((m) => getPercentile(m))}
+              labels={radar.map((m) => m.label)}
+              values={radar.map((m) => getPercentile(m))}
               maxValue={100}
               mode="percentile"
-              displayValues={positionRadarMetrics.map((m) => m.value)}
-              percentiles={positionRadarMetrics.map((m) => getPercentile(m))}
+              displayValues={radar.map((m) => m.value)}
+              percentiles={radar.map((m) => getPercentile(m))}
               title={`${posLabel.toUpperCase()} PROFILE`}
             />
           </div>
@@ -321,10 +232,10 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
         {hasAllroundData && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
             <PercentileRadar
-              labels={allroundRadarMetrics.map((m) => m.label)}
-              values={allroundRadarMetrics.map((m) => getPercentile(m))}
-              displayValues={allroundRadarMetrics.map((m) => m.value)}
-              percentiles={allroundRadarMetrics.map((m) => getPercentile(m))}
+              labels={allround.map((m) => m.label)}
+              values={allround.map((m) => getPercentile(m))}
+              displayValues={allround.map((m) => m.value)}
+              percentiles={allround.map((m) => getPercentile(m))}
               title="PERCENTILE PROFILE"
             />
           </div>
@@ -350,7 +261,7 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
         </span>
       </div>
 
-      {/* Detailed Metric Bars by Group — DYNAMIC from actual data */}
+      {/* Detailed Metric Bars by Group */}
       {visibleGroups.map(group => (
         <div key={group.title} className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
           <div className="px-4 py-3 border-b border-zinc-800">
@@ -366,7 +277,9 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
               </tr>
             </thead>
             <tbody>
-              {group.metrics.map(({ key, metric: m }) => {
+              {group.metrics.map(key => {
+                const m = metricMap.get(key);
+                if (!m) return null;
                 const pct = getPercentile(m);
                 const isInvert = INVERT_METRICS.has(key);
                 return (

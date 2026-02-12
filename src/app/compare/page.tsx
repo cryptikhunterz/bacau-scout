@@ -84,6 +84,89 @@ const PG_LABELS: Record<string, string> = {
   FW: 'Forward',
 };
 
+const POSITION_GROUPS = ['GK', 'CB', 'WB', 'DM', 'CM', 'AM', 'FW'];
+
+/** Canonical radar templates per position group — used when switching templates */
+const PG_RADAR_TEMPLATES: Record<string, { key: string; label: string }[]> = {
+  GK: [
+    { key: 'Save rate, %', label: 'Save %' },
+    { key: 'xG against per 90', label: 'xGA /90' },
+    { key: 'Shots against per 90', label: 'ShotA /90' },
+    { key: 'Exits per 90', label: 'Exits /90' },
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Conceded goals per 90', label: 'GA /90' },
+  ],
+  CB: [
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Interceptions per 90', label: 'Intercept /90' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Defensive duels per 90', label: 'Def Duels /90' },
+    { key: 'Shots blocked per 90', label: 'Blocks /90' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  WB: [
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Offensive duels won, %', label: 'Off Duels %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Crosses per 90', label: 'Crosses /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  DM: [
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Passes per 90', label: 'Passes /90' },
+    { key: 'Accurate long passes, %', label: 'Long Pass %' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'Fouls per 90', label: 'Fouls /90' },
+  ],
+  CM: [
+    { key: 'Accurate passes, %', label: 'Pass Acc %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'Passes per 90', label: 'Passes /90' },
+    { key: 'Defensive duels won, %', label: 'Def Duels %' },
+    { key: 'Successful defensive actions per 90', label: 'Def Actions /90' },
+    { key: 'Interceptions per 90', label: 'Intercept /90' },
+  ],
+  AM: [
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Progressive passes per 90', label: 'Prog Pass /90' },
+    { key: 'Progressive runs per 90', label: 'Prog Runs /90' },
+    { key: 'Shots on target, %', label: 'SoT %' },
+    { key: 'Passes to penalty area per 90', label: 'PA Pass /90' },
+  ],
+  FW: [
+    { key: 'xG per 90', label: 'xG /90' },
+    { key: 'Goals per 90', label: 'Goals /90' },
+    { key: 'Shots on target, %', label: 'SoT %' },
+    { key: 'Key passes per 90', label: 'Chances /90' },
+    { key: 'Successful dribbles, %', label: 'Dribble %' },
+    { key: 'Crosses per 90', label: 'Crosses /90' },
+    { key: 'Aerial duels won, %', label: 'Aerial %' },
+    { key: 'xA per 90', label: 'xA /90' },
+  ],
+};
+
+const ALLROUND_TEMPLATE: { key: string; label: string }[] = [
+  { key: 'Passes per 90', label: 'Passes /90' },
+  { key: 'Accurate passes, %', label: 'Pass Acc %' },
+  { key: 'Progressive passes per 90', label: 'Prog Pass /90' },
+  { key: 'Crosses per 90', label: 'Crosses /90' },
+  { key: 'Offensive duels won, %', label: 'Off Duels %' },
+  { key: 'Defensive duels per 90', label: 'Def Duels /90' },
+  { key: 'Aerial duels per 90', label: 'Aerial /90' },
+  { key: 'Touches in box per 90', label: 'Box Touch /90' },
+  { key: 'Fouls per 90', label: 'Fouls /90' },
+  { key: 'Key passes per 90', label: 'Key Pass /90' },
+];
+
 /* ------------------------------------------------------------------ */
 /*  Utility                                                            */
 /* ------------------------------------------------------------------ */
@@ -204,6 +287,7 @@ export default function ComparePage() {
   const [wyscoutData, setWyscoutData] = useState<Record<string, PercentileWyscoutData>>({});
   const [loading, setLoading] = useState(false);
   const [compareMode, setCompareMode] = useState<CompareMode>('league');
+  const [radarTemplate, setRadarTemplate] = useState<string>('');
 
   const loadPlayer = async (searchResult: SearchResult) => {
     if (players.length >= MAX_COMPARE) return;
@@ -223,6 +307,10 @@ export default function ComparePage() {
         const wData = await wyscoutRes.json();
         if (wData?.hasPercentiles) {
           setWyscoutData(prev => ({ ...prev, [searchResult.playerId]: wData }));
+          // Set default radar template from first player's position group
+          if (players.length === 0 && wData.pg) {
+            setRadarTemplate(wData.pg);
+          }
         }
       }
     } catch (err) {
@@ -244,96 +332,12 @@ export default function ComparePage() {
   const getPercentile = (m: RadarMetric) =>
     compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
 
-  // Build DYNAMIC radar data from UNION of all players' metrics
-  const radarOverlayData = useMemo(() => {
-    const playersWithData = players.filter(p => wyscoutData[p.id]);
-    if (playersWithData.length < 2) return null;
-
-    // UNION of all players' radar metric keys
-    const radarKeySet = new Map<string, string>(); // key -> label
-    for (const p of playersWithData) {
-      const wd = wyscoutData[p.id];
-      for (const m of wd.radar) {
-        if (!radarKeySet.has(m.key)) {
-          radarKeySet.set(m.key, m.label);
-        }
-      }
-    }
-
-    const keys = Array.from(radarKeySet.keys());
-    const labels = Array.from(radarKeySet.values());
-    if (keys.length < 3) return null;
-
-    // Cap at 16 for readability
-    const cappedKeys = keys.slice(0, 16);
-    const cappedLabels = labels.slice(0, 16);
-
-    const playerRadarValues = playersWithData.map(p => {
-      const wd = wyscoutData[p.id];
-      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
-      return {
-        player: p,
-        values: cappedKeys.map(k => {
-          const m = metricMap.get(k);
-          return m ? getPercentile(m) : 0;
-        }),
-        displayValues: cappedKeys.map(k => {
-          const m = metricMap.get(k);
-          return m ? m.value : 0;
-        }),
-      };
-    });
-
-    return { labels: cappedLabels, playerRadarValues };
-  }, [players, wyscoutData, compareMode]);
-
-  // DYNAMIC allround radar from UNION of all players' allround metrics
-  const allroundOverlayData = useMemo(() => {
-    const playersWithData = players.filter(p => wyscoutData[p.id]);
-    if (playersWithData.length < 2) return null;
-
-    // UNION of all players' allround metric keys
-    const allroundKeySet = new Map<string, string>();
-    for (const p of playersWithData) {
-      const wd = wyscoutData[p.id];
-      for (const m of wd.allround) {
-        if (!allroundKeySet.has(m.key)) {
-          allroundKeySet.set(m.key, m.label);
-        }
-      }
-    }
-
-    const keys = Array.from(allroundKeySet.keys());
-    const labels = Array.from(allroundKeySet.values());
-    if (keys.length < 3) return null;
-
-    // Cap at 16
-    const cappedKeys = keys.slice(0, 16);
-    const cappedLabels = labels.slice(0, 16);
-
-    const playerRadarValues = playersWithData.map(p => {
-      const wd = wyscoutData[p.id];
-      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
-      return {
-        player: p,
-        values: cappedKeys.map(k => {
-          const m = metricMap.get(k);
-          return m ? getPercentile(m) : 0;
-        }),
-        displayValues: cappedKeys.map(k => {
-          const m = metricMap.get(k);
-          return m ? m.value : 0;
-        }),
-      };
-    });
-
-    return { labels: cappedLabels, playerRadarValues };
-  }, [players, wyscoutData, compareMode]);
-
-  // Build metric keys for bar comparison — UNION of all players' metrics (dynamic)
+  // Build metric keys for bar comparison — UNION of all players' metrics
+  // Every player gets an entry for every metric (null if missing)
   const allMetrics = useMemo(() => {
     const metricsMap = new Map<string, { label: string; data: Map<string, { value: number; percentile: number }> }>();
     
+    // First pass: collect all metric keys from all players
     for (const player of players) {
       const wd = wyscoutData[player.id];
       if (!wd) continue;
@@ -356,6 +360,67 @@ export default function ComparePage() {
     }
     
     return metricsMap;
+  }, [players, wyscoutData, compareMode]);
+
+  // Build radar overlay data using canonical position templates
+  const radarOverlayData = useMemo(() => {
+    const playersWithData = players.filter(p => wyscoutData[p.id]);
+    if (playersWithData.length < 2) return null;
+
+    // Use canonical template for the selected position group
+    const templatePg = radarTemplate || wyscoutData[playersWithData[0].id]?.pg;
+    if (!templatePg) return null;
+
+    const template = PG_RADAR_TEMPLATES[templatePg];
+    if (!template || template.length < 3) return null;
+
+    const labels = template.map(t => t.label);
+    const keys = template.map(t => t.key);
+
+    const playerRadarValues = playersWithData.map(p => {
+      const wd = wyscoutData[p.id];
+      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
+      return {
+        player: p,
+        values: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? getPercentile(m) : 0;
+        }),
+        displayValues: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? m.value : 0;
+        }),
+      };
+    });
+
+    return { labels, playerRadarValues, templatePg };
+  }, [players, wyscoutData, compareMode, radarTemplate]);
+
+  // All-round radar overlay using canonical template
+  const allroundOverlayData = useMemo(() => {
+    const playersWithData = players.filter(p => wyscoutData[p.id]);
+    if (playersWithData.length < 2) return null;
+
+    const labels = ALLROUND_TEMPLATE.map(t => t.label);
+    const keys = ALLROUND_TEMPLATE.map(t => t.key);
+
+    const playerRadarValues = playersWithData.map(p => {
+      const wd = wyscoutData[p.id];
+      const metricMap = new Map([...wd.radar, ...wd.allround].map(m => [m.key, m]));
+      return {
+        player: p,
+        values: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? getPercentile(m) : 0;
+        }),
+        displayValues: keys.map(k => {
+          const m = metricMap.get(k);
+          return m ? m.value : 0;
+        }),
+      };
+    });
+
+    return { labels, playerRadarValues };
   }, [players, wyscoutData, compareMode]);
 
   return (
@@ -469,9 +534,23 @@ export default function ComparePage() {
         {/* Comparison content */}
         {players.length >= 2 && (
           <div className="space-y-6">
-            {/* Compare mode toggle (no more radar template selector!) */}
+            {/* Radar Template Selector */}
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
-              <div className="flex items-center justify-end">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-4">
+                  <label className="text-sm text-zinc-400 whitespace-nowrap">Radar Template</label>
+                  <select
+                    value={radarTemplate || (wyscoutData[players[0].id]?.pg ?? '')}
+                    onChange={e => setRadarTemplate(e.target.value)}
+                    className="bg-zinc-800 border border-zinc-700 rounded-md px-3 py-1.5 text-sm text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                  >
+                    {POSITION_GROUPS.map(pg => (
+                      <option key={pg} value={pg}>
+                        {pg} — {PG_LABELS[pg] || pg}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                 <div className="flex bg-zinc-800 rounded-lg p-0.5">
                   <button
                     onClick={() => setCompareMode('league')}
@@ -497,14 +576,14 @@ export default function ComparePage() {
               </div>
             </div>
 
-            {/* Radar Charts — DYNAMIC from actual player data */}
+            {/* Radar Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Position Radar — UNION of all players' radar metrics */}
+              {/* Position Radar */}
               {radarOverlayData && (
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
-                  <h2 className="text-lg font-semibold text-white mb-1">📊 Position Radar</h2>
+                  <h2 className="text-lg font-semibold text-white mb-1">📊 Percentile Radar</h2>
                   <p className="text-xs text-zinc-500 mb-4">
-                    Position-specific metrics · Percentile values
+                    Using {PG_LABELS[radarOverlayData.templatePg] || radarOverlayData.templatePg} template · Percentile values
                   </p>
                   {(() => {
                     const d = radarOverlayData;
@@ -543,12 +622,12 @@ export default function ComparePage() {
                 </div>
               )}
 
-              {/* Allround Percentile Radar — UNION of all players' allround metrics */}
+              {/* Enrichment-style Percentile Radar */}
               {allroundOverlayData && (
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
                   <h2 className="text-lg font-semibold text-white mb-1">📈 Percentile Profile</h2>
                   <p className="text-xs text-zinc-500 mb-4">
-                    All-round metrics · Percentile values
+                    All-round metrics · Enrichment-style radar
                   </p>
                   {(() => {
                     const d = allroundOverlayData;
@@ -606,6 +685,7 @@ export default function ComparePage() {
                             const d = data.get(p.id);
                             const val = d?.value;
                             const pct = d?.percentile ?? null;
+                            // Fixed 0-100% scale based on percentile rank
                             const width = pct !== null ? pct : 0;
                             const shortName = p.name.split(' ').pop() || p.name;
                             const hasData = d !== undefined;

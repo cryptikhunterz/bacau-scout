@@ -68,6 +68,20 @@ const COMPARE_COLORS = [
   { label: 'green', text: 'text-green-400', bg: 'bg-green-500/20', border: 'border-green-500/40', bar: 'bg-green-500', dot: '#22c55e' },
 ];
 
+const ALLROUND_KEYS = [
+  'Passes per 90', 'Accurate passes, %', 'Progressive passes per 90',
+  'Crosses per 90', 'Offensive duels won, %', 'Defensive duels per 90',
+  'Aerial duels per 90', 'Touches in box per 90', 'Fouls per 90',
+  'Key passes per 90',
+];
+
+const ALLROUND_LABELS = [
+  'Passes /90', 'Pass Acc %', 'Prog Pass /90',
+  'Crosses /90', 'Off Duels %', 'Def Duels /90',
+  'Aerial /90', 'Box Touch /90', 'Fouls /90',
+  'Key Pass /90',
+];
+
 /* ------------------------------------------------------------------ */
 /*  Utility                                                            */
 /* ------------------------------------------------------------------ */
@@ -78,13 +92,6 @@ function percentileTextColor(pct: number): string {
   if (pct >= 41) return 'text-yellow-400';
   if (pct >= 21) return 'text-amber-400';
   return 'text-red-400';
-}
-
-function formatLabel(key: string): string {
-  return key
-    .replace(/ per 90/g, ' /90')
-    .replace(/, %/g, ' %')
-    .replace(/Successful /g, '');
 }
 
 /* ------------------------------------------------------------------ */
@@ -181,34 +188,22 @@ function TeamSearch({
 }
 
 /* ------------------------------------------------------------------ */
-/*  Aggregate team Wyscout data — DYNAMIC, no hardcoded keys           */
+/*  Aggregate team Wyscout data                                        */
 /* ------------------------------------------------------------------ */
-
-interface DynamicAggregateResult {
-  keys: string[];
-  labels: string[];
-  avgPercentiles: number[];
-  avgValues: number[];
-  playerCount: number;
-}
 
 function aggregateTeamData(
   playerData: PercentileWyscoutData[],
-  metricKeys: string[],
   compareMode: CompareMode,
-): DynamicAggregateResult | null {
-  if (playerData.length === 0 || metricKeys.length === 0) return null;
+) {
+  if (playerData.length === 0) return null;
 
-  const labels = metricKeys.map(formatLabel);
-  
-  const avgPercentiles: number[] = metricKeys.map((key) => {
+  const avgPercentiles: number[] = ALLROUND_KEYS.map((key) => {
     let sum = 0;
     let count = 0;
     for (const player of playerData) {
-      const allMetrics = [...player.radar, ...player.allround];
-      const m = allMetrics.find(a => a.key === key);
+      const m = player.allround.find(a => a.key === key);
       if (m) {
-        const pct = compareMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
+        const pct = compareMode === 'league' ? m.percentile : m.gp;
         if (m.value !== 0 || pct !== 50) {
           sum += pct;
           count++;
@@ -218,12 +213,11 @@ function aggregateTeamData(
     return count > 0 ? Math.round(sum / count) : 0;
   });
 
-  const avgValues: number[] = metricKeys.map((key) => {
+  const avgValues: number[] = ALLROUND_KEYS.map((key) => {
     let sum = 0;
     let count = 0;
     for (const player of playerData) {
-      const allMetrics = [...player.radar, ...player.allround];
-      const m = allMetrics.find(a => a.key === key);
+      const m = player.allround.find(a => a.key === key);
       if (m && (m.value !== 0 || m.percentile !== 50)) {
         sum += m.value;
         count++;
@@ -232,7 +226,7 @@ function aggregateTeamData(
     return count > 0 ? Math.round((sum / count) * 100) / 100 : 0;
   });
 
-  return { keys: metricKeys, labels, avgPercentiles, avgValues, playerCount: playerData.length };
+  return { avgPercentiles, avgValues, playerCount: playerData.length };
 }
 
 /* ------------------------------------------------------------------ */
@@ -354,35 +348,17 @@ export default function CompareTeamsPage() {
     });
   };
 
-  // Build DYNAMIC union of all metric keys across all teams' players
-  const unionMetricKeys = useMemo(() => {
-    const keySet = new Set<string>();
-    for (const team of teams) {
-      const wd = teamWyscoutData[team.club] || [];
-      for (const player of wd) {
-        for (const m of [...player.radar, ...player.allround]) {
-          keySet.add(m.key);
-        }
-      }
-    }
-    return Array.from(keySet).sort();
-  }, [teams, teamWyscoutData]);
-
-  // Aggregate data for each team using dynamic keys
+  // Aggregate data for each team
   const teamAggregates = useMemo(() => {
-    const result: Record<string, DynamicAggregateResult | null> = {};
+    const result: Record<string, ReturnType<typeof aggregateTeamData>> = {};
     for (const team of teams) {
       const wd = teamWyscoutData[team.club] || [];
-      result[team.club] = aggregateTeamData(wd, unionMetricKeys, compareMode);
+      result[team.club] = aggregateTeamData(wd, compareMode);
     }
     return result;
-  }, [teams, teamWyscoutData, compareMode, unionMetricKeys]);
+  }, [teams, teamWyscoutData, compareMode]);
 
   const hasAllAggregates = teams.length >= 2 && teams.every(t => teamAggregates[t.club]);
-
-  // Cap radar at 16 metrics for visual clarity
-  const radarKeys = unionMetricKeys.slice(0, 16);
-  const radarLabels = radarKeys.map(formatLabel);
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -494,7 +470,7 @@ export default function CompareTeamsPage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-4">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <div className="text-xs text-zinc-500">
-                  {teams.map((t) => {
+                  {teams.map((t, i) => {
                     const agg = teamAggregates[t.club];
                     return (agg ? `${t.club}: ${agg.playerCount} players with Wyscout data` : '');
                   }).filter(Boolean).join(' · ')}
@@ -524,8 +500,8 @@ export default function CompareTeamsPage() {
               </div>
             </div>
 
-            {/* Radar Charts — DYNAMIC from actual team data */}
-            {hasAllAggregates && radarKeys.length >= 3 && (
+            {/* Radar Charts */}
+            {hasAllAggregates && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Percentile Radar */}
                 <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
@@ -534,42 +510,22 @@ export default function CompareTeamsPage() {
                     {compareMode === 'global' ? 'Global percentile values' : 'League percentile values'} · Squad averages
                   </p>
                   {(() => {
-                    // Build radar values for each team from the dynamic keys
-                    const teamRadarValues = teams.map(t => {
-                      const agg = teamAggregates[t.club]!;
-                      // Map from full key list to radar subset
-                      return radarKeys.map(key => {
-                        const idx = agg.keys.indexOf(key);
-                        return idx >= 0 ? agg.avgPercentiles[idx] : 0;
-                      });
-                    });
-                    const teamRawValues = teams.map(t => {
-                      const agg = teamAggregates[t.club]!;
-                      return radarKeys.map(key => {
-                        const idx = agg.keys.indexOf(key);
-                        return idx >= 0 ? agg.avgValues[idx] : 0;
-                      });
-                    });
-
-                    const primary = teamRadarValues[0];
-                    const overlays = teamRadarValues.slice(1).map((vals, idx) => ({
-                      values: vals,
-                      color: COMPARE_COLORS[idx + 1].dot,
-                    }));
-
+                    const agg1 = teamAggregates[teams[0].club]!;
+                    const agg2 = teamAggregates[teams[1].club]!;
                     return (
                       <>
                         <RadarChart
-                          labels={radarLabels}
-                          values={primary}
+                          labels={ALLROUND_LABELS}
+                          values={agg1.avgPercentiles}
                           maxValue={100}
                           mode="percentile"
-                          displayValues={teamRawValues[0]}
-                          percentiles={primary}
-                          overlays={overlays}
+                          displayValues={agg1.avgValues}
+                          percentiles={agg1.avgPercentiles}
+                          comparisonValues={agg2.avgPercentiles}
+                          comparisonColor={COMPARE_COLORS[1].dot}
                         />
                         <div className="flex justify-center gap-6 mt-2 text-xs">
-                          {teams.map((t, idx) => (
+                          {teams.slice(0, 2).map((t, idx) => (
                             <span key={t.club} className="flex items-center gap-1.5">
                               <span
                                 className="w-3 h-0.5 inline-block rounded"
@@ -591,42 +547,32 @@ export default function CompareTeamsPage() {
                     Actual values · Each axis scaled independently
                   </p>
                   {(() => {
-                    const teamRawValues = teams.map(t => {
-                      const agg = teamAggregates[t.club]!;
-                      return radarKeys.map(key => {
-                        const idx = agg.keys.indexOf(key);
-                        return idx >= 0 ? agg.avgValues[idx] : 0;
-                      });
-                    });
-
-                    const maxValues = radarKeys.map((_, ki) => {
-                      const vals = teamRawValues.map(tv => tv[ki]);
-                      const max = Math.max(...vals);
+                    const agg1 = teamAggregates[teams[0].club]!;
+                    const agg2 = teamAggregates[teams[1].club]!;
+                    // Build per-axis max values for raw mode
+                    const maxValues = ALLROUND_KEYS.map((_, i) => {
+                      const v1 = agg1.avgValues[i];
+                      const v2 = agg2.avgValues[i];
+                      const max = Math.max(v1, v2);
                       if (max <= 0) return 1;
                       if (max <= 1) return Math.ceil(max * 10) / 10;
                       if (max <= 10) return Math.ceil(max);
                       return Math.ceil(max / 5) * 5;
                     });
-
-                    const primary = teamRawValues[0];
-                    const overlays = teamRawValues.slice(1).map((vals, idx) => ({
-                      values: vals,
-                      color: COMPARE_COLORS[idx + 1].dot,
-                    }));
-
                     return (
                       <>
                         <RadarChart
-                          labels={radarLabels}
-                          values={primary}
+                          labels={ALLROUND_LABELS}
+                          values={agg1.avgValues}
                           maxValue={1}
                           maxValues={maxValues}
                           mode="raw"
                           color="#3b82f6"
-                          overlays={overlays}
+                          comparisonValues={agg2.avgValues}
+                          comparisonColor={COMPARE_COLORS[1].dot}
                         />
                         <div className="flex justify-center gap-6 mt-2 text-xs">
-                          {teams.map((t, idx) => (
+                          {teams.slice(0, 2).map((t, idx) => (
                             <span key={t.club} className="flex items-center gap-1.5">
                               <span
                                 className="w-3 h-0.5 inline-block rounded"
@@ -643,20 +589,18 @@ export default function CompareTeamsPage() {
               </div>
             )}
 
-            {/* Stat Comparison — stacked horizontal bars — DYNAMIC keys */}
-            {hasAllAggregates && unionMetricKeys.length > 0 && (
+            {/* Stat Comparison — stacked horizontal bars */}
+            {hasAllAggregates && (
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-white mb-1">📊 Stat Comparison</h2>
                 <p className="text-xs text-zinc-500 mb-4">Squad-averaged per-90 values and percentiles</p>
                 <div className="space-y-3">
-                  {unionMetricKeys.map((key) => {
+                  {ALLROUND_KEYS.map((key, i) => {
                     const values = teams.map(t => {
                       const agg = teamAggregates[t.club];
-                      if (!agg) return { val: 0, pct: 0 };
-                      const idx = agg.keys.indexOf(key);
                       return {
-                        val: idx >= 0 ? agg.avgValues[idx] : 0,
-                        pct: idx >= 0 ? agg.avgPercentiles[idx] : 0,
+                        val: agg?.avgValues[i] ?? 0,
+                        pct: agg?.avgPercentiles[i] ?? 0,
                       };
                     });
                     const maxVal = Math.max(...values.map(v => v.val), 0.01);
@@ -666,7 +610,7 @@ export default function CompareTeamsPage() {
                     return (
                       <div key={key} className="group">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-zinc-400">{formatLabel(key)}</span>
+                          <span className="text-xs text-zinc-400">{ALLROUND_LABELS[i]}</span>
                         </div>
                         <div className="space-y-1">
                           {teams.map((t, idx) => {
@@ -696,8 +640,8 @@ export default function CompareTeamsPage() {
               </div>
             )}
 
-            {/* Metrics Table — DYNAMIC */}
-            {hasAllAggregates && unionMetricKeys.length > 0 && (
+            {/* Metrics Table */}
+            {hasAllAggregates && (
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg overflow-hidden">
                 <div className="px-4 py-3 border-b border-zinc-800">
                   <h3 className="font-semibold text-white">Metrics Comparison</h3>
@@ -715,21 +659,19 @@ export default function CompareTeamsPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {unionMetricKeys.map((key) => {
+                      {ALLROUND_KEYS.map((key, i) => {
                         const values = teams.map(t => {
                           const agg = teamAggregates[t.club];
-                          if (!agg) return { val: 0, pct: 0 };
-                          const idx = agg.keys.indexOf(key);
                           return {
-                            val: idx >= 0 ? agg.avgValues[idx] : 0,
-                            pct: idx >= 0 ? agg.avgPercentiles[idx] : 0,
+                            val: agg?.avgValues[i] ?? 0,
+                            pct: agg?.avgPercentiles[i] ?? 0,
                           };
                         });
                         const maxPct = Math.max(...values.map(v => v.pct));
 
                         return (
                           <tr key={key} className="border-b border-zinc-800/30 hover:bg-zinc-800/30">
-                            <td className="px-4 py-2 text-zinc-400">{formatLabel(key)}</td>
+                            <td className="px-4 py-2 text-zinc-400">{ALLROUND_LABELS[i]}</td>
                             {values.map((v, idx) => (
                               <td key={idx} className="px-4 py-2 text-right">
                                 <span className={`font-mono ${v.pct === maxPct ? 'font-bold text-white' : 'text-zinc-300'}`}>
