@@ -298,9 +298,10 @@ function SeasonComparison({
       {allSeasons.map((season) => {
         const s1 = p1Seasons.get(season) || { matches: 0, goals: 0, assists: 0 };
         const s2 = p2Seasons.get(season) || { matches: 0, goals: 0, assists: 0 };
-        const maxMatches = Math.max(s1.matches, s2.matches, 1);
-        const maxGoals = Math.max(s1.goals, s2.goals, 1);
-        const maxAssists = Math.max(s1.assists, s2.assists, 1);
+        // Fixed max scales for season stats
+        const SEASON_MAX_MATCHES = 60;
+        const SEASON_MAX_GOALS = 40;
+        const SEASON_MAX_ASSISTS = 25;
 
         return (
           <div key={season} className="mb-6">
@@ -311,19 +312,19 @@ function SeasonComparison({
               label="Appearances"
               value1={s1.matches}
               value2={s2.matches}
-              maxValue={maxMatches}
+              maxValue={SEASON_MAX_MATCHES}
             />
             <ComparisonBar
               label="Goals"
               value1={s1.goals}
               value2={s2.goals}
-              maxValue={maxGoals}
+              maxValue={SEASON_MAX_GOALS}
             />
             <ComparisonBar
               label="Assists"
               value1={s1.assists}
               value2={s2.assists}
-              maxValue={maxAssists}
+              maxValue={SEASON_MAX_ASSISTS}
             />
           </div>
         );
@@ -361,16 +362,20 @@ export default function ComparePage() {
     }
   };
 
-  // Career stat maxima for the bars (use the higher value so bars are relative)
+  // Career stat maxima for the bars — FIXED max scales (not relative to better player)
   const career1 = player1?.careerTotals;
   const career2 = player2?.careerTotals;
 
-  const maxApps = Math.max(career1?.matches || 0, career2?.matches || 0, 1);
-  const maxGoals = Math.max(career1?.goals || 0, career2?.goals || 0, 1);
-  const maxAssists = Math.max(career1?.assists || 0, career2?.assists || 0, 1);
-  const maxMinutes = Math.max(career1?.minutes || 0, career2?.minutes || 0, 1);
+  // Fixed max scales for career stats
+  const FIXED_MAX_APPS = 500;
+  const FIXED_MAX_GOALS = 200;
+  const FIXED_MAX_ASSISTS = 150;
+  const FIXED_MAX_MINUTES = 40000;
 
-  // Per-90 stats
+  // Check if either player has valid minutes data
+  const hasMinutes = (career1?.minutes && career1.minutes > 0) || (career2?.minutes && career2.minutes > 0);
+
+  // Per-90 stats (use fixed max of 1.0 for per-90 ratios)
   const goalsP90_1 =
     career1 && career1.minutes > 0 ? (career1.goals / career1.minutes) * 90 : 0;
   const goalsP90_2 =
@@ -380,8 +385,7 @@ export default function ComparePage() {
   const assistsP90_2 =
     career2 && career2.minutes > 0 ? (career2.assists / career2.minutes) * 90 : 0;
 
-  const maxGP90 = Math.max(goalsP90_1, goalsP90_2, 0.01);
-  const maxAP90 = Math.max(assistsP90_1, assistsP90_2, 0.01);
+  const FIXED_MAX_PER90 = 1.0;
 
   // Goal involvement %
   const gi1 =
@@ -512,26 +516,32 @@ export default function ComparePage() {
                 label="Appearances"
                 value1={career1?.matches || 0}
                 value2={career2?.matches || 0}
-                maxValue={maxApps}
+                maxValue={FIXED_MAX_APPS}
               />
               <ComparisonBar
                 label="Goals"
                 value1={career1?.goals || 0}
                 value2={career2?.goals || 0}
-                maxValue={maxGoals}
+                maxValue={FIXED_MAX_GOALS}
               />
               <ComparisonBar
                 label="Assists"
                 value1={career1?.assists || 0}
                 value2={career2?.assists || 0}
-                maxValue={maxAssists}
+                maxValue={FIXED_MAX_ASSISTS}
               />
-              <ComparisonBar
-                label="Minutes"
-                value1={career1?.minutes || 0}
-                value2={career2?.minutes || 0}
-                maxValue={maxMinutes}
-              />
+              {hasMinutes ? (
+                <ComparisonBar
+                  label="Minutes"
+                  value1={career1?.minutes || 0}
+                  value2={career2?.minutes || 0}
+                  maxValue={FIXED_MAX_MINUTES}
+                />
+              ) : (
+                <div className="mb-3">
+                  <div className="text-center text-sm font-medium text-zinc-500 mb-1">Minutes — N/A</div>
+                </div>
+              )}
             </div>
 
             {/* Per-90 & Ratios */}
@@ -541,13 +551,13 @@ export default function ComparePage() {
                 label="Goals per 90"
                 value1={goalsP90_1}
                 value2={goalsP90_2}
-                maxValue={maxGP90}
+                maxValue={FIXED_MAX_PER90}
               />
               <ComparisonBar
                 label="Assists per 90"
                 value1={assistsP90_1}
                 value2={assistsP90_2}
-                maxValue={maxAP90}
+                maxValue={FIXED_MAX_PER90}
               />
               <ComparisonBar
                 label="G+A per Match (%)"

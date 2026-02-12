@@ -22,7 +22,7 @@ interface Player {
 // FM-style stat badge
 function StatBadge({ value, type = 'stat' }: { value: number | string | null; type?: 'stat' | 'age' | 'value' }) {
   if (value === null || value === undefined || value === '-') {
-    return <span className="text-zinc-600">-</span>;
+    return <span className="text-zinc-600">{type === 'age' ? 'N/A' : '-'}</span>;
   }
   
   const num = typeof value === 'string' ? parseFloat(value) || 0 : value;

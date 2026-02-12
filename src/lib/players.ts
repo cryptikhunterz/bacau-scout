@@ -30,6 +30,14 @@ export interface RawPlayer {
     total_appearances?: number;
     total_goals?: number;
     total_assists?: number;
+    stats_by_season?: Array<{
+      season?: string;
+      competition?: string;
+      appearances?: number;
+      goals?: number;
+      assists?: number;
+      minutes?: number;
+    }>;
   };
   career_totals?: {
     appearances?: number;
@@ -314,7 +322,16 @@ function rawToDetail(raw: RawPlayer): PlayerDetail {
   const apps = raw.appearances || raw.career_stats?.total_appearances || raw.career_totals?.appearances || 0;
   const goals = raw.goals || raw.career_stats?.total_goals || raw.career_totals?.goals || 0;
   const assists = raw.assists || raw.career_stats?.total_assists || raw.career_totals?.assists || 0;
-  const minutes = raw.minutes || raw.career_totals?.minutes || 0;
+
+  // Minutes: try top-level, then career_totals, then sum from season_stats
+  let minutes = raw.minutes || raw.career_totals?.minutes || 0;
+  if (!minutes) {
+    // Sum minutes from season_stats (or career_stats.stats_by_season)
+    const seasonStats = raw.season_stats || raw.career_stats?.stats_by_season || [];
+    for (const s of seasonStats) {
+      if (s.minutes) minutes += s.minutes;
+    }
+  }
 
   // Parse season stats
   const stats = (raw.season_stats || [])

@@ -167,8 +167,12 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
   const [showSuccess, setShowSuccess] = useState(false);
 
   // Scout identity: in admin edit mode, keep original scout; otherwise use session
-  const scoutName = isAdminEdit ? (e?.scoutName || '') : (session?.user?.name || e?.scoutName || '');
-  const scoutId = isAdminEdit ? (e?.scoutId || '') : ((session?.user as any)?.id || e?.scoutId || '');
+  const scoutName = isAdminEdit
+    ? (e?.scoutName || '')
+    : (session?.user?.name || session?.user?.email || e?.scoutName || '');
+  const scoutId = isAdminEdit
+    ? (e?.scoutId || '')
+    : ((session?.user as any)?.id || e?.scoutId || '');
 
   const toggleScoutingTag = (tag: string) => {
     if (scoutingTags.includes(tag)) {

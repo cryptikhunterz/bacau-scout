@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-02-12 (v6) — Bug Fix Batch
+
+### Fixed
+- **MAJ-19: Bar graphs use relative scaling instead of fixed 100%** — Comparison bars in `/compare` now use fixed max scales: 500 appearances, 200 goals, 150 assists, 40k minutes for career totals; 60/40/25 for season stats; 1.0 for per-90 ratios. No longer relative to the better player.
+- **MAJ-20: Minutes shows 0 for both players** — Minutes data is now computed by summing `minutes` from `season_stats` (or `career_stats.stats_by_season`) when the top-level field is missing. If no minutes data exists for either player, the Minutes row shows "N/A" instead of 0.
+- **MAJ-24: "Pressing" appears twice in scout evaluation form** — Renamed duplicate "Pressing" attributes across 5 position templates. Defensive Actions now uses "Counter-Press", Tactical groups use "Pressing Triggers". Affected: Full-Back, Defensive Midfield, Central Midfield, Winger, Centre-Forward.
+- **MAJ-25: Player age shows "-" instead of actual age** — `StatBadge` in search page now shows "N/A" for missing age values instead of "-".
+- **MAJ-27: "Report done by" auto-fills incorrectly** — Auth callbacks now explicitly pass `name` through JWT→session. GradingForm falls back to email if display name is unavailable.
+- **MAJ-28: Merge platform missing "Observe" verdict** — Added "Observe" (teal) to `VERDICT_OPTIONS` between Sign and Monitor. Added to Verdict type, dashboard filter dropdown, VerdictBadge color map, and header stats bar.
+
 ## 2026-02-12 (v5)
 
 ### Fixed
