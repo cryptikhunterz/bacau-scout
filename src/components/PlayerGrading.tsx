@@ -15,10 +15,15 @@ interface PlayerGradingProps {
 
 export function PlayerGrading({ player }: PlayerGradingProps) {
   const [existingGrade, setExistingGrade] = useState<PlayerGrade | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
-    getGradeAsync(player.id).then(g => setExistingGrade(g));
+    setLoading(true);
+    getGradeAsync(player.id).then(g => {
+      setExistingGrade(g);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, [player.id]);
 
   const handleSave = () => {
@@ -37,17 +42,24 @@ export function PlayerGrading({ player }: PlayerGradingProps) {
         Scout Evaluation
       </h2>
 
-      {existingGrade && (
-        <p className="text-sm text-zinc-500 mb-4">
-          Last graded: {new Date(existingGrade.gradedAt).toLocaleDateString()}
-        </p>
-      )}
+      {loading ? (
+        <p className="text-sm text-zinc-400">Loading grade data...</p>
+      ) : (
+        <>
+          {existingGrade && (
+            <p className="text-sm text-zinc-500 mb-4">
+              Last graded: {new Date(existingGrade.gradedAt).toLocaleDateString()}
+            </p>
+          )}
 
-      <GradingForm
-        player={player}
-        existingGrade={existingGrade || undefined}
-        onSave={handleSave}
-      />
+          <GradingForm
+            key={existingGrade?.gradedAt || 'new'}
+            player={player}
+            existingGrade={existingGrade || undefined}
+            onSave={handleSave}
+          />
+        </>
+      )}
 
       {existingGrade && (
         <div className="mt-6 pt-4 border-t border-zinc-700">
