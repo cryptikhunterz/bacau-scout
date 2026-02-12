@@ -25,7 +25,7 @@ import {
 } from '@/lib/positionAttributes';
 import { FileUpload } from '@/components/FileUpload';
 import { RadarChart } from '@/components/RadarChart';
-import { WyscoutRadars } from '@/components/WyscoutRadars';
+// WyscoutRadars removed — shown above Scout Evaluation via WyscoutStats
 
 interface GradingFormProps {
   player: {
@@ -306,8 +306,7 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
         </div>
       </div>
 
-      {/* ─── WYSCOUT ADVANCED METRICS ─── */}
-      <WyscoutRadars playerId={player.id} tmPosition={player.position} />
+      {/* Wyscout radars removed — shown above Scout Evaluation via WyscoutStats */}
 
       {/* ─── POSITION-SPECIFIC ATTRIBUTES ─── */}
       {hasPositionTemplate ? (
