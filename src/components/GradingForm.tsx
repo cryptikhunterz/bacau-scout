@@ -91,36 +91,36 @@ export function GradingForm({ player, existingGrade, onSave }: GradingFormProps)
   const [scoutingLevel, setScoutingLevel] = useState<ScoutingLevel>(e?.scoutingLevel || 'Basic');
 
   // Report
-  const [report, setReport] = useState<AbilityRating>(e?.report || 3);
+  const [report, setReport] = useState<AbilityRating>(e?.report ?? 3);
 
   // Physical (1-5)
-  const [physStrength, setPhysStrength] = useState<AbilityRating>(e?.physStrength || 3);
-  const [physSpeed, setPhysSpeed] = useState<AbilityRating>(e?.physSpeed || 3);
-  const [physAgility, setPhysAgility] = useState<AbilityRating>(e?.physAgility || 3);
-  const [physCoordination, setPhysCoordination] = useState<AbilityRating>(e?.physCoordination || 3);
+  const [physStrength, setPhysStrength] = useState<AbilityRating>(e?.physStrength ?? 3);
+  const [physSpeed, setPhysSpeed] = useState<AbilityRating>(e?.physSpeed ?? 3);
+  const [physAgility, setPhysAgility] = useState<AbilityRating>(e?.physAgility ?? 3);
+  const [physCoordination, setPhysCoordination] = useState<AbilityRating>(e?.physCoordination ?? 3);
 
   // Technique (1-5)
-  const [techControl, setTechControl] = useState<AbilityRating>(e?.techControl || 3);
-  const [techShortPasses, setTechShortPasses] = useState<AbilityRating>(e?.techShortPasses || 3);
-  const [techLongPasses, setTechLongPasses] = useState<AbilityRating>(e?.techLongPasses || 3);
-  const [techAerial, setTechAerial] = useState<AbilityRating>(e?.techAerial || 3);
-  const [techCrossing, setTechCrossing] = useState<AbilityRating>(e?.techCrossing || 3);
-  const [techFinishing, setTechFinishing] = useState<AbilityRating>(e?.techFinishing || 3);
-  const [techDribbling, setTechDribbling] = useState<AbilityRating>(e?.techDribbling || 3);
-  const [techOneVsOneOffense, setTechOneVsOneOffense] = useState<AbilityRating>(e?.techOneVsOneOffense || 3);
-  const [techOneVsOneDefense, setTechOneVsOneDefense] = useState<AbilityRating>(e?.techOneVsOneDefense || 3);
+  const [techControl, setTechControl] = useState<AbilityRating>(e?.techControl ?? 3);
+  const [techShortPasses, setTechShortPasses] = useState<AbilityRating>(e?.techShortPasses ?? 3);
+  const [techLongPasses, setTechLongPasses] = useState<AbilityRating>(e?.techLongPasses ?? 3);
+  const [techAerial, setTechAerial] = useState<AbilityRating>(e?.techAerial ?? 3);
+  const [techCrossing, setTechCrossing] = useState<AbilityRating>(e?.techCrossing ?? 3);
+  const [techFinishing, setTechFinishing] = useState<AbilityRating>(e?.techFinishing ?? 3);
+  const [techDribbling, setTechDribbling] = useState<AbilityRating>(e?.techDribbling ?? 3);
+  const [techOneVsOneOffense, setTechOneVsOneOffense] = useState<AbilityRating>(e?.techOneVsOneOffense ?? 3);
+  const [techOneVsOneDefense, setTechOneVsOneDefense] = useState<AbilityRating>(e?.techOneVsOneDefense ?? 3);
 
   // Tactic (1-5)
-  const [tacPositioning, setTacPositioning] = useState<AbilityRating>(e?.tacPositioning || 3);
-  const [tacTransition, setTacTransition] = useState<AbilityRating>(e?.tacTransition || 3);
-  const [tacDecisions, setTacDecisions] = useState<AbilityRating>(e?.tacDecisions || 3);
-  const [tacAnticipations, setTacAnticipations] = useState<AbilityRating>(e?.tacAnticipations || 3);
-  const [tacDuels, setTacDuels] = useState<AbilityRating>(e?.tacDuels || 3);
-  const [tacSetPieces, setTacSetPieces] = useState<AbilityRating>(e?.tacSetPieces || 3);
+  const [tacPositioning, setTacPositioning] = useState<AbilityRating>(e?.tacPositioning ?? 3);
+  const [tacTransition, setTacTransition] = useState<AbilityRating>(e?.tacTransition ?? 3);
+  const [tacDecisions, setTacDecisions] = useState<AbilityRating>(e?.tacDecisions ?? 3);
+  const [tacAnticipations, setTacAnticipations] = useState<AbilityRating>(e?.tacAnticipations ?? 3);
+  const [tacDuels, setTacDuels] = useState<AbilityRating>(e?.tacDuels ?? 3);
+  const [tacSetPieces, setTacSetPieces] = useState<AbilityRating>(e?.tacSetPieces ?? 3);
 
   // Overall Scores (both 1-8)
-  const [ability, setAbility] = useState<PotentialRating>(e?.ability || 4);
-  const [potential, setPotential] = useState<PotentialRating>(e?.potential || 4);
+  const [ability, setAbility] = useState<PotentialRating>(e?.ability ?? 4);
+  const [potential, setPotential] = useState<PotentialRating>(e?.potential ?? 4);
 
   // Scouting Tags (3 max)
   const [scoutingTags, setScoutingTags] = useState<string[]>(e?.scoutingTags || []);
