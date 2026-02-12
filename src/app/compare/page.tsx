@@ -596,7 +596,6 @@ export default function ComparePage() {
                 <p className="text-xs text-zinc-500 mb-4">Side-by-side bar graphs for each metric</p>
                 <div className="space-y-3">
                   {Array.from(allMetrics.entries()).map(([key, { label, data }]) => {
-                    const maxVal = Math.max(...data.map(d => d.value), 0.01);
                     const barColors = ['bg-blue-500', 'bg-red-500', 'bg-green-500'];
                     const textColors = ['text-blue-400', 'text-red-400', 'text-green-400'];
 
@@ -610,7 +609,8 @@ export default function ComparePage() {
                             const d = data.find(d => d.playerId === p.id);
                             const val = d?.value;
                             const pct = d?.percentile ?? null;
-                            const width = val !== undefined ? (val / maxVal) * 100 : 0;
+                            // Fixed 0-100% scale based on percentile rank
+                            const width = pct !== null ? pct : 0;
                             const shortName = p.name.split(' ').pop() || p.name;
 
                             return (
