@@ -20,6 +20,11 @@ function percentileZoneColor(p: number, opacity: number): string {
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
+interface OverlayData {
+  values: number[];
+  color: string;
+}
+
 interface RadarChartProps {
   labels: string[];
   values: number[];
@@ -29,6 +34,8 @@ interface RadarChartProps {
   size?: number;
   comparisonValues?: number[];
   comparisonColor?: string;
+  /** Multiple comparison overlays (for 3+ player compare) */
+  overlays?: OverlayData[];
   maxValues?: number[];
   /**
    * Percentile mode: values are treated as 0-100 percentiles.
@@ -60,6 +67,7 @@ export function RadarChart({
   size = 400,
   comparisonValues,
   comparisonColor = '#3b82f6',
+  overlays,
   maxValues,
   mode = 'raw',
   displayValues,
@@ -238,8 +246,8 @@ export function RadarChart({
           );
         })}
 
-        {/* Comparison polygon */}
-        {comparisonPolygon && (
+        {/* Comparison polygon (legacy single overlay) */}
+        {comparisonPolygon && !overlays && (
           <>
             <polygon
               points={comparisonPolygon}
@@ -255,6 +263,28 @@ export function RadarChart({
             ))}
           </>
         )}
+
+        {/* Multiple overlay polygons (for 3+ player compare) */}
+        {overlays && overlays.map((ov, oi) => {
+          const ovPolygon = buildPolygonPoints(ov.values);
+          const ovPoints = buildDataPoints(ov.values);
+          return (
+            <g key={`overlay-${oi}`}>
+              <polygon
+                points={ovPolygon}
+                fill={ov.color}
+                fillOpacity={0.1}
+                stroke={ov.color}
+                strokeWidth={1.5}
+                strokeDasharray={oi > 0 ? "4,4" : "6,3"}
+                strokeLinejoin="round"
+              />
+              {ovPoints.map((p, i) => (
+                <circle key={`ov-${oi}-dot-${i}`} cx={p.x} cy={p.y} r={3} fill={ov.color} opacity={0.7} />
+              ))}
+            </g>
+          );
+        })}
 
         {/* Main data polygon */}
         <polygon

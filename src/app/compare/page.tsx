@@ -587,9 +587,11 @@ export default function ComparePage() {
                   </p>
                   {(() => {
                     const d = radarOverlayData;
-                    // First player is primary, second is comparison overlay
                     const primary = d.playerRadarValues[0];
-                    const comparison = d.playerRadarValues[1];
+                    const otherOverlays = d.playerRadarValues.slice(1).map((prd, idx) => ({
+                      values: prd.values,
+                      color: COMPARE_COLORS[idx + 1].dot,
+                    }));
                     return (
                       <>
                         <RadarChart
@@ -599,8 +601,7 @@ export default function ComparePage() {
                           mode="percentile"
                           displayValues={primary.displayValues}
                           percentiles={primary.values}
-                          comparisonValues={comparison.values}
-                          comparisonColor={COMPARE_COLORS[1].dot}
+                          overlays={otherOverlays}
                         />
                         <div className="flex justify-center gap-6 mt-2 text-[10px]">
                           {d.playerRadarValues.map((prd, idx) => (
@@ -631,7 +632,10 @@ export default function ComparePage() {
                   {(() => {
                     const d = allroundOverlayData;
                     const primary = d.playerRadarValues[0];
-                    const comparison = d.playerRadarValues[1];
+                    const otherOverlays = d.playerRadarValues.slice(1).map((prd, idx) => ({
+                      values: prd.values,
+                      color: COMPARE_COLORS[idx + 1].dot,
+                    }));
                     return (
                       <>
                         <PercentileRadar
@@ -639,8 +643,7 @@ export default function ComparePage() {
                           values={primary.values}
                           displayValues={primary.displayValues}
                           percentiles={primary.values}
-                          comparisonValues={comparison.values}
-                          comparisonColor={COMPARE_COLORS[1].dot}
+                          overlays={otherOverlays}
                         />
                         <div className="flex justify-center gap-6 mt-2 text-[10px]">
                           {d.playerRadarValues.map((prd, idx) => (

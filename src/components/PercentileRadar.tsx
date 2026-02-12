@@ -24,6 +24,11 @@ function percentileDotColor(p: number): string {
 
 // ─── Props ──────────────────────────────────────────────────────────────────
 
+interface OverlayData {
+  values: number[];
+  color: string;
+}
+
 interface PercentileRadarProps {
   labels: string[];
   /** Percentile values 0-100 (used for polygon shape) */
@@ -35,6 +40,8 @@ interface PercentileRadarProps {
   /** Optional comparison overlay values (percentiles) */
   comparisonValues?: number[];
   comparisonColor?: string;
+  /** Multiple comparison overlays (for 3+ player compare) */
+  overlays?: OverlayData[];
   title?: string;
   size?: number;
 }
@@ -46,6 +53,7 @@ export function PercentileRadar({
   percentiles,
   comparisonValues,
   comparisonColor = '#ef4444',
+  overlays,
   title,
   size = 420,
 }: PercentileRadarProps) {
@@ -183,8 +191,8 @@ export function PercentileRadar({
           );
         })}
 
-        {/* ── Comparison polygon (dashed) ── */}
-        {compPolygon && (
+        {/* ── Comparison polygon (legacy single overlay) ── */}
+        {compPolygon && !overlays && (
           <>
             <polygon
               points={compPolygon}
@@ -207,6 +215,28 @@ export function PercentileRadar({
             ))}
           </>
         )}
+
+        {/* ── Multiple overlay polygons (for 3+ player compare) ── */}
+        {overlays && overlays.map((ov, oi) => {
+          const ovPoly = buildPolygonPoints(ov.values);
+          const ovPts = buildDataPoints(ov.values);
+          return (
+            <g key={`overlay-${oi}`}>
+              <polygon
+                points={ovPoly}
+                fill={ov.color}
+                fillOpacity={0.08}
+                stroke={ov.color}
+                strokeWidth={1.5}
+                strokeDasharray={oi > 0 ? "4,4" : "6,3"}
+                strokeLinejoin="round"
+              />
+              {ovPts.map((p, i) => (
+                <circle key={`ov-${oi}-dot-${i}`} cx={p.x} cy={p.y} r={3} fill={ov.color} opacity={0.6} />
+              ))}
+            </g>
+          );
+        })}
 
         {/* ── Player data polygon ── */}
         <polygon
