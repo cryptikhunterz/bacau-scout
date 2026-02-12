@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-02-12 (v11) — Wyscout Advanced Metrics Integration
+
+### Added
+- **Wyscout metrics data pipeline** — Python script (`scripts/generate-wyscout-data.py`) that extracts 12,105 matched players from the Wyscout enrichment dataset and writes `public/wyscout-metrics.json` mapping Transfermarkt player_id → Wyscout per-90 metrics + position.
+- **API endpoint** `GET /api/players/[id]/wyscout` — serves Wyscout metrics for a given player ID with in-memory caching for performance.
+- **`WyscoutRadars` component** — reusable client component that fetches Wyscout data and renders two radar charts:
+  - **Position Profile (green #22c55e)** — 8 metrics tailored to the player's position group (CB, Midfield, Winger, Forward)
+  - **All-Round Profile (blue #3b82f6)** — 10 general metrics applicable to all outfield players
+- **Position mapping** (`src/lib/wyscoutRadar.ts`) — maps Transfermarkt positions to Wyscout metric sets with per-axis max values for independent scaling.
+- **`maxValues` prop on RadarChart** — enables independent per-axis scaling: each axis uses its own max value, percentage-based grid rings (25/50/75/100%), and raw value display. Fully backward compatible — when `maxValues` is not provided, the original integer-step behavior is preserved.
+
+### Changed
+- **Report page** (`/report/[playerId]`) — Wyscout radars appear in an "ADVANCED METRICS (WYSCOUT)" section above the existing scout evaluation radars.
+- **Grading form** (`GradingForm.tsx`) — same Wyscout radars shown above the scout attribute evaluation section when data is available.
+
+### Notes
+- Missing metrics handled gracefully (displayed as 0)
+- Goalkeeper position radars skipped (insufficient Wyscout GK metrics in dataset)
+- Existing scout evaluation radars (1-5 scale) remain unchanged and are visually separate
+
 ## 2026-02-12 (v10) — Wyscout-Quality Radar Charts
 
 ### Changed

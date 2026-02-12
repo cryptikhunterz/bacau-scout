@@ -6,6 +6,7 @@ import { useSession } from 'next-auth/react';
 import { getPotentialColor, POTENTIAL_LABELS, PlayerGrade } from '@/lib/grades';
 import { GradingForm } from '@/components/GradingForm';
 import { RadarChart } from '@/components/RadarChart';
+import { WyscoutRadars } from '@/components/WyscoutRadars';
 import { getPositionTemplate, resolvePositionCategory } from '@/lib/positionAttributes';
 
 interface AttachmentData {
@@ -401,7 +402,10 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
           </div>
         </div>
 
-        {/* Radar Charts — Side by Side */}
+        {/* Wyscout Advanced Metrics (above scout evaluation) */}
+        <WyscoutRadars playerId={playerId} tmPosition={report.position} />
+
+        {/* Scout Evaluation Radar Charts — Side by Side */}
         {(positionRadar || overallRadar) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {positionRadar && (

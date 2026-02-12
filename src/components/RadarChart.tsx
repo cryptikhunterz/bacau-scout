@@ -12,6 +12,12 @@ interface RadarChartProps {
   // Optional second dataset for comparison overlay
   comparisonValues?: number[];
   comparisonColor?: string;
+  /**
+   * Per-axis max values for independent scaling (e.g. Wyscout per-90 stats).
+   * When provided, each axis is scaled by its own max instead of the global maxValue.
+   * The raw value is displayed in labels instead of a scaled number.
+   */
+  maxValues?: number[];
 }
 
 /**
@@ -27,6 +33,7 @@ export function RadarChart({
   size = 400,
   comparisonValues,
   comparisonColor = '#3b82f6',
+  maxValues,
 }: RadarChartProps) {
   const n = labels.length;
   if (n < 3) return null;
@@ -52,11 +59,15 @@ export function RadarChart({
     y: cy + radius * Math.sin(angle),
   });
 
+  /** Resolve effective max for axis i */
+  const axisMax = (i: number) => (maxValues && maxValues[i] > 0 ? maxValues[i] : maxValue);
+
   /** Build SVG polygon points string for data values */
   const buildPolygonPoints = (vals: number[]) =>
     vals
       .map((v, i) => {
-        const r = (Math.min(v, maxValue) / maxValue) * chartRadius;
+        const m = axisMax(i);
+        const r = (Math.min(v, m) / m) * chartRadius;
         const { x, y } = toXY(angles[i], r);
         return `${x},${y}`;
       })
@@ -65,7 +76,8 @@ export function RadarChart({
   /** Build data points array for dot markers */
   const buildDataPoints = (vals: number[]) =>
     vals.map((v, i) => {
-      const r = (Math.min(v, maxValue) / maxValue) * chartRadius;
+      const m = axisMax(i);
+      const r = (Math.min(v, m) / m) * chartRadius;
       return toXY(angles[i], r);
     });
 
@@ -75,8 +87,13 @@ export function RadarChart({
   const comparisonPolygon = comparisonValues ? buildPolygonPoints(comparisonValues) : null;
   const comparisonPoints = comparisonValues ? buildDataPoints(comparisonValues) : null;
 
-  // Grid levels (1, 2, ..., maxValue)
-  const gridLevels = Array.from({ length: maxValue }, (_, i) => i + 1);
+  // Grid levels: when using per-axis maxValues, show percentage rings (25%, 50%, 75%, 100%)
+  // Otherwise, integer steps (1, 2, ..., maxValue)
+  const usePerAxisScaling = !!maxValues && maxValues.length === n;
+  const gridLevels = usePerAxisScaling
+    ? [0.25, 0.5, 0.75, 1.0]
+    : Array.from({ length: maxValue }, (_, i) => i + 1);
+  const gridMax = usePerAxisScaling ? 1.0 : maxValue;
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -101,7 +118,7 @@ export function RadarChart({
 
         {/* Concentric CIRCULAR grid lines */}
         {gridLevels.map((level) => {
-          const r = (level / maxValue) * chartRadius;
+          const r = (level / gridMax) * chartRadius;
           return (
             <circle
               key={`grid-${level}`}
@@ -110,7 +127,7 @@ export function RadarChart({
               r={r}
               fill="none"
               stroke="#3f3f46"
-              strokeWidth={level === maxValue ? 1.5 : 0.8}
+              strokeWidth={level === gridMax ? 1.5 : 0.8}
               opacity={0.3}
             />
           );
@@ -133,9 +150,9 @@ export function RadarChart({
           );
         })}
 
-        {/* Scale labels along the first axis (top) */}
-        {gridLevels.map((level) => {
-          const r = (level / maxValue) * chartRadius;
+        {/* Scale labels along the first axis (top) — hidden when using per-axis scaling */}
+        {!usePerAxisScaling && gridLevels.map((level) => {
+          const r = (level / gridMax) * chartRadius;
           const { x, y } = toXY(angles[0], r);
           return (
             <text

@@ -25,6 +25,7 @@ import {
 } from '@/lib/positionAttributes';
 import { FileUpload } from '@/components/FileUpload';
 import { RadarChart } from '@/components/RadarChart';
+import { WyscoutRadars } from '@/components/WyscoutRadars';
 
 interface GradingFormProps {
   player: {
@@ -304,6 +305,9 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
             className="px-3 py-2 rounded border border-zinc-700 bg-zinc-900 text-sm text-zinc-400 w-48 cursor-not-allowed" />
         </div>
       </div>
+
+      {/* ─── WYSCOUT ADVANCED METRICS ─── */}
+      <WyscoutRadars playerId={player.id} tmPosition={player.position} />
 
       {/* ─── POSITION-SPECIFIC ATTRIBUTES ─── */}
       {hasPositionTemplate ? (
