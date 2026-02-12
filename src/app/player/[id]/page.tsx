@@ -4,6 +4,7 @@ import { formatMarketValue } from '@/types/player';
 import { PlayerGrading } from '@/components/PlayerGrading';
 import { PlayerAvatar } from '@/components/PlayerAvatar';
 import { findPlayerById, PlayerDetail } from '@/lib/players';
+import { WyscoutStatsWrapper } from './WyscoutStatsWrapper';
 
 // Position colors
 const posColors: Record<string, string> = {
@@ -246,6 +247,9 @@ export default async function PlayerDetailPage({
                 </div>
               </div>
             )}
+
+            {/* Wyscout Advanced Metrics */}
+            <WyscoutStatsWrapper playerId={player.id} />
 
             {/* Scout Evaluation */}
             <div>

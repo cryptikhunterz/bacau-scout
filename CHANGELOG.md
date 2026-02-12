@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-02-12 (v13) — Enrichment Platform Stats Integration
+
+### Added
+- **`WyscoutStats` component** — Full Wyscout advanced metrics section for player profile pages, replicating the enrichment platform's layout:
+  - League/Global percentile toggle
+  - Dual radar charts (Position-specific + All-round profiles)
+  - Detailed metric tables with percentile bars grouped by Attack, Defence, Passing, and Goalkeeping
+  - Color-coded percentile indicators (emerald ≥81, green ≥61, yellow ≥41, amber ≥21, red <21)
+  - Percentile bar graphs showing where the player ranks
+- **`WyscoutCompare` component** — Wyscout advanced metrics comparison for the player compare page:
+  - Side-by-side overlay radar charts (position-specific and all-round)
+  - Bar graph comparisons with percentile annotations for each metric
+  - Full metrics comparison table with best-value highlighting
+  - League/Global toggle
+- **`WyscoutTeamCompare` component** — Aggregated team-level Wyscout stats for the team compare page:
+  - Fetches Wyscout data for all players with player IDs on each team
+  - Computes squad-averaged percentiles and raw values across 10 all-round metrics
+  - Overlay radar chart comparing team averages
+  - Bar graph and metrics table with team-level comparisons
+  - League/Global toggle
+
+### Changed
+- **Player profile page** — Added Wyscout Advanced Metrics section between Season-by-Season stats and Scout Evaluation form. Career Overview (appearances/goals/assists/minutes) preserved at the top. All existing features untouched.
+- **Player compare page** — Added Wyscout comparison section after Season-by-Season comparison. Existing Career Totals, Per-90 & Ratios, and season comparisons all preserved.
+- **Team compare page** — Added Wyscout Team Metrics section before Full Squads listing. Existing Squad Overview, Position Breakdown, and Squad Performance sections all preserved.
+
 ## 2026-02-12 (v12) — Percentile-Based Radar Charts
 
 ### Added

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { WyscoutCompare } from '@/components/WyscoutCompare';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -582,6 +583,14 @@ export default function ComparePage() {
             <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
               <SeasonComparison player1={player1} player2={player2} />
             </div>
+
+            {/* Wyscout Advanced Metrics Comparison */}
+            <WyscoutCompare
+              player1Id={player1.id}
+              player2Id={player2.id}
+              player1Name={player1.name.split(' ').pop() || player1.name}
+              player2Name={player2.name.split(' ').pop() || player2.name}
+            />
           </div>
         )}
 

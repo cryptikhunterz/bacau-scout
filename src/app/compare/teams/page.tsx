@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
+import { WyscoutTeamCompare } from '@/components/WyscoutTeamCompare';
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
@@ -565,6 +566,14 @@ export default function CompareTeamsPage() {
                 maxValue={maxAssists}
               />
             </div>
+
+            {/* Wyscout Team Metrics Comparison */}
+            <WyscoutTeamCompare
+              team1PlayerIds={team1.players.filter(p => p.playerId).map(p => p.playerId!)}
+              team2PlayerIds={team2.players.filter(p => p.playerId).map(p => p.playerId!)}
+              team1Name={team1.club}
+              team2Name={team2.club}
+            />
 
             {/* Squad Lists */}
             <div>
