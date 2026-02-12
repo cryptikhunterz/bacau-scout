@@ -101,12 +101,21 @@ model ScoutingReport {
   conclusion    String?
   notes         String?
 
+  // Position-specific grading
+  positionCategory  String?
+  positionAttributes Json?
+
   // Metadata
   scoutName     String?
   status        String?  // FM | U23 | LOAN | WATCH
   scoutingLevel String?  // Basic | Impressive | Data only
   transferFee   String?
   salary        String?
+
+  // Admin edit tracking
+  editedBy      String?  // admin name who last edited
+  editedById    String?  // admin scout ID
+  editedAt      DateTime?
 
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
@@ -127,7 +136,25 @@ model ScoutingReport {
   discipline     Int?
   recommendation String?
 
-  @@unique([playerId])
+  attachments   Attachment[]
+
+  @@unique([playerId, scoutId])
   @@index([playerId])
+  @@index([scoutId])
   @@index([verdict])
+}
+
+model Attachment {
+  id        String   @id @default(cuid())
+  reportId  String
+  fileName  String
+  fileType  String
+  fileSize  Int
+  url       String
+  label     String?
+  createdAt DateTime @default(now())
+
+  report    ScoutingReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
 }

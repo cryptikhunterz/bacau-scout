@@ -4,6 +4,150 @@ All notable changes to the Bacau Scout platform are documented here.
 
 ---
 
+## 2026-02-08 — Multi-Scout Reports
+
+### Context
+Only one report could exist per player. If Scout B graded a player that Scout A already graded, it would overwrite Scout A's report. Flavius and the scouts need independent reports.
+
+### Changes
+
+**Database Migration (`multi_scout_reports`)**
+- Changed unique constraint from `@@unique([playerId])` to `@@unique([playerId, scoutId])`
+- Added index on `scoutId` for lookups
+- Non-destructive: existing reports preserved
+
+**API Routes (`src/app/api/grades/[playerId]/route.ts`)**
+- GET: accepts optional `?scoutId=xxx` query param
+  - With scoutId: returns single grade for that scout (used by grading form)
+  - Without scoutId: returns all grades for that player (used by report view)
+- POST: requires `scoutId` in body, upserts by `playerId + scoutId` combo
+- DELETE: requires `?scoutId=xxx`, only deletes that scout's report
+
+**Grading Form (`src/components/PlayerGrading.tsx`)**
+- Now loads the current scout's own grade via `getGradeAsync(playerId, scoutId)`
+- Uses `session.user.id` as scoutId
+- Delete only deletes the current scout's grade
+
+**Report View (`src/app/report/[playerId]/page.tsx`)**
+- Shows all reports for a player
+- When multiple scouts graded the same player, displays a tab bar to switch between reports
+- No averaging — each report stands independently
+
+**Grades Library (`src/lib/grades.ts`)**
+- Added `scoutId` to PlayerGrade interface
+- `saveGrade()` keys localStorage by `playerId + scoutId`
+- `deleteGrade()` and `deleteGradeAsync()` accept scoutId
+- New `getAllGradesForPlayerAsync()` helper
+- `getGradeAsync()` accepts optional scoutId param
+
+### Files Changed
+- `prisma/schema.prisma` — unique constraint change
+- `prisma/migrations/20260208132500_multi_scout_reports/migration.sql`
+- `src/app/api/grades/[playerId]/route.ts` — full rewrite for multi-scout
+- `src/components/PlayerGrading.tsx` — loads scout's own grade
+- `src/components/GradingForm.tsx` — passes scoutId
+- `src/lib/grades.ts` — scoutId support throughout
+- `src/app/report/[playerId]/page.tsx` — multi-report display
+
+### Dashboard
+No changes needed — already shows Scout column. Multiple reports for same player will appear as separate rows.
+
+---
+
+## 2026-02-08 — Read-Only Report View + Display Fixes
+
+### Context
+Scout Flavius reported he couldn't view other scouts' reports. Clicking a player name on the dashboard opened the grading form under his own name, potentially overwriting the existing report. Scouts could only see ability/potential on the dashboard but not the full breakdown.
+
+### Fix (Deploy 1 — Read-Only View)
+Added a new read-only `/report/[playerId]` page that displays the full scouting report from the database:
+- All attributes (Physical/Technique/Tactic) with ability ratings
+- Verdict, overall scores (Ability, Potential)
+- Scouting tags, role, conclusion, notes
+- Scout name and date
+- Link to player profile for creating/editing grades
+
+Dashboard player links now go to `/report/` (read-only) instead of `/player/` (edit).
+
+### Fix (Deploy 2 — Display Cleanup)
+Per Flavius feedback:
+- **Removed per-attribute Potential column** — report view now shows single ability column per attribute (matches agreed design: attributes are ability-only 1-5, overall Ability + Potential are standalone scores)
+- **Removed FCB Report score** — confusing to scouts, removed from display
+
+### Files Changed
+- `src/app/report/[playerId]/page.tsx` — NEW read-only report view page
+- `src/app/page.tsx` — dashboard links changed from `/player/` to `/report/`
+
+### No Breaking Changes
+Existing grading form, save logic, player pages, and API routes completely untouched.
+
+### Known Limitation
+⚠️ **One report per player** — the DB constraint `@@unique([playerId])` means only one scouting report can exist per player. If Scout B grades a player that Scout A already graded, it OVERWRITES Scout A's report. Multi-scout support (unique per `[playerId, scoutId]`) is a planned future change.
+
+---
+
+## 2026-02-07 — Activity Logging on Grades API
+
+### What
+Added `console.log` to all grades API routes so we can see save attempts, fetches, and errors in Railway logs.
+
+### Why
+0 reports in DB, no way to tell if scouts are hitting the API or if saves are silently failing.
+
+### What's Logged
+- `[Grades GET]` — dashboard fetches (count + timing)
+- `[Grades GET /:id]` — individual grade lookups (found/not found + timing)
+- `[Grades POST /:id]` — save attempts (scout name, player name, verdict + timing)
+- `[Grades DELETE /:id]` — deletions
+
+### Files Changed
+- `src/app/api/grades/route.ts` — added GET logging
+- `src/app/api/grades/[playerId]/route.ts` — added GET/POST/DELETE logging
+
+### No Logic Changes
+Only `console.log` additions. Save/fetch/delete behavior is identical.
+
+### Monitoring
+Added to heartbeat checks — watching for grade save attempts and failures.
+
+---
+
+## 2026-02-07 — On-Demand Player Add (Tommaso Carcani)
+
+### Context
+Scout Stefan requested a player not in our database: **Tommaso Carcani** (Centre-Forward, ASD Tau Calcio Altopascio, Serie D - Girone E, Italy). Serie D is 4th tier and not part of our regular scrape pipeline.
+
+### What Was Done
+- Found player on Transfermarkt (ID: 787136)
+- Manually added to `public/players.json` with full profile data
+- Updated with performance stats from TM: **22 apps, 15 goals, 3 assists** (1,616 min)
+- Season breakdown: Serie D-E (21/14/3) + Coppa Serie D (1/1/0)
+- Deployed to Railway
+
+### Files Changed
+- `public/players.json` — added 1 player (21,647 → 21,648)
+
+### Note
+This was a manual one-off add. A proper on-demand scrape feature (admin UI to import players by TM URL) is planned to handle future requests sustainably.
+
+---
+
+## 2026-02-06 — Remove Scouting Level & Slim Down Verdicts
+
+### Changes
+- **Removed "Scouting Level"** (Data only / Basic / Fully scouted) from the grading form UI — field kept in schema for backward compat
+- **Removed "Observe" and "Discard" verdicts** — per scout feedback, 4 verdicts are enough
+- **New verdict options:** Sign, Monitor, Not a priority, Out of reach
+
+### Files Changed
+- `src/lib/grades.ts` — updated Verdict type and VERDICT_OPTIONS
+- `src/components/GradingForm.tsx` — removed scouting level dropdown
+- `src/app/page.tsx` — removed Observe/Discard counts and filter options
+- `src/components/GradesTable.tsx` — removed Observe verdict color
+- `src/components/GradesFilters.tsx` — removed Observe from filter buttons
+
+---
+
 ## 2026-02-05 — Player Profiles: Direct Data Lookup (`739bf07`)
 
 ### Problem

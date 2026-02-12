@@ -77,6 +77,7 @@ export interface NormalizedPlayer {
   appearances: number | null;
   goals: number | null;
   assists: number | null;
+  photoUrl: string | null;
   // Pre-computed fields for performance
   nameLower: string;
   nameSearch: string; // Stripped of diacritics for search
@@ -207,6 +208,7 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
       appearances: raw.appearances || raw.career_stats?.total_appearances || null,
       goals: raw.goals || raw.career_stats?.total_goals || null,
       assists: raw.assists || raw.career_stats?.total_assists || null,
+      photoUrl: raw.photo_url || null,
       nameLower: name.toLowerCase(),
       nameSearch: stripDiacritics(name),
       marketValueNum: parseMarketValue(marketValue),
@@ -236,6 +238,7 @@ export function normalizePlayer(raw: RawPlayer): NormalizedPlayer | null {
       appearances: null,
       goals: null,
       assists: null,
+      photoUrl: raw.photo_url || null,
       nameLower: name.toLowerCase(),
       nameSearch: stripDiacritics(name),
       marketValueNum: parseMarketValue(marketValue),

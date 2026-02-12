@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatMarketValue } from '@/types/player';
 import { PlayerGrading } from '@/components/PlayerGrading';
+import { PlayerAvatar } from '@/components/PlayerAvatar';
 import { findPlayerById, PlayerDetail } from '@/lib/players';
 
 // Position colors
@@ -78,10 +79,17 @@ export default async function PlayerDetailPage({
           <div className="bg-zinc-900 rounded-xl p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
               <div className="flex items-start gap-4">
-                {/* Avatar */}
-                <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${posGradient} flex items-center justify-center text-white font-bold text-xl shrink-0`}>
-                  {player.shirtNumber || player.name?.charAt(0) || '?'}
-                </div>
+                {/* Player Photo / Avatar */}
+                <PlayerAvatar
+                  photoUrl={player.photoUrl}
+                  name={player.name}
+                  fallbackText={player.shirtNumber || undefined}
+                  size="w-20 h-20"
+                  rounded="rounded-xl"
+                  gradient={`bg-gradient-to-br ${posGradient}`}
+                  fallbackBg="bg-zinc-800"
+                  fallbackTextSize="text-2xl"
+                />
                 <div>
                   <h1 className="text-2xl sm:text-3xl font-bold text-white">
                     {player.name}

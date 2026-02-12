@@ -3,8 +3,8 @@
 // ─── Types ──────────────────────────────────────────────────────────
 
 export type Status = "FM" | "U23" | "LOAN" | "WATCH";
-export type Verdict = "Sign" | "Observe" | "Monitor" | "Not a priority" | "Out of reach" | "Discard";
-export type ScoutingLevel = "Basic" | "Impressive" | "Data only";
+export type Verdict = "Sign" | "Monitor" | "Not a priority" | "Out of reach" | "Discard";
+export type ScoutingLevel = "Basic" | "Impressive" | "Data only"; // kept for backward compat
 export type AbilityRating = 1 | 2 | 3 | 4 | 5;
 export type PotentialRating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
@@ -76,10 +76,20 @@ export interface PlayerGrade {
   conclusion: string;
   notes: string;
 
+  // Position-specific attributes (new system)
+  positionCategory?: string;            // resolved position category label
+  positionAttributes?: Record<string, number>; // attribute name → 1-5 rating
+
   // Scout & Optional
+  scoutId?: string;
   scoutName: string;
   transferFee?: string;
   salary?: string;
+
+  // Admin edit tracking
+  editedBy?: string | null;
+  editedById?: string | null;
+  editedAt?: string | null;
 }
 
 // ─── Rating Scales ──────────────────────────────────────────────────
@@ -197,11 +207,10 @@ export const AVAILABLE_TAGS = ALL_SCOUTING_TAGS;
 
 export const VERDICT_OPTIONS: { value: Verdict; color: string }[] = [
   { value: 'Sign', color: 'bg-green-600' },
-  { value: 'Observe', color: 'bg-blue-600' },
   { value: 'Monitor', color: 'bg-yellow-500' },
   { value: 'Not a priority', color: 'bg-zinc-600' },
   { value: 'Out of reach', color: 'bg-red-600' },
-  { value: 'Discard', color: 'bg-red-800' },
+  { value: 'Discard', color: 'bg-red-900' },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────
@@ -245,15 +254,29 @@ export async function getAllGradesAsync(): Promise<PlayerGrade[]> {
   }
 }
 
-export async function getGradeAsync(playerId: string): Promise<PlayerGrade | null> {
+export async function getGradeAsync(playerId: string, scoutId?: string): Promise<PlayerGrade | null> {
   try {
-    const response = await fetch(`/api/grades/${playerId}`);
+    const url = scoutId ? `/api/grades/${playerId}?scoutId=${scoutId}` : `/api/grades/${playerId}`;
+    const response = await fetch(url);
     if (!response.ok) throw new Error('Failed to fetch grade');
     const data = await response.json();
     return data || null;
   } catch (error) {
     console.error('Failed to fetch grade:', error);
     return null;
+  }
+}
+
+export async function getAllGradesForPlayerAsync(playerId: string): Promise<PlayerGrade[]> {
+  try {
+    const response = await fetch(`/api/grades/${playerId}`);
+    if (!response.ok) throw new Error('Failed to fetch grades');
+    const data = await response.json();
+    if (!data) return [];
+    return Array.isArray(data) ? data : [data];
+  } catch (error) {
+    console.error('Failed to fetch grades for player:', error);
+    return [];
   }
 }
 
@@ -271,9 +294,32 @@ export async function saveGradeAsync(grade: PlayerGrade): Promise<boolean> {
   }
 }
 
-export async function deleteGradeAsync(playerId: string): Promise<boolean> {
+export async function updateGradeAsAdminAsync(
+  grade: PlayerGrade,
+  adminId: string,
+  adminName: string
+): Promise<boolean> {
   try {
-    const response = await fetch(`/api/grades/${playerId}`, { method: 'DELETE' });
+    const response = await fetch(`/api/grades/${grade.playerId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...grade,
+        adminId,
+        adminName,
+      }),
+    });
+    return response.ok;
+  } catch (error) {
+    console.error('Failed to update grade as admin:', error);
+    return false;
+  }
+}
+
+export async function deleteGradeAsync(playerId: string, scoutId?: string): Promise<boolean> {
+  try {
+    const url = scoutId ? `/api/grades/${playerId}?scoutId=${scoutId}` : `/api/grades/${playerId}`;
+    const response = await fetch(url, { method: 'DELETE' });
     return response.ok;
   } catch (error) {
     console.error('Failed to delete grade:', error);
@@ -298,7 +344,8 @@ export function getGrade(playerId: string): PlayerGrade | null {
 
 export function saveGrade(grade: PlayerGrade): void {
   const grades = getAllGrades();
-  const existingIndex = grades.findIndex(g => g.playerId === grade.playerId);
+  // Key by playerId + scoutId for multi-scout support
+  const existingIndex = grades.findIndex(g => g.playerId === grade.playerId && g.scoutId === grade.scoutId);
   if (existingIndex >= 0) {
     grades[existingIndex] = { ...grade, gradedAt: new Date().toISOString() };
   } else {
@@ -308,8 +355,8 @@ export function saveGrade(grade: PlayerGrade): void {
   saveGradeAsync(grade).catch(console.error);
 }
 
-export function deleteGrade(playerId: string): void {
-  const grades = getAllGrades().filter(g => g.playerId !== playerId);
+export function deleteGrade(playerId: string, scoutId?: string): void {
+  const grades = getAllGrades().filter(g => !(g.playerId === playerId && (!scoutId || g.scoutId === scoutId)));
   localStorage.setItem(STORAGE_KEY, JSON.stringify(grades));
-  deleteGradeAsync(playerId).catch(console.error);
+  deleteGradeAsync(playerId, scoutId).catch(console.error);
 }

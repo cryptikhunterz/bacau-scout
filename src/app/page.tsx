@@ -3,7 +3,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { getAllGradesAsync, PlayerGrade, getPotentialColor } from '@/lib/grades';
+import { getAllGradesAsync, PlayerGrade, getPotentialColor, POTENTIAL_LABELS } from '@/lib/grades';
+import { PlayerAvatar } from '@/components/PlayerAvatar';
 
 // Position badge colors
 const positionColors: Record<string, string> = {
@@ -49,11 +50,10 @@ function getPotential(g: PlayerGrade): number { return g.potential || 4; }
 function VerdictBadge({ verdict }: { verdict: string }) {
   const colors: Record<string, string> = {
     'Sign': 'bg-green-600 text-white',
-    'Observe': 'bg-blue-600 text-white',
     'Monitor': 'bg-yellow-500 text-black',
     'Not a priority': 'bg-zinc-600 text-white',
     'Out of reach': 'bg-red-600 text-white',
-    'Discard': 'bg-red-800 text-white',
+    'Discard': 'bg-red-900 text-white',
   };
   return (
     <span className={`inline-block px-2 py-1 text-xs font-bold rounded whitespace-nowrap ${colors[verdict] || 'bg-zinc-600 text-white'}`}>
@@ -65,6 +65,7 @@ function VerdictBadge({ verdict }: { verdict: string }) {
 export default function Home() {
   const { data: session } = useSession();
   const [grades, setGrades] = useState<PlayerGrade[]>([]);
+  const [photoMap, setPhotoMap] = useState<Record<string, string>>({});
   const [search, setSearch] = useState('');
   const [verdictFilter, setVerdictFilter] = useState('');
   const [posFilter, setPosFilter] = useState('');
@@ -73,6 +74,19 @@ export default function Home() {
 
   useEffect(() => {
     getAllGradesAsync().then(setGrades);
+    // Load photo map for player thumbnails
+    fetch('/players.json')
+      .then(res => res.json())
+      .then((players: Array<{ player_id?: string; photo_url?: string }>) => {
+        const map: Record<string, string> = {};
+        for (const p of players) {
+          if (p.player_id && p.photo_url) {
+            map[p.player_id] = p.photo_url;
+          }
+        }
+        setPhotoMap(map);
+      })
+      .catch(() => {});
   }, []);
 
   const filteredGrades = useMemo(() => {
@@ -108,11 +122,10 @@ export default function Home() {
   };
 
   const signCount = grades.filter(g => g.verdict === 'Sign').length;
-  const observeCount = grades.filter(g => g.verdict === 'Observe').length;
   const monitorCount = grades.filter(g => g.verdict === 'Monitor').length;
   const notPriorityCount = grades.filter(g => g.verdict === 'Not a priority').length;
-  const outOfReachCount = grades.filter(g => g.verdict === 'Out of reach').length;
   const discardCount = grades.filter(g => g.verdict === 'Discard').length;
+  const outOfReachCount = grades.filter(g => g.verdict === 'Out of reach').length;
 
   return (
     <div className="min-h-screen bg-zinc-900">
@@ -124,11 +137,10 @@ export default function Home() {
             <p className="text-sm text-zinc-400 flex flex-wrap gap-x-1">
               <span>{grades.length} scouting reports •</span>
               <span className="text-green-400">{signCount} Sign</span><span>•</span>
-              <span className="text-blue-400">{observeCount} Observe</span><span>•</span>
               <span className="text-yellow-400">{monitorCount} Monitor</span><span>•</span>
               <span className="text-zinc-400">{notPriorityCount} Not a priority</span><span>•</span>
               <span className="text-red-400">{outOfReachCount} Out of reach</span><span>•</span>
-              <span className="text-red-600">{discardCount} Discard</span>
+              <span className="text-red-300">{discardCount} Discard</span>
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -138,6 +150,14 @@ export default function Home() {
                 ⚙️ Admin
               </Link>
             )}
+            <Link href="/compare"
+              className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
+              ⚖️ Compare
+            </Link>
+            <Link href="/compare/teams"
+              className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
+              🏟️ Teams
+            </Link>
             <Link href="/search"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
               + Scout New Player
@@ -157,7 +177,6 @@ export default function Home() {
             className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white">
             <option value="">All Verdicts</option>
             <option value="Sign">Sign</option>
-            <option value="Observe">Observe</option>
             <option value="Monitor">Monitor</option>
             <option value="Not a priority">Not a priority</option>
             <option value="Out of reach">Out of reach</option>
@@ -214,6 +233,7 @@ export default function Home() {
                     <th className="px-3 py-3 text-left font-medium text-zinc-400 cursor-pointer hover:text-white" onClick={() => handleSort('date')}>
                       Date <SortIcon col="date" />
                     </th>
+                    <th className="px-3 py-3 text-center font-medium text-zinc-400 w-16"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-700/50">
@@ -225,25 +245,56 @@ export default function Home() {
                         </span>
                       </td>
                       <td className="px-3 py-2">
-                        <Link href={`/player/${grade.playerId}`} className="font-medium text-white hover:text-blue-400">
+                        <Link href={`/report/${grade.playerId}`} className="flex items-center gap-2 font-medium text-white hover:text-blue-400">
+                          <PlayerAvatar
+                            photoUrl={photoMap[grade.playerId] || null}
+                            name={grade.playerName}
+                            size="w-8 h-8"
+                            rounded="rounded-full"
+                            fallbackBg="bg-zinc-700"
+                            fallbackTextSize="text-xs"
+                          />
                           {grade.playerName}
                         </Link>
                       </td>
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.club}</td>
                       <td className="px-3 py-2 text-center"><VerdictBadge verdict={grade.verdict} /></td>
-                      <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(getAbility(grade))}`}>
-                          {getAbility(grade)}
+                      <td className="px-3 py-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getPotentialColor(getAbility(grade))}`}>
+                          {POTENTIAL_LABELS[getAbility(grade)] || getAbility(grade)}
                         </span>
                       </td>
-                      <td className="px-3 py-2 text-center">
-                        <span className={`inline-flex items-center justify-center w-9 h-7 rounded font-bold text-sm ${getPotentialColor(getPotential(grade))}`}>
-                          {getPotential(grade)}
+                      <td className="px-3 py-2">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getPotentialColor(getPotential(grade))}`}>
+                          {POTENTIAL_LABELS[getPotential(grade)] || getPotential(grade)}
                         </span>
                       </td>
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.salary || '-'}</td>
                       <td className="px-3 py-2 text-zinc-400 text-xs">{grade.scoutName || '-'}</td>
                       <td className="px-3 py-2 text-zinc-500 text-xs">{new Date(grade.gradedAt).toLocaleDateString()}</td>
+                      <td className="px-3 py-2 text-center">
+                        {session?.user && (grade.scoutId === (session.user as any).id || grade.scoutId === session.user.email) && (
+                          <Link href={`/player/${grade.playerId}`}
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-zinc-700 hover:bg-blue-600 text-zinc-400 hover:text-white transition-colors"
+                            title="Edit report"
+                            onClick={(e) => e.stopPropagation()}>
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </Link>
+                        )}
+                        {/* Admin edit: show on ALL reports if user is admin and it's not their own (to avoid duplicate buttons) */}
+                        {session?.user?.role === 'admin' && grade.scoutId !== (session.user as any).id && grade.scoutId !== session.user.email && (
+                          <Link href={`/report/${grade.playerId}`}
+                            className="inline-flex items-center justify-center w-7 h-7 rounded-md bg-amber-700 hover:bg-amber-600 text-amber-200 hover:text-white transition-colors"
+                            title="Admin edit report"
+                            onClick={(e) => e.stopPropagation()}>
+                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </Link>
+                        )}
+                      </td>
                     </tr>
                   ))}
                 </tbody>

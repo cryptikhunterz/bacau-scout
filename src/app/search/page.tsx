@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
+import { PlayerAvatar } from '@/components/PlayerAvatar';
 
 interface Player {
   name: string;
@@ -15,6 +16,7 @@ interface Player {
   appearances: number | null;
   goals: number | null;
   assists: number | null;
+  photo_url: string | null;
 }
 
 // FM-style stat badge
@@ -214,6 +216,9 @@ export default function SearchPage() {
             <Link href="/" className="text-zinc-400 hover:text-white transition-colors">
               ← Back to Reports
             </Link>
+            <Link href="/compare" className="text-zinc-400 hover:text-white transition-colors text-sm">
+              ⚖️ Compare
+            </Link>
             <div>
               <h1 className="text-xl font-bold text-white">Player Database</h1>
               <p className="text-sm text-zinc-400">{filteredPlayers.length.toLocaleString()} players</p>
@@ -306,7 +311,15 @@ export default function SearchPage() {
                       </span>
                     </td>
                     <td className="px-3 py-2">
-                      <Link href={`/player/${player.player_id}`} className="font-medium text-white hover:text-blue-400 transition-colors">
+                      <Link href={`/player/${player.player_id}`} className="flex items-center gap-2 font-medium text-white hover:text-blue-400 transition-colors">
+                        <PlayerAvatar
+                          photoUrl={player.photo_url}
+                          name={player.name}
+                          size="w-8 h-8"
+                          rounded="rounded-full"
+                          fallbackBg="bg-zinc-700"
+                          fallbackTextSize="text-xs"
+                        />
                         {player.name}
                       </Link>
                     </td>

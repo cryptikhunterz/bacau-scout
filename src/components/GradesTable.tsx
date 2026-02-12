@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlayerGrade, getAttributeColor, getPotentialColor } from '@/lib/grades';
+import { PlayerGrade, getAttributeColor, getPotentialColor, POTENTIAL_LABELS } from '@/lib/grades';
 
 interface GradesTableProps {
   grades: PlayerGrade[];
@@ -30,10 +30,10 @@ function getTacticAvg(g: PlayerGrade): number {
 // Verdict badge colors
 const verdictColors: Record<string, string> = {
   'Sign': 'bg-green-600 text-white',
-  'Observe': 'bg-blue-600 text-white',
   'Monitor': 'bg-yellow-500 text-black',
   'Not a priority': 'bg-zinc-600 text-white',
   'Out of reach': 'bg-red-600 text-white',
+  'Discard': 'bg-red-900 text-white',
 };
 
 export function GradesTable({ grades }: GradesTableProps) {
@@ -58,8 +58,8 @@ export function GradesTable({ grades }: GradesTableProps) {
       case 'physical': aVal = getPhysicalAvg(a); bVal = getPhysicalAvg(b); break;
       case 'technique': aVal = getTechniqueAvg(a); bVal = getTechniqueAvg(b); break;
       case 'tactic': aVal = getTacticAvg(a); bVal = getTacticAvg(b); break;
-      case 'ability': aVal = getPhysicalAvg(a); bVal = getPhysicalAvg(b); break;
-      case 'potential': aVal = getTacticAvg(a); bVal = getTacticAvg(b); break;
+      case 'ability': aVal = a.ability || 0; bVal = b.ability || 0; break;
+      case 'potential': aVal = a.potential || 0; bVal = b.potential || 0; break;
       default: aVal = a[sortKey] ?? ''; bVal = b[sortKey] ?? '';
     }
 
@@ -98,14 +98,14 @@ export function GradesTable({ grades }: GradesTableProps) {
                   {grade.verdict}
                 </span>
               </td>
-              <td className="py-2 px-2 text-center">
-                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getAttributeColor(Math.round(getPhysicalAvg(grade)))}`}>
-                  {getPhysicalAvg(grade) || '-'}
+              <td className="py-2 px-2">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getPotentialColor(grade.ability || 0)}`}>
+                  {POTENTIAL_LABELS[grade.ability || 0] || '-'}
                 </span>
               </td>
-              <td className="py-2 px-2 text-center">
-                <span className={`inline-flex items-center justify-center w-7 h-6 rounded font-bold text-xs ${getPotentialColor(Math.round(getTacticAvg(grade)))}`}>
-                  {getTacticAvg(grade) || '-'}
+              <td className="py-2 px-2">
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getPotentialColor(grade.potential || 0)}`}>
+                  {POTENTIAL_LABELS[grade.potential || 0] || '-'}
                 </span>
               </td>
               <td className="py-2 px-2 text-center text-zinc-300">{getPhysicalAvg(grade) || '-'}</td>
