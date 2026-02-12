@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { PlayerGrade, getAttributeColor, getAbilityColor, getPotentialColor, ABILITY_LABELS, POTENTIAL_LABELS } from '@/lib/grades';
+import { PlayerGrade, getAttributeColor, getPotentialColor, POTENTIAL_LABELS } from '@/lib/grades';
 
 interface GradesTableProps {
   grades: PlayerGrade[];
@@ -99,8 +99,8 @@ export function GradesTable({ grades }: GradesTableProps) {
                 </span>
               </td>
               <td className="py-2 px-2">
-                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getAbilityColor(grade.ability || 0)}`}>
-                  {ABILITY_LABELS[grade.ability || 0] || '-'}
+                <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap ${getPotentialColor(grade.ability || 0)}`}>
+                  {POTENTIAL_LABELS[grade.ability || 0] || '-'}
                 </span>
               </td>
               <td className="py-2 px-2">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
-import { getAbilityColor, getPotentialColor, ABILITY_LABELS, POTENTIAL_LABELS, PlayerGrade } from '@/lib/grades';
+import { getPotentialColor, POTENTIAL_LABELS, PlayerGrade } from '@/lib/grades';
 import { GradingForm } from '@/components/GradingForm';
 import { RadarChart } from '@/components/RadarChart';
 import { WyscoutRadars } from '@/components/WyscoutRadars';
@@ -377,8 +377,8 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
           <div className="flex flex-wrap items-center gap-4 mt-5 pt-5 border-t border-zinc-800">
             <div>
               <p className="text-xs text-zinc-500 mb-1">Ability</p>
-              <span className={`inline-flex items-center px-3 py-1.5 rounded-lg font-bold text-sm ${getAbilityColor(report.ability)}`}>
-                {ABILITY_LABELS[report.ability] || report.ability}
+              <span className={`inline-flex items-center px-3 py-1.5 rounded-lg font-bold text-sm ${getPotentialColor(report.ability)}`}>
+                {POTENTIAL_LABELS[report.ability] || report.ability}
               </span>
             </div>
             <div>
