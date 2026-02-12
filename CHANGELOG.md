@@ -1,5 +1,48 @@
 # Changelog
 
+## 2026-02-12 (v17) — Dynamic Radars Across ALL Pages (No Hardcoding)
+
+### Changed
+- **CRITICAL FIX: All radar charts now use dynamic metrics from actual player data** — no more hardcoded metric templates per position. Follows the enrichment platform's approach exactly.
+- **`WyscoutStats.tsx` (Player Profile)**:
+  - Position Radar uses `radar[]` from API; falls back to dynamic build from ALL metrics if < 3
+  - Percentile Profile uses `allround[]` from API; falls back to remaining metrics if < 3
+  - Stat bars now show ALL metrics present in the data, categorized dynamically (Attack/Defence/Passing/Goalkeeping/Other)
+  - Removed hardcoded `METRIC_GROUPS` key arrays — replaced with `METRIC_CATEGORY_MAP` for categorization only
+- **`WyscoutRadars.tsx` (Report Page)**:
+  - Same dynamic radar building — no hardcoded metric lists
+  - Removed legacy raw mode fallback (no longer needed with enrichment data)
+- **`compare/page.tsx` (Player Compare)**:
+  - **DELETED all `PG_RADAR_TEMPLATES` and `ALLROUND_TEMPLATE`** — 100+ lines of hardcoded position metrics removed
+  - **REMOVED Radar Template dropdown** — radars now show what data exists
+  - Position Radar uses UNION of all selected players' `radar` metrics
+  - Percentile Profile uses UNION of all selected players' `allround` metrics
+  - All selected players rendered as overlays (supports 3+ players)
+- **`compare/teams/page.tsx` (Team Compare)**:
+  - **DELETED hardcoded `ALLROUND_KEYS` and `ALLROUND_LABELS`**
+  - Dynamic UNION of all metric keys across all teams' players
+  - Radar, stat bars, and metrics table all use dynamic keys
+  - Supports 3+ team overlays on radar charts
+- **`WyscoutTeamCompare.tsx`**: Rewritten with dynamic aggregation, no hardcoded keys
+- **`sync-from-enrichment.py`**:
+  - `radar[]` contains enrichment's `r` config (position-specific), or dynamic build if < 5
+  - `allround[]` contains ALL remaining metrics with percentiles (no cap — was capped at 10)
+  - Better label formatting matching enrichment frontend
+  - Regenerated data files
+
+### Key Principle
+Copied exactly how the enrichment platform does it:
+- Takes ALL metrics with percentiles
+- Sorts position-specific ones first
+- Caps at 16 for radars
+- DYNAMIC. NOT HARDCODED.
+
+### Verified Players
+- Cîrstean (940237): 16 radar + 6 allround ✅
+- Chirilă (548417): 8 radar + 19 allround ✅
+- Cruceru (315448): 7 radar + 27 allround ✅
+- Moukhliss (495622): 6 radar + 29 allround ✅
+
 ## 2026-02-12 (v16) — Regenerated Wyscout Data with Wyscout Position Mapping
 
 ### Changed
