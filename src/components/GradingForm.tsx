@@ -167,15 +167,17 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
 
   const [showSuccess, setShowSuccess] = useState(false);
 
-  // ─── Compute group averages for radar charts ──────────────────────
-  const groupAverages = useMemo(() => {
+  // ─── Compute ALL individual attributes for radar chart ──────────────
+  const radarAttributes = useMemo(() => {
     if (!hasPositionTemplate || positionTemplate.groups.length === 0) return { labels: [], values: [] };
-    const labels = positionTemplate.groups.map(g => g.title);
-    const values = positionTemplate.groups.map(g => {
-      if (g.attributes.length === 0) return 0;
-      const sum = g.attributes.reduce((acc, attr) => acc + (positionAttributes[attr] || 3), 0);
-      return sum / g.attributes.length;
-    });
+    const labels: string[] = [];
+    const values: number[] = [];
+    for (const group of positionTemplate.groups) {
+      for (const attr of group.attributes) {
+        labels.push(attr);
+        values.push(positionAttributes[attr] || 3);
+      }
+    }
     return { labels, values };
   }, [hasPositionTemplate, positionTemplate, positionAttributes]);
 
@@ -292,29 +294,16 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
             <span className="text-xs text-zinc-500 ml-auto">{player.position}</span>
           </div>
 
-          {/* ─── Radar Charts (side by side) ─── */}
-          {groupAverages.labels.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 bg-zinc-800/60 rounded-lg border border-zinc-700/50">
-                <RadarChart
-                  labels={groupAverages.labels}
-                  values={groupAverages.values}
-                  maxValue={5}
-                  color="#22c55e"
-                  fillOpacity={0.2}
-                  title="Position Web"
-                />
-              </div>
-              <div className="p-4 bg-zinc-800/60 rounded-lg border border-zinc-700/50">
-                <RadarChart
-                  labels={groupAverages.labels}
-                  values={groupAverages.values}
-                  maxValue={5}
-                  color="#3b82f6"
-                  fillOpacity={0.2}
-                  title="Overall Traits"
-                />
-              </div>
+          {/* ─── Player Radar Chart ─── */}
+          {radarAttributes.labels.length > 0 && (
+            <div className="p-4 bg-zinc-900/80 rounded-xl border border-zinc-800">
+              <RadarChart
+                labels={radarAttributes.labels}
+                values={radarAttributes.values}
+                maxValue={5}
+                color="#22c55e"
+                title={`${positionTemplate.badge} ${positionTemplate.label.toUpperCase()} RADAR`}
+              />
             </div>
           )}
 

@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-02-12 (v10) — Wyscout-Quality Radar Charts
+
+### Changed
+- **Complete radar chart redesign** — `RadarChart` component rewritten from scratch to match Wyscout professional scouting radar quality:
+  - **Circular concentric gridlines** (`<circle>` elements) instead of polygon-shaped grid
+  - **Filled data polygon** with semi-transparent green fill (20% opacity) and solid 2px border
+  - **Dot markers** (4px filled circles) at each data vertex
+  - **External labels** at each axis: attribute name in light gray (`#d4d4d8`) with value in the chart color below
+  - **Dark background circle** (`zinc-900` at 60% opacity) behind the chart area
+  - **Scale labels** (1–5) along the first axis in `zinc-500`
+  - **Comparison overlay support**: optional second dataset with dashed line and different color
+  - Props simplified: `labels, values, maxValue, color, title, size` + optional `comparisonValues/comparisonColor`
+- **Grading form** — Now shows ONE large radar chart (not two side by side) with ALL individual position attributes as axes (e.g. 25+ attributes for a GK), updating in real-time as ratings change. Title shows position badge + name (e.g. "🧤 GOALKEEPER RADAR")
+- **Report view** — Now shows ONE large radar chart with ALL individual attributes:
+  - Position-specific reports: every attribute from every group shown as its own axis
+  - Legacy reports (Physical/Technique/Tactic): all 19 individual attributes shown as axes
+  - Full-width, centered above attribute breakdowns
+
+### Removed
+- Dual side-by-side radar charts (replaced with single comprehensive chart)
+- `fillOpacity` prop from RadarChart (now fixed at 0.2 for professional look)
+- Group-average-based radar axes (replaced with individual attribute axes)
+
 ## 2026-02-12 (v9) — Radar Charts on Report View
 
 ### Added

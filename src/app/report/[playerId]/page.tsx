@@ -125,47 +125,56 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
 
   const isAdmin = session?.user?.role === 'admin';
 
-  // ─── Compute radar chart data from report ─────────────────────────
+  // ─── Compute radar chart data from report (individual attributes) ──
   const radarData = useMemo(() => {
     if (!report) return null;
 
-    // Case 1: New system — positionAttributes present
+    // Case 1: New system — positionAttributes present → show ALL individual attributes
     if (report.positionAttributes && Object.keys(report.positionAttributes).length > 0) {
       const template = getPositionTemplate(report.position);
       if (template.groups.length === 0) return null;
-      const labels = template.groups.map(g => g.title);
-      const values = template.groups.map(g => {
-        if (g.attributes.length === 0) return 0;
-        const sum = g.attributes.reduce(
-          (acc, attr) => acc + (report.positionAttributes![attr] || 0),
-          0,
-        );
-        return sum / g.attributes.length;
-      });
-      return { labels, values };
+      const labels: string[] = [];
+      const values: number[] = [];
+      for (const group of template.groups) {
+        for (const attr of group.attributes) {
+          labels.push(attr);
+          values.push(report.positionAttributes[attr] || 0);
+        }
+      }
+      if (labels.length === 0) return null;
+      return { labels, values, title: `${template.badge} ${template.label.toUpperCase()} RADAR` };
     }
 
-    // Case 2: Legacy attributes — derive 3 axes from Physical/Technique/Tactic averages
-    const physValues = [report.physStrength, report.physSpeed, report.physAgility, report.physCoordination].filter(Boolean);
-    const techValues = [
-      report.techControl, report.techShortPasses, report.techLongPasses, report.techAerial,
-      report.techCrossing, report.techFinishing, report.techDribbling, report.techOneVsOneOffense, report.techOneVsOneDefense,
-    ].filter(Boolean);
-    const tacValues = [
-      report.tacPositioning, report.tacTransition, report.tacDecisions,
-      report.tacAnticipations, report.tacDuels, report.tacSetPieces,
-    ].filter(Boolean);
+    // Case 2: Legacy attributes — show ALL individual attributes from Physical/Technique/Tactic
+    const legacyAttrs: { label: string; value: number }[] = [
+      { label: 'Strength', value: report.physStrength },
+      { label: 'Speed', value: report.physSpeed },
+      { label: 'Agility', value: report.physAgility },
+      { label: 'Coordination', value: report.physCoordination },
+      { label: 'Control', value: report.techControl },
+      { label: 'Short Passes', value: report.techShortPasses },
+      { label: 'Long Passes', value: report.techLongPasses },
+      { label: 'Aerial', value: report.techAerial },
+      { label: 'Crossing', value: report.techCrossing },
+      { label: 'Finishing', value: report.techFinishing },
+      { label: 'Dribbling', value: report.techDribbling },
+      { label: '1v1 Offense', value: report.techOneVsOneOffense },
+      { label: '1v1 Defense', value: report.techOneVsOneDefense },
+      { label: 'Positioning', value: report.tacPositioning },
+      { label: 'Transition', value: report.tacTransition },
+      { label: 'Decisions', value: report.tacDecisions },
+      { label: 'Anticipation', value: report.tacAnticipations },
+      { label: 'Duels', value: report.tacDuels },
+      { label: 'Set Pieces', value: report.tacSetPieces },
+    ];
 
-    const avg = (arr: number[]) => arr.length > 0 ? arr.reduce((a, b) => a + b, 0) / arr.length : 0;
-    const physAvg = avg(physValues);
-    const techAvg = avg(techValues);
-    const tacAvg = avg(tacValues);
-
-    if (physAvg === 0 && techAvg === 0 && tacAvg === 0) return null;
+    const validAttrs = legacyAttrs.filter(a => a.value && a.value > 0);
+    if (validAttrs.length === 0) return null;
 
     return {
-      labels: ['Physical', 'Technique', 'Tactic'],
-      values: [physAvg, techAvg, tacAvg],
+      labels: validAttrs.map(a => a.label),
+      values: validAttrs.map(a => a.value),
+      title: 'PLAYER RADAR',
     };
   }, [report]);
 
@@ -375,29 +384,16 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
           </div>
         </div>
 
-        {/* Radar Charts */}
-        {radarData && radarData.labels.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800 flex items-center justify-center">
-              <RadarChart
-                labels={radarData.labels}
-                values={radarData.values}
-                maxValue={5}
-                color="#22c55e"
-                fillOpacity={0.2}
-                title="Position Web"
-              />
-            </div>
-            <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800 flex items-center justify-center">
-              <RadarChart
-                labels={radarData.labels}
-                values={radarData.values}
-                maxValue={5}
-                color="#3b82f6"
-                fillOpacity={0.2}
-                title="Overall Traits"
-              />
-            </div>
+        {/* Radar Chart */}
+        {radarData && radarData.labels.length >= 3 && (
+          <div className="p-4 bg-zinc-900 rounded-xl border border-zinc-800">
+            <RadarChart
+              labels={radarData.labels}
+              values={radarData.values}
+              maxValue={5}
+              color="#22c55e"
+              title={radarData.title}
+            />
           </div>
         )}
 
