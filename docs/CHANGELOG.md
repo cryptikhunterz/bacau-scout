@@ -4,6 +4,46 @@ All notable changes to the Bacau Scout platform are documented here.
 
 ---
 
+## 2026-02-16 — Add Player On-the-Spot (`91bf39f`)
+
+### Feature: Scouts can add any player by pasting a Transfermarkt URL
+
+**Problem:** Scouts find players not in our 21,647-player database. They had to message us manually and wait for someone to add them.
+
+**Solution:** "Add Player" button appears on the search page when no results are found. Scout pastes a Transfermarkt URL → system scrapes the profile in real-time (2-3 sec) → player saved to DB → scout redirected to profile page to grade immediately.
+
+### Technical Design (Option B — Hybrid)
+- **Base data:** `players.json` (21,647 scraped players, baked into deploy)
+- **Manual players:** `ManualPlayer` PostgreSQL table (survives redeploys)
+- **Merge:** Search API loads both sources, dedupes by `player_id`
+- **Player detail:** Uses async lookup that checks both JSON and DB
+
+### New Files
+- `src/lib/scrape-player.ts` — Server-side TM profile scraper (HTML parsing)
+- `src/app/api/players/add/route.ts` — POST endpoint for adding players
+
+### Modified Files
+- `prisma/schema.prisma` — New `ManualPlayer` model
+- `src/lib/players.ts` — Added `clearPlayersCache()`, `loadPlayersWithManual()`, `findPlayerByIdAsync()`
+- `src/app/api/search/route.ts` — Uses `loadPlayersWithManual()` to include DB players
+- `src/app/player/[id]/page.tsx` — Uses `findPlayerByIdAsync()` for manual player support
+- `src/app/search/page.tsx` — "Add Player" UI in empty state
+
+### Edge Cases Handled
+- Invalid URL → error message
+- Player already in JSON or DB → returns existing, shows in search
+- TM rate limiting / page not found → appropriate error messages
+- Cache cleared after add so player appears immediately in server-side searches
+
+### What Was NOT Changed
+- ✅ Grading system unchanged
+- ✅ Auth/middleware unchanged
+- ✅ Dashboard/homepage unchanged
+- ✅ Existing search logic unchanged (just added empty-state UI)
+- ✅ `players.json` untouched
+
+---
+
 ## 2026-02-05 — Player Profiles: Direct Data Lookup (`739bf07`)
 
 ### Problem
