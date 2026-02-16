@@ -109,6 +109,11 @@ export default function SearchPage() {
   const [page, setPage] = useState(1);
   const perPage = 50;
 
+  // Add Player state
+  const [addPlayerUrl, setAddPlayerUrl] = useState('');
+  const [addPlayerLoading, setAddPlayerLoading] = useState(false);
+  const [addPlayerMsg, setAddPlayerMsg] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
   useEffect(() => {
     async function loadPlayers() {
       try {
@@ -195,6 +200,45 @@ export default function SearchPage() {
   const SortIcon = ({ col }: { col: typeof sortBy }) => {
     if (sortBy !== col) return <span className="text-zinc-500 ml-1">↕</span>;
     return <span className="text-blue-400 ml-1">{sortDir === 'asc' ? '↑' : '↓'}</span>;
+  };
+
+  const handleAddPlayer = async () => {
+    if (!addPlayerUrl.trim()) return;
+    
+    setAddPlayerLoading(true);
+    setAddPlayerMsg(null);
+
+    try {
+      const res = await fetch('/api/players/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ transfermarktUrl: addPlayerUrl.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setAddPlayerMsg({ type: 'error', text: data.error || 'Failed to add player' });
+        return;
+      }
+
+      if (data.status === 'exists') {
+        setAddPlayerMsg({ type: 'success', text: `${data.player.name} is already in the database` });
+        // Set search to the player name to show them
+        setSearch(data.player.name);
+      } else if (data.status === 'added') {
+        setAddPlayerMsg({ type: 'success', text: `${data.player.name} added successfully!` });
+        // Reload players.json won't include DB players, but search API will find them
+        // Redirect to the player's profile
+        window.location.href = `/player/${data.player.player_id}`;
+      }
+
+      setAddPlayerUrl('');
+    } catch (err) {
+      setAddPlayerMsg({ type: 'error', text: 'Network error. Please try again.' });
+    } finally {
+      setAddPlayerLoading(false);
+    }
   };
 
   if (loading) {
@@ -335,6 +379,46 @@ export default function SearchPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Add Player - Empty State */}
+          {filteredPlayers.length === 0 && search && (
+            <div className="px-6 py-8 text-center border-t border-zinc-700">
+              <p className="text-zinc-400 mb-2">No players found for &quot;{search}&quot;</p>
+              <p className="text-zinc-500 text-sm mb-4">
+                Player not in our database? Add them by pasting their Transfermarkt URL below.
+              </p>
+              <div className="max-w-lg mx-auto flex gap-2">
+                <input
+                  type="text"
+                  value={addPlayerUrl}
+                  onChange={(e) => setAddPlayerUrl(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddPlayer(); }}
+                  placeholder="https://www.transfermarkt.com/.../spieler/123456"
+                  className="flex-1 px-4 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  disabled={addPlayerLoading}
+                />
+                <button
+                  onClick={handleAddPlayer}
+                  disabled={addPlayerLoading || !addPlayerUrl.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors whitespace-nowrap"
+                >
+                  {addPlayerLoading ? (
+                    <span className="flex items-center gap-2">
+                      <span className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                      Adding...
+                    </span>
+                  ) : (
+                    '+ Add Player'
+                  )}
+                </button>
+              </div>
+              {addPlayerMsg && (
+                <p className={`mt-3 text-sm ${addPlayerMsg.type === 'success' ? 'text-green-400' : 'text-red-400'}`}>
+                  {addPlayerMsg.text}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Pagination */}
           <div className="flex items-center justify-between px-4 py-3 bg-zinc-900 border-t border-zinc-700">

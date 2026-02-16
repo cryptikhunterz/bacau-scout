@@ -27,6 +27,37 @@ model Invite {
   expiresAt DateTime
 }
 
+model ManualPlayer {
+  id            String   @id @default(cuid())
+  playerId      String   @unique
+  name          String
+  position      String?
+  age           Int?
+  dateOfBirth   String?
+  club          String?
+  clubId        String?
+  league        String?
+  leagueCode    String?
+  marketValue   String?
+  nationality   String?
+  citizenship   String?
+  height        String?
+  foot          String?
+  contractExpires String?
+  shirtNumber   String?
+  photoUrl      String?
+  profileUrl    String?
+  appearances   Int?
+  goals         Int?
+  assists       Int?
+  addedBy       String?  // scout email or name
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([playerId])
+  @@index([name])
+}
+
 model ScoutingReport {
   id            String   @id @default(cuid())
   playerId      String

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { formatMarketValue } from '@/types/player';
 import { PlayerGrading } from '@/components/PlayerGrading';
-import { findPlayerById, PlayerDetail } from '@/lib/players';
+import { findPlayerByIdAsync, PlayerDetail } from '@/lib/players';
 
 // Position colors
 const posColors: Record<string, string> = {
@@ -34,7 +34,7 @@ export default async function PlayerDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const player = findPlayerById(id);
+  const player = await findPlayerByIdAsync(id);
   if (!player) notFound();
 
   const posGradient = getPosGradient(player.position || '');

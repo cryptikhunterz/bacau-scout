@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import { PrismaClient } from '@prisma/client';
 
 // Raw player record from JSON (new scraped format)
 export interface RawPlayer {
@@ -123,6 +124,20 @@ let playersCache: NormalizedPlayer[] | null = null;
 let rawPlayersCache: RawPlayer[] | null = null;
 let playerIdMap: Map<string, NormalizedPlayer> = new Map();
 let rawPlayerIdMap: Map<string, RawPlayer> = new Map();
+let manualPlayersLoaded = false;
+
+const prisma = new PrismaClient();
+
+/**
+ * Clear the players cache — call after adding a manual player
+ */
+export function clearPlayersCache(): void {
+  playersCache = null;
+  rawPlayersCache = null;
+  playerIdMap = new Map();
+  rawPlayerIdMap = new Map();
+  manualPlayersLoaded = false;
+}
 
 /**
  * Strip diacritics/accents from string for search matching
@@ -139,10 +154,10 @@ function loadRawPlayers(): RawPlayer[] {
 
   if (!fs.existsSync(jsonPath)) {
     console.error('JSON file not found:', jsonPath);
-    return [];
+    rawPlayersCache = [];
+  } else {
+    rawPlayersCache = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
   }
-
-  rawPlayersCache = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
   
   // Build raw lookup map
   rawPlayerIdMap = new Map();
@@ -154,6 +169,121 @@ function loadRawPlayers(): RawPlayer[] {
   }
 
   return rawPlayersCache!;
+}
+
+/**
+ * Async version of loadPlayers that also merges manual players from DB.
+ * Use this in API routes where async is available.
+ */
+export async function loadPlayersWithManual(): Promise<NormalizedPlayer[]> {
+  // Start with the base JSON players
+  const basePlayers = loadPlayers();
+
+  if (manualPlayersLoaded) return basePlayers;
+
+  try {
+    const manualPlayers = await prisma.manualPlayer.findMany();
+
+    if (manualPlayers.length === 0) {
+      manualPlayersLoaded = true;
+      return basePlayers;
+    }
+
+    console.log(`Loaded ${manualPlayers.length} manual players from DB`);
+
+    for (const mp of manualPlayers) {
+      // Skip if already in JSON data
+      if (rawPlayerIdMap.has(mp.playerId)) continue;
+
+      const raw: RawPlayer = {
+        player_id: mp.playerId,
+        name: mp.name,
+        position: mp.position || undefined,
+        age: mp.age || undefined,
+        date_of_birth: mp.dateOfBirth || undefined,
+        club: mp.club || undefined,
+        league: mp.league || undefined,
+        league_code: mp.leagueCode || undefined,
+        market_value: mp.marketValue || undefined,
+        nationality: mp.nationality || undefined,
+        height: mp.height || undefined,
+        foot: mp.foot || undefined,
+        citizenship: mp.citizenship || undefined,
+        contract_expires: mp.contractExpires || undefined,
+        shirt_number: mp.shirtNumber || undefined,
+        photo_url: mp.photoUrl || undefined,
+        profile_url: mp.profileUrl || undefined,
+        appearances: mp.appearances || undefined,
+        goals: mp.goals || undefined,
+        assists: mp.assists || undefined,
+      };
+
+      rawPlayersCache!.push(raw);
+      rawPlayerIdMap.set(mp.playerId, raw);
+
+      const normalized = normalizePlayer(raw);
+      if (normalized) {
+        playersCache!.push(normalized);
+        if (normalized.playerId) {
+          playerIdMap.set(normalized.playerId, normalized);
+        }
+      }
+    }
+
+    manualPlayersLoaded = true;
+    return playersCache!;
+  } catch (err) {
+    console.error('Error loading manual players:', err);
+    return basePlayers;
+  }
+}
+
+/**
+ * Async version of findPlayerById — checks DB manual players too
+ */
+export async function findPlayerByIdAsync(id: string): Promise<PlayerDetail | null> {
+  // Try the JSON cache first (fast path)
+  const fromJson = findPlayerById(id);
+  if (fromJson) return fromJson;
+
+  // Check manual players in DB
+  try {
+    const manual = await prisma.manualPlayer.findUnique({
+      where: { playerId: id },
+    });
+
+    if (!manual) return null;
+
+    return {
+      id: manual.playerId,
+      name: manual.name,
+      tmUrl: manual.profileUrl,
+      position: manual.position,
+      age: manual.age,
+      nationality: manual.nationality,
+      secondNationality: null,
+      birthDate: manual.dateOfBirth,
+      birthplace: null,
+      club: manual.club,
+      league: manual.league,
+      marketValue: manual.marketValue,
+      height: manual.height,
+      foot: manual.foot,
+      contractUntil: manual.contractExpires,
+      shirtNumber: manual.shirtNumber,
+      photoUrl: manual.photoUrl,
+      careerTotals: {
+        matches: manual.appearances || 0,
+        goals: manual.goals || 0,
+        assists: manual.assists || 0,
+        minutes: 0,
+      },
+      stats: [],
+    };
+  } catch (err) {
+    console.error('Error looking up manual player:', err);
+    return null;
+  }
 }
 
 export function loadPlayers(): NormalizedPlayer[] {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import {
-  loadPlayers,
+  loadPlayersWithManual,
   extractPlayerIdFromUrl,
   NormalizedPlayer,
 } from '@/lib/players';
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json([]);
   }
 
-  const players = loadPlayers();
+  const players = await loadPlayersWithManual();
 
   // Check if query is a Transfermarkt URL (any domain: .com, .es, .de, .pt, .co.uk, etc.)
   if (query.includes('transfermarkt') && query.includes('spieler')) {
