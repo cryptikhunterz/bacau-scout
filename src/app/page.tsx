@@ -161,6 +161,10 @@ export default function Home() {
               className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
               🏟️ Teams
             </Link>
+            <Link href="/scouting-reports"
+              className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
+              🎬 Film Room
+            </Link>
             <Link href="/search"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors">
               + Scout New Player

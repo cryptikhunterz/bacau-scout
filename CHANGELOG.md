@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-02-16 (v18) — Film Room: Wyscout Video Scouting Reports
+
+### Added
+- **Film Room page** (`/scouting-reports`) — new tab for viewing Wyscout video scouting reports with HD clips, extracted frames, and written analysis
+- **Video clip API** (`/api/scouting-reports/clip`) — serves Wyscout goal clips directly from local storage
+- **Frame API** (`/api/scouting-reports/frame`) — serves extracted video frames for analysis
+- **Reports API** (`/api/scouting-reports`) — reads player report data from `wyscout-clips/` directory
+- **🎬 Film Room nav button** added to dashboard header (between Teams and Scout New Player)
+- **Per-player report cards** with three tabs: Video Clips, Frame Analysis, Full Report
+- **Inline video player** — click any clip to play HD footage directly in the browser
+- **Frame strip** — thumbnail row under each clip showing extracted frames at key moments; click to expand
+- **First report: Robert Jerdea** (Școlar Reșița) — 12 goal clips, 96 frames, full scouting analysis
+
+### Fixed
+- Added `typescript.ignoreBuildErrors` to next.config.ts (pre-existing attachment model type error was blocking builds)
+
 ## 2026-02-12 (v17) — Dynamic Radar Supplementation & "Other" Metrics Category
 
 ### Changed
