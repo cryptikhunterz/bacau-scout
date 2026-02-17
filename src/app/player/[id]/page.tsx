@@ -23,6 +23,30 @@ const posColors: Record<string, string> = {
   'Attack': 'from-red-500 to-red-600',
 };
 
+// ─── Data validation (TM scrape sometimes shifts fields) ─────────────────
+function looksLikeHeight(v?: string | null): boolean {
+  if (!v) return false;
+  return /\d[,.]?\d*\s*m/i.test(v) || /\d'\d/i.test(v); // "1,91 m" or "6'3"
+}
+function looksLikeFoot(v?: string | null): boolean {
+  if (!v) return false;
+  const lower = v.toLowerCase().trim();
+  return ['right', 'left', 'both'].includes(lower);
+}
+function looksLikeDate(v?: string | null): boolean {
+  if (!v) return false;
+  return /\d{2}\/\d{2}\/\d{4}/.test(v) || /\d{4}-\d{2}-\d{2}/.test(v) || /\w+ \d{1,2}, \d{4}/.test(v);
+}
+function looksLikeContract(v?: string | null): boolean {
+  if (!v || v === '-') return false;
+  // Should contain a year (e.g. "Jun 30, 2027" or "30.06.2027" or "2027")
+  return /\d{4}/.test(v) && !/[A-Z]{2,}/.test(v.replace(/\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\b/gi, ''));
+}
+function looksLikeGarbage(v: string): boolean {
+  // Shifted fields often contain labels like "Position:", "Place of birth:", etc.
+  return /^\d+[,.]?\d*\s*m$/i.test(v) || /position|place of birth|citizenship|attack|defence|midfield|goalkeeper/i.test(v);
+}
+
 function getPosGradient(pos: string): string {
   for (const [key, val] of Object.entries(posColors)) {
     if (pos?.includes(key)) return val;
@@ -96,14 +120,14 @@ export default async function PlayerDetailPage({
 
               {/* Middle: Player Details grid */}
               <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-1 text-sm border-l border-zinc-800 pl-5">
-                <DetailRow label="Height" value={player.height} />
-                <DetailRow label="Foot" value={player.foot} />
-                <DetailRow label="Birth" value={player.birthDate} />
-                <DetailRow label="Nationality" value={player.nationality} />
-                {player.secondNationality && <DetailRow label="2nd Nat." value={player.secondNationality} />}
-                {player.birthplace && <DetailRow label="Birthplace" value={player.birthplace} />}
-                {player.shirtNumber && <DetailRow label="Shirt" value={`#${player.shirtNumber}`} />}
-                {player.contractUntil && player.contractUntil !== '-' && <DetailRow label="Contract" value={player.contractUntil} />}
+                {looksLikeHeight(player.height) && <DetailRow label="Height" value={player.height} />}
+                {looksLikeFoot(player.foot) && <DetailRow label="Foot" value={player.foot} />}
+                {looksLikeDate(player.birthDate) && <DetailRow label="Birth" value={player.birthDate} />}
+                {player.nationality && !looksLikeGarbage(player.nationality) && <DetailRow label="Nationality" value={player.nationality} />}
+                {player.secondNationality && !looksLikeGarbage(player.secondNationality) && <DetailRow label="2nd Nat." value={player.secondNationality} />}
+                {player.birthplace && !looksLikeGarbage(player.birthplace) && <DetailRow label="Birthplace" value={player.birthplace} />}
+                {player.shirtNumber && /^\d+$/.test(player.shirtNumber) && <DetailRow label="Shirt" value={`#${player.shirtNumber}`} />}
+                {looksLikeContract(player.contractUntil) && <DetailRow label="Contract" value={player.contractUntil!} />}
               </div>
 
               {/* Right: Market Value + TM Link */}
