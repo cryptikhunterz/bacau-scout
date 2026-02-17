@@ -64,7 +64,7 @@ export function RadarChart({
   maxValue,
   color = '#22c55e',
   title,
-  size = 400,
+  size = 550,
   comparisonValues,
   comparisonColor = '#3b82f6',
   overlays,
@@ -153,7 +153,7 @@ export function RadarChart({
       <svg
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         className="w-full"
-        style={{ maxWidth: `${size + 160}px` }}
+        style={{ maxWidth: `${size + 200}px` }}
       >
         {/* Background circle */}
         <circle cx={cx} cy={cy} r={chartRadius + 8} fill="#18181b" opacity={0.6} />
@@ -335,7 +335,7 @@ export function RadarChart({
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill="#d4d4d8"
-                fontSize={11}
+                fontSize={13}
                 fontWeight={500}
                 fontFamily="system-ui, sans-serif"
               >
@@ -343,11 +343,11 @@ export function RadarChart({
               </text>
               <text
                 x={x}
-                y={y + yOffset + 14}
+                y={y + yOffset + 16}
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill={valueColor}
-                fontSize={11}
+                fontSize={13}
                 fontWeight={700}
                 fontFamily="system-ui, sans-serif"
               >

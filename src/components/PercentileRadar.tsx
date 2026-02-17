@@ -55,7 +55,7 @@ export function PercentileRadar({
   comparisonColor = '#ef4444',
   overlays,
   title,
-  size = 420,
+  size = 550,
 }: PercentileRadarProps) {
   const n = labels.length;
   if (n < 3) return null;
@@ -119,7 +119,7 @@ export function PercentileRadar({
       <svg
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         className="w-full"
-        style={{ maxWidth: `${viewBoxSize}px` }}
+        style={{ maxWidth: `${viewBoxSize + 40}px` }}
       >
         {/* ── Green zone background rings ── */}
         {zones.map((zone, zi) => {
@@ -292,7 +292,7 @@ export function PercentileRadar({
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill="#d4d4d8"
-                fontSize={10}
+                fontSize={12}
                 fontWeight={500}
                 fontFamily="system-ui, sans-serif"
               >
@@ -300,11 +300,11 @@ export function PercentileRadar({
               </text>
               <text
                 x={x}
-                y={y + yOffset + 14}
+                y={y + yOffset + 16}
                 textAnchor={anchor}
                 dominantBaseline="central"
                 fill={valueColor}
-                fontSize={11}
+                fontSize={13}
                 fontWeight={700}
                 fontFamily="system-ui, sans-serif"
               >
