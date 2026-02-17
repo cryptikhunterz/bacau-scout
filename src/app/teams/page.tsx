@@ -221,10 +221,13 @@ export default function TeamsDashboard() {
                   <tr
                     key={t.id}
                     className="border-b border-zinc-800/50 hover:bg-zinc-800/50 cursor-pointer transition-colors"
+                    onClick={() => window.location.href = `/teams/${t.id}`}
                   >
                     <td className="px-4 py-3">
-                      <div className="font-medium text-white">{t.n}</div>
-                      <div className="text-xs text-zinc-500">{t.tm}</div>
+                      <Link href={`/teams/${t.id}`} className="block">
+                        <div className="font-medium text-white hover:text-blue-400 transition-colors">{t.n}</div>
+                        <div className="text-xs text-zinc-500">{t.tm}</div>
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-zinc-300 text-xs">{t.comp}</td>
                     <td className="px-4 py-3 text-zinc-300 text-sm">{getCountry(t.tm)}</td>
