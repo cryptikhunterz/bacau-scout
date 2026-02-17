@@ -202,13 +202,13 @@ export default function ComparePage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
                 <h2 className="text-lg font-semibold text-white mb-1">📊 Percentile Radar</h2>
                 <p className="text-xs text-zinc-500 mb-4">
                   Using {radarTemplate || selected[0].pg} position metrics · Percentile values
                 </p>
-                <CompareRadar players={selected} positionMetrics={posMetrics} height={450} positionGroup={radarTemplate || undefined} />
+                <CompareRadar players={selected} positionMetrics={posMetrics} height={350} positionGroup={radarTemplate || undefined} />
               </div>
 
               <div className="bg-zinc-900 border border-zinc-800 rounded-lg p-6">
@@ -216,7 +216,7 @@ export default function ComparePage() {
                 <p className="text-xs text-zinc-500 mb-4">
                   Actual per-90 values · Each axis scaled independently
                 </p>
-                <CompareRadar players={selected} positionMetrics={posMetrics} height={450} mode="raw" positionGroup={radarTemplate || undefined} />
+                <CompareRadar players={selected} positionMetrics={posMetrics} height={350} mode="raw" positionGroup={radarTemplate || undefined} />
               </div>
             </div>
           </>
