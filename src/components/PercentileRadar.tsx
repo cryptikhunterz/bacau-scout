@@ -119,7 +119,7 @@ export function PercentileRadar({
       <svg
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         className="w-full"
-        style={{ maxWidth: `${viewBoxSize + 40}px` }}
+        style={{ maxWidth: '100%' }}
       >
         {/* ── Green zone background rings ── */}
         {zones.map((zone, zi) => {

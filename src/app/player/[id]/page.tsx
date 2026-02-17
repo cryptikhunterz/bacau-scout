@@ -130,74 +130,33 @@ export default async function PlayerDetailPage({
           </div>
         </div>
 
+        {/* Compact Career Overview — horizontal strip */}
+        {totals && (totals.matches > 0 || totals.goals > 0) && (
+          <div className="bg-zinc-900 rounded-xl border border-zinc-800 px-5 py-3">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+              <h2 className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">Career</h2>
+              <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">Apps</span><span className="text-white font-bold text-sm">{totals.matches}</span></div>
+              <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">Goals</span><span className={`font-bold text-sm ${!isGoalkeeper && totals.goals > 0 ? 'text-green-400' : 'text-white'}`}>{totals.goals}</span></div>
+              <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">Assists</span><span className="text-white font-bold text-sm">{totals.assists}</span></div>
+              <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">Minutes</span><span className="text-white font-bold text-sm">{totals.minutes.toLocaleString()}</span></div>
+              {totals.matches > 0 && totals.goals > 0 && !isGoalkeeper && (
+                <>
+                  <div className="w-px h-4 bg-zinc-700" />
+                  <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">G/Game</span><span className="text-white font-semibold text-sm">{(totals.goals / totals.matches).toFixed(2)}</span></div>
+                  <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">A/Game</span><span className="text-white font-semibold text-sm">{(totals.assists / totals.matches).toFixed(2)}</span></div>
+                  <div className="flex items-center gap-1.5"><span className="text-zinc-500 text-xs">G+A/Game</span><span className="text-green-400 font-semibold text-sm">{((totals.goals + totals.assists) / totals.matches).toFixed(2)}</span></div>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* HERO: Wyscout Advanced Metrics — full width, radars prominent */}
+        <WyscoutStatsWrapper playerId={player.id} />
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left column: Info + Stats */}
+          {/* Left column: Season Stats */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Career Totals */}
-            {totals && (totals.matches > 0 || totals.goals > 0) && (
-              <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-6">
-                <h2 className="text-sm font-semibold text-zinc-400 uppercase tracking-wider mb-4">
-                  Career Overview
-                </h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  <StatCard label="Appearances" value={totals.matches} icon="⚽" />
-                  <StatCard label={isGoalkeeper ? 'Goals (rare for GK)' : 'Goals'} value={totals.goals} icon={isGoalkeeper ? '🧤' : '🥅'} highlight={!isGoalkeeper} />
-                  <StatCard label={isGoalkeeper ? 'Assists (rare for GK)' : 'Assists'} value={totals.assists} icon={isGoalkeeper ? '🧤' : '🅰️'} />
-                  <StatCard label="Minutes" value={totals.minutes.toLocaleString()} icon="⏱️" />
-                </div>
-                {isGoalkeeper && (
-                  <div className="mt-3 px-3 py-2 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                    <p className="text-xs text-yellow-400/80">
-                      ℹ️ Goalkeeper stats — saves, clean sheets, and other GK-specific metrics are not available from Transfermarkt. Only appearances, goals, assists, and minutes are provided.
-                    </p>
-                  </div>
-                )}
-                {totals.matches > 0 && totals.goals > 0 && !isGoalkeeper && (
-                  <div className="mt-4 pt-4 border-t border-zinc-800">
-                    <div className="flex gap-6 text-sm">
-                      <div>
-                        <span className="text-zinc-500">Goals/Game: </span>
-                        <span className="text-white font-semibold">
-                          {(totals.goals / totals.matches).toFixed(2)}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-zinc-500">Assists/Game: </span>
-                        <span className="text-white font-semibold">
-                          {(totals.assists / totals.matches).toFixed(2)}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="text-zinc-500">G+A/Game: </span>
-                        <span className="text-green-400 font-semibold">
-                          {((totals.goals + totals.assists) / totals.matches).toFixed(2)}
-                        </span>
-                      </div>
-                      {totals.minutes > 0 && (
-                        <div>
-                          <span className="text-zinc-500">Min/Goal: </span>
-                          <span className="text-white font-semibold">
-                            {totals.goals > 0 ? Math.round(totals.minutes / totals.goals) : '∞'}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )}
-                {totals.matches > 0 && isGoalkeeper && (
-                  <div className="mt-4 pt-4 border-t border-zinc-800">
-                    <div className="flex gap-6 text-sm">
-                      <div>
-                        <span className="text-zinc-500">Min/App: </span>
-                        <span className="text-white font-semibold">
-                          {totals.minutes > 0 ? Math.round(totals.minutes / totals.matches) : '-'}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* Season Stats Table */}
             {hasStats && (
@@ -247,9 +206,6 @@ export default async function PlayerDetailPage({
                 </div>
               </div>
             )}
-
-            {/* Wyscout Advanced Metrics */}
-            <WyscoutStatsWrapper playerId={player.id} />
 
             {/* Scout Evaluation */}
             <div>

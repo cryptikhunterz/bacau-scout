@@ -153,7 +153,7 @@ export function RadarChart({
       <svg
         viewBox={`0 0 ${viewBoxSize} ${viewBoxSize}`}
         className="w-full"
-        style={{ maxWidth: `${size + 200}px` }}
+        style={{ maxWidth: '100%' }}
       >
         {/* Background circle */}
         <circle cx={cx} cy={cy} r={chartRadius + 8} fill="#18181b" opacity={0.6} />
