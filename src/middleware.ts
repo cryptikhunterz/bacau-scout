@@ -9,11 +9,12 @@ export async function middleware(request: NextRequest) {
   const publicPaths = ["/login", "/register", "/api/auth"];
   const isPublic = publicPaths.some((path) => pathname.startsWith(path));
 
-  // Allow static assets
+  // Allow static assets and data files
   const isStatic =
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
-    pathname.startsWith("/images");
+    pathname.startsWith("/images") ||
+    pathname.startsWith("/data");
 
   if (isPublic || isStatic) {
     return NextResponse.next();

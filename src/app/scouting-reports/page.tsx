@@ -110,8 +110,37 @@ function FrameStrip({ frames, clipName }: { frames: FrameData[]; clipName: strin
         ))}
       </div>
       {selectedFrame && (
-        <div className="mt-2 rounded-lg overflow-hidden border border-zinc-600">
+        <div className="mt-2 rounded-lg overflow-hidden border border-zinc-600 relative">
           <img src={selectedFrame} alt="Frame analysis" className="w-full" />
+          {/* Prev / Next navigation */}
+          <div className="absolute inset-0 flex items-center justify-between px-2 pointer-events-none">
+            {clipFrames.indexOf(clipFrames.find(f => f.path === selectedFrame)!) > 0 && (
+              <button
+                onClick={() => {
+                  const idx = clipFrames.findIndex(f => f.path === selectedFrame);
+                  if (idx > 0) setSelectedFrame(clipFrames[idx - 1].path);
+                }}
+                className="pointer-events-auto bg-black/70 hover:bg-black/90 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold transition-colors"
+              >
+                ‹
+              </button>
+            )}
+            <div />
+            {clipFrames.indexOf(clipFrames.find(f => f.path === selectedFrame)!) < clipFrames.length - 1 && (
+              <button
+                onClick={() => {
+                  const idx = clipFrames.findIndex(f => f.path === selectedFrame);
+                  if (idx < clipFrames.length - 1) setSelectedFrame(clipFrames[idx + 1].path);
+                }}
+                className="pointer-events-auto bg-black/70 hover:bg-black/90 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold transition-colors"
+              >
+                ›
+              </button>
+            )}
+          </div>
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+            {clipFrames.findIndex(f => f.path === selectedFrame) + 1} / {clipFrames.length}
+          </div>
         </div>
       )}
     </div>
