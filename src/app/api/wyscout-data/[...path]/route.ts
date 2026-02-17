@@ -13,20 +13,25 @@ export async function GET(
   if (filePath === 'debug.json') {
     const cwd = process.cwd();
     const checks: Record<string, string> = { cwd };
-    for (const base of [
-      path.join(cwd, 'public', 'data'),
-      path.join(cwd, 'data'),
-      path.join(cwd, '.next', 'static', 'data'),
-      '/app/public/data',
-      '/app/data',
-    ]) {
-      try {
-        await access(base);
-        const files = await readdir(base);
-        checks[base] = files.slice(0, 10).join(', ');
-      } catch {
-        checks[base] = 'NOT FOUND';
-      }
+    // Deep scan for any data directory
+    const { execSync } = require('child_process');
+    try {
+      const found = execSync('find /app -name "leagues.json" -maxdepth 5 2>/dev/null || find / -name "leagues.json" -maxdepth 5 2>/dev/null | head -10', { encoding: 'utf-8', timeout: 5000 });
+      checks['find_leagues'] = found.trim() || 'NONE';
+    } catch (e: any) {
+      checks['find_leagues'] = e.stdout?.trim() || 'ERROR';
+    }
+    try {
+      const ls = execSync('ls -la /app/ 2>/dev/null', { encoding: 'utf-8', timeout: 3000 });
+      checks['ls_app'] = ls.trim();
+    } catch {
+      checks['ls_app'] = 'ERROR';
+    }
+    try {
+      const ls2 = execSync('ls -la /app/public/ 2>/dev/null || echo NO_PUBLIC', { encoding: 'utf-8', timeout: 3000 });
+      checks['ls_app_public'] = ls2.trim();
+    } catch {
+      checks['ls_app_public'] = 'ERROR';
     }
     return NextResponse.json(checks);
   }
