@@ -8,7 +8,7 @@ const chunkCache: Record<number, Record<number, WyscoutPlayer>> = {};
 // Dashboard list (no metrics — small file)
 export async function loadWyscoutPlayers(): Promise<WyscoutPlayer[]> {
   if (playersListCache) return playersListCache;
-  const res = await fetch('/data/players-list.json');
+  const res = await fetch('/api/wyscout-data/players-list.json');
   playersListCache = await res.json();
   return playersListCache!;
 }
@@ -18,7 +18,7 @@ export async function loadWyscoutPlayer(id: number): Promise<WyscoutPlayer | nul
   const chunkId = Math.floor(id / 100);
   if (!chunkCache[chunkId]) {
     try {
-      const res = await fetch(`/data/chunks/${chunkId}.json`);
+      const res = await fetch(`/api/wyscout-data/chunks/${chunkId}.json`);
       if (!res.ok) return null;
       chunkCache[chunkId] = await res.json();
     } catch {
@@ -30,14 +30,14 @@ export async function loadWyscoutPlayer(id: number): Promise<WyscoutPlayer | nul
 
 export async function loadWyscoutLeagues(): Promise<WyscoutLeague[]> {
   if (leaguesCache) return leaguesCache;
-  const res = await fetch('/data/leagues.json');
+  const res = await fetch('/api/wyscout-data/leagues.json');
   leaguesCache = await res.json();
   return leaguesCache!;
 }
 
 export async function loadWyscoutPositionMetrics(): Promise<WyscoutPositionMetrics> {
   if (posMetricsCache) return posMetricsCache;
-  const res = await fetch('/data/position-metrics.json');
+  const res = await fetch('/api/wyscout-data/position-metrics.json');
   posMetricsCache = await res.json();
   return posMetricsCache!;
 }

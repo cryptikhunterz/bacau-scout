@@ -7,14 +7,14 @@ const teamChunkCache: Record<number, Record<string, WyscoutTeam>> = {};
 
 export async function loadTeamsList(): Promise<TeamListItem[]> {
   if (teamsListCache) return teamsListCache;
-  const res = await fetch('/data/teams-list.json');
+  const res = await fetch('/api/wyscout-data/teams-list.json');
   teamsListCache = await res.json();
   return teamsListCache!;
 }
 
 async function loadTeamIndex(): Promise<Record<string, number>> {
   if (teamIndexCache) return teamIndexCache;
-  const res = await fetch('/data/team-index.json');
+  const res = await fetch('/api/wyscout-data/team-index.json');
   teamIndexCache = await res.json();
   return teamIndexCache!;
 }
@@ -26,7 +26,7 @@ export async function loadTeam(id: string): Promise<WyscoutTeam | null> {
 
   if (!teamChunkCache[chunkId]) {
     try {
-      const res = await fetch(`/data/team-chunks/${chunkId}.json`);
+      const res = await fetch(`/api/wyscout-data/team-chunks/${chunkId}.json`);
       if (!res.ok) return null;
       teamChunkCache[chunkId] = await res.json();
     } catch {
@@ -40,7 +40,7 @@ export async function loadTeam(id: string): Promise<WyscoutTeam | null> {
 export async function loadBacauReference(): Promise<BacauReference | null> {
   if (bacauCache) return bacauCache;
   try {
-    const res = await fetch('/data/bacau-reference.json');
+    const res = await fetch('/api/wyscout-data/bacau-reference.json');
     if (!res.ok) return null;
     bacauCache = await res.json();
     return bacauCache;
