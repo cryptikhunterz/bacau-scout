@@ -8,6 +8,7 @@ import {
   OVERALL_METRICS,
   extractRadarData,
 } from '@/lib/wyscoutRadar';
+import { loadWyscoutPositionMetrics } from '@/lib/wyscoutData';
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -48,6 +49,8 @@ const PG_LABELS: Record<string, string> = {
   FW: 'FORWARD',
 };
 
+const POSITION_GROUPS = ['GK', 'CB', 'WB', 'DM', 'CM', 'AM', 'FW'];
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 interface WyscoutRadarsProps {
@@ -59,6 +62,8 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
   const [data, setData] = useState<WyscoutData | null>(null);
   const [loading, setLoading] = useState(true);
   const [compMode, setCompMode] = useState<'league' | 'global'>('league');
+  const [radarTemplate, setRadarTemplate] = useState<string>('');
+  const [posMetrics, setPosMetrics] = useState<Record<string, { key: string; label: string }[]> | null>(null);
 
   useEffect(() => {
     if (!playerId) {
@@ -66,13 +71,13 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
       return;
     }
 
-    fetch(`/api/players/${playerId}/wyscout`)
-      .then((res) => {
-        if (!res.ok) return null;
-        return res.json();
-      })
-      .then((json) => {
+    Promise.all([
+      fetch(`/api/players/${playerId}/wyscout`).then((res) => res.ok ? res.json() : null),
+      loadWyscoutPositionMetrics(),
+    ])
+      .then(([json, pm]) => {
         if (json) setData(json);
+        if (pm) setPosMetrics(pm);
         setLoading(false);
       })
       .catch(() => setLoading(false));
@@ -90,10 +95,30 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
 
   if (data.hasPercentiles) {
     const { pg, comp, radar, allround } = data;
+    const activePg = radarTemplate || pg;
 
     // Pick percentile field based on comparison mode
     const getPercentile = (m: RadarMetric) =>
       compMode === 'league' ? (m.percentile ?? m.gp) : (m.gp ?? m.percentile);
+
+    // Build a lookup of ALL available metrics from radar + allround
+    const allMetricsMap = new Map<string, RadarMetric>();
+    for (const m of [...radar, ...allround]) {
+      if (!allMetricsMap.has(m.key)) allMetricsMap.set(m.key, m);
+    }
+
+    // If a different template is selected, rebuild radar from position-metrics
+    let templateRadar = radar;
+    if (radarTemplate && posMetrics && posMetrics[radarTemplate]) {
+      const templateKeys = posMetrics[radarTemplate];
+      templateRadar = templateKeys
+        .map((tk: { key: string; label: string }) => {
+          const existing = allMetricsMap.get(tk.key);
+          if (existing) return { ...existing, label: tk.label || existing.label };
+          return null;
+        })
+        .filter((m: RadarMetric | null): m is RadarMetric => m !== null);
+    }
 
     // Supplement sparse radars: ensure at least 3 meaningful data points each
     const MIN_RADAR_POINTS = 3;
@@ -115,8 +140,8 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
       return supplemented;
     };
 
-    const effectiveRadar = supplementRadar(radar, allround);
-    const effectiveAllround = supplementRadar(allround, radar);
+    const effectiveRadar = supplementRadar(templateRadar, allround);
+    const effectiveAllround = supplementRadar(allround, templateRadar);
 
     // Filter out metrics with no data (value=0 and percentile=50 means missing)
     const hasPositionData = effectiveRadar.length >= 3 && effectiveRadar.some((m) => m.value !== 0 || m.percentile !== 50);
@@ -124,7 +149,7 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
 
     if (!hasPositionData && !hasAllroundData) return null;
 
-    const posLabel = PG_LABELS[pg] || pg;
+    const posLabel = PG_LABELS[activePg] || activePg;
 
     return (
       <div className="space-y-4">
@@ -162,6 +187,30 @@ export function WyscoutRadars({ playerId, tmPosition }: WyscoutRadarsProps) {
           <span className="ml-2 text-[10px] text-zinc-500 max-w-[180px] truncate" title={comp}>
             {compMode === 'league' ? comp : 'All leagues, same position'}
           </span>
+        </div>
+
+        {/* Position template selector */}
+        <div className="flex items-center justify-center gap-2">
+          <span className="text-xs text-zinc-500">Template:</span>
+          <select
+            value={activePg}
+            onChange={(e) => setRadarTemplate(e.target.value)}
+            className="bg-zinc-800 border border-zinc-700 rounded-md px-2 py-1 text-xs text-white focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+          >
+            {POSITION_GROUPS.map((g) => (
+              <option key={g} value={g}>
+                {g} — {PG_LABELS[g] || g}
+              </option>
+            ))}
+          </select>
+          {radarTemplate && radarTemplate !== pg && (
+            <button
+              onClick={() => setRadarTemplate('')}
+              className="text-xs text-zinc-500 hover:text-white underline"
+            >
+              Reset to {pg}
+            </button>
+          )}
         </div>
 
         {/* Legend */}
