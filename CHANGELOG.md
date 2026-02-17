@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-02-17 (v19) — Bug Fixes & Improvements
+
+### Fixed
+- **Bug 1: Bordea/Niță name swap** — Player 8960 (Andreas Niță) had corrupted shortName "B. Mario Andreas" from Bordea's data. Fixed to "A. Niță" in both players-list.json and chunks/89.json
+- **Bug 2: Dashboard position filter crash** — Position filter crashed when `position` was null/undefined, causing all grades to show unfiltered. Added null safety to filter logic, `getPositionColor`, and `getPositionAbbrev`. Fixes Korça appearing in all position results
+- **Bug 3: 172 players missing from Compare** — Backfilled empty metrics for 172 players from wyscout-percentiles.json. Created `scripts/backfill-chunk-metrics.js`
+- **Bug 4: League name normalization** — Normalized Wyscout-format league names (e.g. "Romania. Liga II" → "Romania Liga 2") across 1288 players. Created `scripts/normalize-league-names.js`
+- **Bug 5: Compare radars not side by side** — Changed radar grid from `lg:grid-cols-2` to `md:grid-cols-2` and reduced height from 450 to 350 for more compact layout
+- **Bug 8: Inconsistent stats sections** — All defined metrics in each group are now always shown in WyscoutStats, with "—" and dimmed styling for missing data
+
+### Added
+- **Bug 6: Radar template selector on player profile** — Position group dropdown (GK/CB/WB/DM/CM/AM/FW) added to WyscoutRadars component, allowing users to switch radar templates on individual player profiles
+- **Bug 7: Team detail page** — Created `/teams/[id]` page showing team name, competition, country, season, style match %, radar chart, statistics with percentile bars, similar teams, and roster with player profile links. Made team rows clickable in the Teams list
+
 ## 2026-02-16 (v18) — Film Room: Wyscout Video Scouting Reports
 
 ### Added
