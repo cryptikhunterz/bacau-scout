@@ -145,7 +145,7 @@ export default async function PlayerDetailPage({
         )}
 
         {/* ─── HERO: Wyscout Radars + Stat Bars ─── */}
-        <WyscoutStatsWrapper playerId={player.id} />
+        <WyscoutStatsWrapper playerId={player.id} tmPosition={player.position || undefined} />
 
         {/* ─── Season Stats ─── */}
           {hasStats && (
