@@ -278,7 +278,7 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
     <main className="min-h-screen bg-zinc-950">
       {/* Top bar */}
       <div className="bg-zinc-900 border-b border-zinc-800 px-4 py-3">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           <Link href="/" className="inline-flex items-center text-sm text-zinc-400 hover:text-white transition-colors">
             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -291,7 +291,7 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
         </div>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         {/* Report selector (when multiple scouts graded this player) */}
         {allReports.length > 1 && (
           <div className="bg-zinc-900 rounded-xl border border-zinc-800 p-4">
