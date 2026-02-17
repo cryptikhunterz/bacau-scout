@@ -188,14 +188,16 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
     if (!metricMap.has(m.key)) metricMap.set(m.key, m);
   }
 
-  // Build visible metric groups (only show groups with available data)
+  // Build visible metric groups — show ALL keys in each group, even if player lacks data
   const categorizedKeys = new Set(METRIC_GROUPS.flatMap(g => g.keys));
   const uncategorizedKeys = Array.from(metricMap.keys()).filter(k => !categorizedKeys.has(k));
 
+  // A group is visible if the player has ANY metric from that group
   const visibleGroups = [
     ...METRIC_GROUPS.map(group => ({
       ...group,
-      metrics: group.keys.filter(key => metricMap.has(key)),
+      metrics: group.keys, // show ALL keys, not just ones with data
+      hasAny: group.keys.some(key => metricMap.has(key)),
     })),
     // "Other" category catches all metrics not in the hardcoded groups
     ...(uncategorizedKeys.length > 0
@@ -203,9 +205,10 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
           title: '📋 Other',
           keys: uncategorizedKeys,
           metrics: uncategorizedKeys,
+          hasAny: true,
         }]
       : []),
-  ].filter(group => group.metrics.length > 0);
+  ].filter(group => group.hasAny);
 
   return (
     <div className="space-y-6">
@@ -316,28 +319,29 @@ export function WyscoutStats({ playerId }: WyscoutStatsProps) {
             <tbody>
               {group.metrics.map(key => {
                 const m = metricMap.get(key);
-                if (!m) return null;
-                const pct = getPercentile(m);
+                const pct = m ? getPercentile(m) : null;
                 const isInvert = INVERT_METRICS.has(key);
                 return (
-                  <tr key={key} className="border-b border-zinc-800/30 hover:bg-zinc-800/30">
+                  <tr key={key} className={`border-b border-zinc-800/30 hover:bg-zinc-800/30 ${!m ? 'opacity-40' : ''}`}>
                     <td className="px-3 py-1.5 text-zinc-300">
                       {key}
                       {isInvert && <span className="text-[10px] text-zinc-600 ml-1">(lower is better)</span>}
                     </td>
                     <td className="px-3 py-1.5 text-right font-mono text-white">
-                      {m.value !== undefined ? m.value : '—'}
+                      {m && m.value !== undefined ? m.value : '—'}
                     </td>
-                    <td className={`px-3 py-1.5 text-right font-mono font-bold ${percentileTextColor(pct)}`}>
-                      {pct}
+                    <td className={`px-3 py-1.5 text-right font-mono font-bold ${pct !== null ? percentileTextColor(pct) : 'text-zinc-600'}`}>
+                      {pct !== null ? pct : '—'}
                     </td>
                     <td className="px-3 py-1.5">
                       <div className="flex items-center gap-1.5">
                         <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-                          <div
-                            className={`h-full rounded-full ${percentileBarColor(pct)}`}
-                            style={{ width: `${pct}%` }}
-                          />
+                          {pct !== null && (
+                            <div
+                              className={`h-full rounded-full ${percentileBarColor(pct)}`}
+                              style={{ width: `${pct}%` }}
+                            />
+                          )}
                         </div>
                       </div>
                     </td>
