@@ -1,0 +1,219 @@
+{
+  "GK": [
+    {
+      "key": "Save rate, %",
+      "label": "Save %"
+    },
+    {
+      "key": "xG against per 90",
+      "label": "xG Conceded /90"
+    },
+    {
+      "key": "Shots against per 90",
+      "label": "Shots Saved /90"
+    },
+    {
+      "key": "Accurate passes, %",
+      "label": "Pass Accuracy %"
+    },
+    {
+      "key": "Exits per 90",
+      "label": "Exits /90"
+    },
+    {
+      "key": "Prevented goals per 90",
+      "label": "Prevented Goals /90"
+    }
+  ],
+  "CB": [
+    {
+      "key": "Defensive duels won, %",
+      "label": "Defensive Challenge %"
+    },
+    {
+      "key": "Aerial duels won, %",
+      "label": "Aerial Duels Won %"
+    },
+    {
+      "key": "Accurate passes, %",
+      "label": "Pass Accuracy %"
+    },
+    {
+      "key": "Interceptions per 90",
+      "label": "Interceptions /90"
+    },
+    {
+      "key": "Successful defensive actions per 90",
+      "label": "Ball Recoveries /90"
+    },
+    {
+      "key": "Defensive duels per 90",
+      "label": "Defensive Duels /90"
+    },
+    {
+      "key": "Fouls per 90",
+      "label": "Fouls /90",
+      "invert": true
+    },
+    {
+      "key": "Shots blocked per 90",
+      "label": "Shots Blocked /90"
+    }
+  ],
+  "WB": [
+    {
+      "key": "Defensive duels won, %",
+      "label": "Defensive 1v1 %"
+    },
+    {
+      "key": "Successful defensive actions per 90",
+      "label": "Defensive Actions /90"
+    },
+    {
+      "key": "Aerial duels won, %",
+      "label": "Aerial Duels %"
+    },
+    {
+      "key": "Crosses per 90",
+      "label": "Crosses /90"
+    },
+    {
+      "key": "Successful dribbles, %",
+      "label": "Dribble Success %"
+    },
+    {
+      "key": "Key passes per 90",
+      "label": "Chances Created /90"
+    },
+    {
+      "key": "xA per 90",
+      "label": "xA /90"
+    },
+    {
+      "key": "Fouls per 90",
+      "label": "Fouls /90",
+      "invert": true
+    }
+  ],
+  "DM": [
+    {
+      "key": "Accurate passes, %",
+      "label": "Pass Accuracy %"
+    },
+    {
+      "key": "Defensive duels won, %",
+      "label": "Defensive Challenge %"
+    },
+    {
+      "key": "Successful defensive actions per 90",
+      "label": "Ball Recoveries /90"
+    },
+    {
+      "key": "Passes per 90",
+      "label": "Passes /90"
+    },
+    {
+      "key": "Accurate long passes, %",
+      "label": "Long Ball Accuracy %"
+    },
+    {
+      "key": "Aerial duels won, %",
+      "label": "Aerial Challenge %"
+    },
+    {
+      "key": "Fouls per 90",
+      "label": "Fouls /90",
+      "invert": true
+    }
+  ],
+  "CM": [
+    {
+      "key": "Accurate passes, %",
+      "label": "Pass Accuracy %"
+    },
+    {
+      "key": "Key passes per 90",
+      "label": "Chances Created /90"
+    },
+    {
+      "key": "Passes per 90",
+      "label": "Passes /90"
+    },
+    {
+      "key": "Defensive duels won, %",
+      "label": "Defensive Challenge %"
+    },
+    {
+      "key": "Successful defensive actions per 90",
+      "label": "Ball Recoveries /90"
+    },
+    {
+      "key": "Interceptions per 90",
+      "label": "Interceptions /90"
+    }
+  ],
+  "AM": [
+    {
+      "key": "Key passes per 90",
+      "label": "Chances Created /90"
+    },
+    {
+      "key": "xG per 90",
+      "label": "xG /90"
+    },
+    {
+      "key": "xA per 90",
+      "label": "xA /90"
+    },
+    {
+      "key": "Successful dribbles, %",
+      "label": "Dribble Success %"
+    },
+    {
+      "key": "Dribbles per 90",
+      "label": "Dribbles /90"
+    },
+    {
+      "key": "Shots on target, %",
+      "label": "Shots on Target %"
+    },
+    {
+      "key": "Progressive runs per 90",
+      "label": "Progressive Runs /90"
+    }
+  ],
+  "FW": [
+    {
+      "key": "xG per 90",
+      "label": "xG /90"
+    },
+    {
+      "key": "Goals per 90",
+      "label": "Goals /90"
+    },
+    {
+      "key": "Shots on target, %",
+      "label": "Shots on Target %"
+    },
+    {
+      "key": "Key passes per 90",
+      "label": "Chances Created /90"
+    },
+    {
+      "key": "Successful dribbles, %",
+      "label": "Dribble Success %"
+    },
+    {
+      "key": "Crosses per 90",
+      "label": "Crosses /90"
+    },
+    {
+      "key": "Aerial duels won, %",
+      "label": "Aerial Duels Won %"
+    },
+    {
+      "key": "xA per 90",
+      "label": "xA /90"
+    }
+  ]
+}

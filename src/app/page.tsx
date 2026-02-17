@@ -159,7 +159,11 @@ export default function Home() {
             </Link>
             <Link href="/compare/teams"
               className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
-              🏟️ Teams
+              🏟️ Team Compare
+            </Link>
+            <Link href="/teams"
+              className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
+              📊 Team DB
             </Link>
             <Link href="/scouting-reports"
               className="px-4 py-2 bg-zinc-700 hover:bg-zinc-600 text-white rounded-lg font-medium transition-colors text-sm">
