@@ -3,7 +3,7 @@
 // ─── Types ──────────────────────────────────────────────────────────
 
 export type Status = "FM" | "U23" | "LOAN" | "WATCH";
-export type Verdict = "Sign" | "Observe" | "Monitor" | "Not a priority" | "Out of reach" | "Discard";
+export type Verdict = "Sign" | "Monitor" | "Not a priority" | "Out of reach" | "Discard";
 export type ScoutingLevel = "Basic" | "Impressive" | "Data only"; // kept for backward compat
 export type AbilityRating = 1 | 2 | 3 | 4 | 5;
 export type PotentialRating = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -207,7 +207,6 @@ export const AVAILABLE_TAGS = ALL_SCOUTING_TAGS;
 
 export const VERDICT_OPTIONS: { value: Verdict; color: string }[] = [
   { value: 'Sign', color: 'bg-green-600' },
-  { value: 'Observe', color: 'bg-teal-500' },
   { value: 'Monitor', color: 'bg-yellow-500' },
   { value: 'Not a priority', color: 'bg-zinc-600' },
   { value: 'Out of reach', color: 'bg-red-600' },

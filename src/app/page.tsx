@@ -52,7 +52,6 @@ function getPotential(g: PlayerGrade): number { return g.potential || 4; }
 function VerdictBadge({ verdict }: { verdict: string }) {
   const colors: Record<string, string> = {
     'Sign': 'bg-green-600 text-white',
-    'Observe': 'bg-teal-500 text-white',
     'Monitor': 'bg-yellow-500 text-black',
     'Not a priority': 'bg-zinc-600 text-white',
     'Out of reach': 'bg-red-600 text-white',
@@ -125,7 +124,7 @@ export default function Home() {
   };
 
   const signCount = grades.filter(g => g.verdict === 'Sign').length;
-  const observeCount = grades.filter(g => g.verdict === 'Observe').length;
+  // Observe removed per Flavius request
   const monitorCount = grades.filter(g => g.verdict === 'Monitor').length;
   const notPriorityCount = grades.filter(g => g.verdict === 'Not a priority').length;
   const discardCount = grades.filter(g => g.verdict === 'Discard').length;
@@ -141,7 +140,6 @@ export default function Home() {
             <p className="text-sm text-zinc-400 flex flex-wrap gap-x-1">
               <span>{grades.length} scouting reports •</span>
               <span className="text-green-400">{signCount} Sign</span><span>•</span>
-              <span className="text-teal-400">{observeCount} Observe</span><span>•</span>
               <span className="text-yellow-400">{monitorCount} Monitor</span><span>•</span>
               <span className="text-zinc-400">{notPriorityCount} Not a priority</span><span>•</span>
               <span className="text-red-400">{outOfReachCount} Out of reach</span><span>•</span>
@@ -190,7 +188,6 @@ export default function Home() {
             className="px-3 py-2 bg-zinc-700 border border-zinc-600 rounded-lg text-sm text-white">
             <option value="">All Verdicts</option>
             <option value="Sign">Sign</option>
-            <option value="Observe">Observe</option>
             <option value="Monitor">Monitor</option>
             <option value="Not a priority">Not a priority</option>
             <option value="Out of reach">Out of reach</option>

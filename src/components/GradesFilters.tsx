@@ -14,7 +14,7 @@ export function GradesFilters({ filters, onChange }: GradesFiltersProps) {
     <div className="flex flex-wrap gap-4 items-center">
       {/* Verdict toggle buttons */}
       <div className="flex gap-1">
-        {['All', 'Sign', 'Observe', 'Monitor', 'Not a priority', 'Out of reach', 'Discard'].map((v) => (
+        {['All', 'Sign', 'Monitor', 'Not a priority', 'Out of reach', 'Discard'].map((v) => (
           <button
             key={v}
             onClick={() => onChange({ ...filters, verdict: v === 'All' ? '' : v })}
