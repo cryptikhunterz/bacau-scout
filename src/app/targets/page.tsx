@@ -237,7 +237,7 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
             }`}
           >
             <Image
-              src={`/targets/${file}`}
+              src={`/targets/${file}`} unoptimized
               alt={captions[file] || file}
               fill
               className="object-cover"
@@ -255,7 +255,7 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
         <div className="mt-3 rounded-lg overflow-hidden border border-zinc-700 bg-zinc-950">
           <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
             <Image
-              src={`/targets/${screenshots[selected]}`}
+              src={`/targets/${screenshots[selected]}`} unoptimized
               alt={captions[screenshots[selected]] || screenshots[selected]}
               fill
               className="object-contain"

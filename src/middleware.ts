@@ -14,7 +14,8 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/_next") ||
     pathname === "/favicon.ico" ||
     pathname.startsWith("/images") ||
-    pathname.startsWith("/data");
+    pathname.startsWith("/data") ||
+    pathname.startsWith("/targets/");
 
   if (isPublic || isStatic) {
     return NextResponse.next();
@@ -44,5 +45,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|data/).*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|data/|targets/).*)"],
 };
