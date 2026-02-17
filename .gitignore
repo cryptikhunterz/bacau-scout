@@ -45,4 +45,4 @@ next-env.d.ts
 .env
 # Wyscout video clips (too large for git)
 wyscout-clips/**/*.mp4
-data/
+/data/
