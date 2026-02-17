@@ -261,10 +261,6 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* ═══ LEFT COLUMN: Rubric + Status + Position Attributes ═══ */}
-      <div className="space-y-5">
-
       {/* ─── RUBRIC ─── */}
       <div className="p-3 bg-zinc-900 rounded-lg space-y-3">
         <p className="text-xs font-medium text-zinc-500">Rating Scales</p>
@@ -379,11 +375,6 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
           </div>
         </>
       )}
-
-      </div>{/* ═══ END LEFT COLUMN ═══ */}
-
-      {/* ═══ RIGHT COLUMN: Overall Assessment + Tags + Verdict + Conclusion ═══ */}
-      <div className="space-y-5">
 
       {/* ─── OVERALL ABILITY & POTENTIAL ─── */}
       <div className="p-4 bg-zinc-800 rounded-lg border-2 border-zinc-600 space-y-4">
@@ -518,8 +509,6 @@ export function GradingForm({ player, existingGrade, isAdminEdit, onSave, onCanc
         {showSuccess && <span className="text-green-400 text-sm">✓ {isAdminEdit ? 'Admin edit saved' : 'Grade saved'}</span>}
       </div>
 
-      </div>{/* ═══ END RIGHT COLUMN ═══ */}
-      </div>{/* ═══ END 2-COL GRID ═══ */}
     </div>
   );
 }

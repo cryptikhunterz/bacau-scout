@@ -147,9 +147,7 @@ export default async function PlayerDetailPage({
         {/* ─── HERO: Wyscout Radars + Stat Bars ─── */}
         <WyscoutStatsWrapper playerId={player.id} />
 
-        {/* ─── BOTTOM: Season Stats + Scout Evaluation side by side ─── */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Season Stats */}
+        {/* ─── Season Stats ─── */}
           {hasStats && (
             <div className="bg-zinc-900 rounded-xl border border-zinc-800 overflow-hidden">
               <div className="p-4 border-b border-zinc-800">
@@ -190,18 +188,15 @@ export default async function PlayerDetailPage({
             </div>
           )}
 
-          {/* Scout Evaluation */}
-          <div>
-            <PlayerGrading
-              player={{
-                id: player.id,
-                name: player.name,
-                position: player.position || '',
-                club: player.club || '',
-              }}
-            />
-          </div>
-        </div>
+        {/* ─── Scout Evaluation (full width) ─── */}
+        <PlayerGrading
+          player={{
+            id: player.id,
+            name: player.name,
+            position: player.position || '',
+            club: player.club || '',
+          }}
+        />
       </div>
     </main>
   );
