@@ -404,7 +404,6 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
         </div>
 
         {/* Wyscout Advanced Metrics (above scout evaluation) */}
-        <WyscoutRadars playerId={playerId} tmPosition={report.position} />
         <WyscoutStats playerId={playerId} />
 
         {/* Scout evaluation radars removed — Wyscout radars above are sufficient */}
