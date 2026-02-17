@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public routes
-  const publicPaths = ["/login", "/register", "/api/auth"];
+  const publicPaths = ["/login", "/register", "/api/auth", "/api/wyscout-data"];
   const isPublic = publicPaths.some((path) => pathname.startsWith(path));
 
   // Allow static assets and data files
