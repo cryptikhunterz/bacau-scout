@@ -7,6 +7,7 @@ import { getPotentialColor, POTENTIAL_LABELS, PlayerGrade } from '@/lib/grades';
 import { GradingForm } from '@/components/GradingForm';
 import { RadarChart } from '@/components/RadarChart';
 import { WyscoutRadars } from '@/components/WyscoutRadars';
+import { WyscoutStats } from '@/components/WyscoutStats';
 import { getPositionTemplate, resolvePositionCategory } from '@/lib/positionAttributes';
 
 interface AttachmentData {
@@ -404,6 +405,7 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
 
         {/* Wyscout Advanced Metrics (above scout evaluation) */}
         <WyscoutRadars playerId={playerId} tmPosition={report.position} />
+        <WyscoutStats playerId={playerId} />
 
         {/* Scout evaluation radars removed — Wyscout radars above are sufficient */}
 
