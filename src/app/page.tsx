@@ -24,6 +24,7 @@ const positionColors: Record<string, string> = {
 };
 
 function getPositionColor(position: string): string {
+  if (!position) return 'bg-zinc-600';
   for (const [key, color] of Object.entries(positionColors)) {
     if (position.includes(key)) return color;
   }
@@ -31,6 +32,7 @@ function getPositionColor(position: string): string {
 }
 
 function getPositionAbbrev(position: string): string {
+  if (!position) return '—';
   const abbrevMap: Record<string, string> = {
     'Goalkeeper': 'GK', 'Centre-Back': 'CB', 'Left-Back': 'LB', 'Right-Back': 'RB',
     'Defensive Midfield': 'DM', 'Central Midfield': 'CM', 'Attacking Midfield': 'AM',
@@ -94,7 +96,7 @@ export default function Home() {
     let result = grades.filter(g => {
       if (search && !g.playerName.toLowerCase().includes(search.toLowerCase())) return false;
       if (verdictFilter && g.verdict !== verdictFilter) return false;
-      if (posFilter && !g.position.toLowerCase().includes(posFilter.toLowerCase())) return false;
+      if (posFilter && !(g.position || '').toLowerCase().includes(posFilter.toLowerCase())) return false;
       return true;
     });
 
