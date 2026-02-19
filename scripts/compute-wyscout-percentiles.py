@@ -285,36 +285,36 @@ def main():
     print("  Sorted value arrays built")
 
     # Step 3: Compute percentiles for each player
+    all_position_groups = list(POSITION_METRICS.keys())  # GK, CB, WB, DM, CM, AM, FW
+
     output = {}
     for pid, pdata in players.items():
         pg = pdata["pg"]
         comp = pdata["comp"]
-        metrics_out = {}  # normalized key → raw value
+
+        # --- Compute league & global percentiles for player's OWN position group ---
         p_league = {}     # normalized key → league percentile
         p_global = {}     # normalized key → global percentile
 
         for mk, mv in pdata["metrics"].items():
             norm_key = normalize_key(mk)
-            metrics_out[norm_key] = round(mv, 2)
-
             is_inverted = mk in INVERTED_METRICS
 
-            # League percentile
+            # League percentile (own position group)
             lv = league_values.get((pg, comp), {}).get(mk, [])
             p_league[norm_key] = percentile_rank(mv, lv, invert=is_inverted)
 
-            # Global percentile
+            # Global percentile (own position group)
             gv = global_values.get(pg, {}).get(mk, [])
             p_global[norm_key] = percentile_rank(mv, gv, invert=is_inverted)
 
-        # Build position radar
+        # Build position radar (natural position)
         pos_metrics_defs = POSITION_METRICS.get(pg, [])
         pos_radar = []
         for mk, label in pos_metrics_defs:
             norm_key = normalize_key(mk)
             raw = pdata["metrics"].get(mk)
             if raw is None:
-                # Try to find it
                 raw = 0
             pos_radar.append({
                 "key": norm_key,
@@ -340,11 +340,60 @@ def main():
                     "gp": p_global.get(norm_key, 50),
                 })
 
+        # --- Compute templates: percentiles against ALL position pools ---
+        templates = {}
+        for tpg in all_position_groups:
+            # Compute global percentiles for this player against the target position pool
+            t_global = {}
+            for mk, mv in pdata["metrics"].items():
+                norm_key = normalize_key(mk)
+                is_inverted = mk in INVERTED_METRICS
+                gv = global_values.get(tpg, {}).get(mk, [])
+                t_global[norm_key] = percentile_rank(mv, gv, invert=is_inverted)
+
+            # Build position radar using template position's metrics
+            t_pos_metrics_defs = POSITION_METRICS.get(tpg, [])
+            t_radar = []
+            for mk, label in t_pos_metrics_defs:
+                norm_key = normalize_key(mk)
+                raw = pdata["metrics"].get(mk)
+                if raw is None:
+                    raw = 0
+                t_radar.append({
+                    "key": norm_key,
+                    "label": label,
+                    "value": round(raw, 2) if raw else 0,
+                    "percentile": t_global.get(norm_key, 50),
+                    "gp": t_global.get(norm_key, 50),
+                })
+
+            # Build allround radar against this pool (skip GK pool for allround)
+            t_allround = []
+            if tpg != "GK":
+                for mk, label in ALLROUND_METRICS:
+                    norm_key = normalize_key(mk)
+                    raw = pdata["metrics"].get(mk)
+                    if raw is None:
+                        raw = 0
+                    t_allround.append({
+                        "key": norm_key,
+                        "label": label,
+                        "value": round(raw, 2) if raw else 0,
+                        "percentile": t_global.get(norm_key, 50),
+                        "gp": t_global.get(norm_key, 50),
+                    })
+
+            templates[tpg] = {
+                "radar": t_radar,
+                "allround": t_allround,
+            }
+
         output[pid] = {
             "pg": pg,
             "comp": comp,
             "radar": pos_radar,
             "allround": allround_radar,
+            "templates": templates,
         }
 
     # Step 4: Write output

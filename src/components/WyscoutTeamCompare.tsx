@@ -41,17 +41,17 @@ function percentileTextColor(pct: number): string {
 // ─── ALL-ROUND KEYS (standard 10-metric radar for aggregation) ──────────
 
 const ALLROUND_KEYS = [
-  'Passes per 90', 'Accurate passes, %', 'Progressive passes per 90',
-  'Crosses per 90', 'Offensive duels won, %', 'Defensive duels per 90',
-  'Aerial duels per 90', 'Touches in box per 90', 'Fouls per 90',
-  'Key passes per 90',
+  'Goals per 90', 'xG per 90', 'Assists per 90', 'xA per 90',
+  'Key passes per 90', 'Accurate passes, %',
+  'Dribbles per 90', 'Defensive duels per 90',
+  'Aerial duels per 90', 'Touches in box per 90',
 ];
 
 const ALLROUND_LABELS = [
-  'Passes /90', 'Pass Acc %', 'Prog Pass /90',
-  'Crosses /90', 'Off Duels %', 'Def Duels /90',
-  'Aerial /90', 'Box Touch /90', 'Fouls /90',
-  'Key Pass /90',
+  'Goals /90', 'xG /90', 'Assists /90', 'xA /90',
+  'Key Pass /90', 'Pass Acc %',
+  'Dribbles /90', 'Def Duels /90',
+  'Aerial /90', 'Box Touch /90',
 ];
 
 // ─── Component ──────────────────────────────────────────────────────────────

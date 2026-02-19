@@ -16,7 +16,7 @@ Five striker targets were scouted for FC Bacău (Romanian Liga 2) using Wyscout 
 | **League** | Slovenia 2. SNL | Netherlands KKD | Czech 3rd tier | Slovenia 2. SNL | Czech ChNL |
 | **Position** | CF | CF | **LW** ⚠️ | CF | CF/RW/SS |
 | **Height** | 185cm | N/A | N/A | N/A | 190cm |
-| **Foot** | Left | Right | Left | N/A | Right |
+| **Foot** | Left | Right (two-footed!) | Left | **Left** | Right |
 | **Apps** | 16 | 25 | 9 | 14 | 11 |
 | **Goals** | **12** | **13** | **0** | 5 | 5 |
 | **Assists** | 0 | 3 | 2 | 3 | 1 |
@@ -28,7 +28,7 @@ Five striker targets were scouted for FC Bacău (Romanian Liga 2) using Wyscout 
 | **Est. Fee** | Free-€25k | €150-300k | Free-€15k | Free-€20k | €50-100k |
 | **Est. Salary/mo** | €2.5-4k | €4-6k | €1.5-2.5k | €2-3.5k | €3-5k |
 | **EU Passport** | ✅ Yes | ✅ Yes | ❌ No | ✅ Yes | ❌ No |
-| **Wyscout Film** | ✅ Full review | ⚠️ Limited | ❌ Not found | ⚠️ Limited | ⚠️ Limited |
+| **Wyscout Film** | ✅ Full review | ✅ Full review (20 clips) | ⚠️ Profile only (video blocked) | ✅ Partial (4 clips) | ⚠️ Profile only (video blocked) |
 
 ---
 
@@ -43,37 +43,44 @@ Five striker targets were scouted for FC Bacău (Romanian Liga 2) using Wyscout 
 - EU passport, no agent complications
 - ⚠️ Zero assists, weak aerial duels, low league level
 
-### 2. 🥈 Tim van der Leij (RKC Waalwijk) — **HIGHEST CEILING**
-- **13 goals + 3 assists** at Dutch 2nd division level (highest quality league on list)
-- Only 19 years old — massive development and resale potential
-- PSV + Vitesse youth academy pedigree
-- 📛 Most expensive: contract until 2028, agent involved, €275k market value
-- Loan-to-buy structure would be ideal
-- Need video review to confirm
+### 2. 🥈 Tim van der Leij (RKC Waalwijk) — **HIGHEST CEILING** ✅ VIDEO CONFIRMED
+- **12 senior goals** (7 right, 4 left, 2 headers) — **genuinely two-footed!**
+- ✅ Wyscout video review: 20 goal clips analyzed, quality confirmed
+- **1 goal per ~100 minutes** of league play at age 19 in Dutch KKD
+- Brace vs Utrecht II (different feet), hat-trick vs HSC '21 (left + left + header)
+- PSV + Vitesse youth academy pedigree, no agency (Wyscout)
+- 📛 Most expensive: contract until 2028, €275k market value
+- **Late-game predator:** 8 of 12 goals after 65th minute
+- Loan-to-buy structure recommended
 
-### 3. 🥉 El Hadji Ndiaye (Opava / Zlín) — **BEST PHYSICAL PROFILE**
-- **5 goals + 1 assist in 9 starts** at Czech 2nd division
-- 190cm, physically dominant, versatile (CF/RW/SS)
-- Hat-trick vs Ústí nad Labem
-- Regular starter, trusted by coaching staff
+### 3. 🥉 El Hadji Ndiaye (Opava / Zlín) — **BEST PHYSICAL PROFILE** ⚠️ VIDEO BLOCKED
+- **5 goals in 9 starts** (3 right foot + 2 headers) at Czech ChNL
+- 190cm/6'3", 77kg — imposing physical profile confirmed via Wyscout
+- **Hat-trick vs Ústí nad Labem (3-3)** — scored ALL team goals with 2 RF + 1 header
+- Regular starter (84.8 min/match), plays CF every game
+- Contract at Zlín expires 31/12/2026 — leverage for negotiation
 - ⚠️ Senegalese passport (non-EU slot needed)
-- ⚠️ Complicated loan/transfer structure
-- ⚠️ Red card/discipline record
+- ⚠️ Complicated loan/transfer structure (Zlín owns, Opava loans)
+- ⚠️ Red card + 2 yellows in 9 games — discipline concern
+- ⚠️ Video BLOCKED — Czech league outside Wyscout subscription
 
-### 4. 🏅 Gašper Černe (Brinje Grosuplje) — **BACKUP OPTION**
-- **5 goals + 3 assists in 697 minutes** — best G+A/90 after van der Leij
-- 21 years old, Slovenian EU passport
-- Good impact substitute profile
-- ⚠️ Can't hold starting spot (avg 47 min/game)
+### 4. 🏅 Gašper Černe (Brinje Grosuplje) — **BACKUP OPTION** ✅ PARTIAL VIDEO
+- **5 goals + 3 assists in 556 minutes** — left-footed, scores with all three (LF/RF/head)
+- ✅ 4 goal clips reviewed on Wyscout: good set-piece positioning, predatory box instinct
+- 21 years old, Slovenian EU passport, **no agency**
+- **Contract expires 30/06/2025** ⚠️ — may already be out of contract = FREE TRANSFER
+- Recent trend: earning more starts (83-88 min in latest matches)
+- ⚠️ Average 46.3 min/game historically
 - ⚠️ Previously dropped from NK Domžale (1. SNL)
-- Monitor in spring, consider if Bajraj falls through
+- Monitor + verify contract status urgently
 
-### 5. ❌ Muhammed Suso (FK Pardubice) — **NOT RECOMMENDED**
-- **Zero goals** in 9 appearances
-- **Wrong position** — Left Winger, not Centre-Forward
-- Can't break into Pardubice first team
-- Playing Czech 3rd tier reserve football
-- Remove from shortlist
+### 5. ❌ Muhammed Suso (FK Pardubice) — **NOT RECOMMENDED** ⚠️ VIDEO BLOCKED
+- **Zero Pardubice appearances** confirmed on Wyscout — hasn't played at all since transfer
+- **Wrong position** — Left Winger/RAMF, not Centre-Forward (confirmed by Wyscout match data)
+- 9 career goals all from Estonian football (Paide + Paide II) — low-level opposition
+- Wyscout Events List includes "Crosses, Throw-ins" = wide player, not striker
+- Two-footed (5R, 3L, 1H) in Estonian goals — some finishing ability
+- Remove from striker shortlist; only reconsider if winger needed
 
 ---
 
@@ -107,23 +114,51 @@ Five striker targets were scouted for FC Bacău (Romanian Liga 2) using Wyscout 
 
 ## Methodology
 - **Wyscout platform** (CSM Ceahlăul account) — logged in, searched all 5 players
-- **Full video analysis completed for:** Murat Bajraj (18 goal clips, match stats, profile data)
+- **Full video analysis completed for:** Murat Bajraj (18 goal clips), Tim van der Leij (20 goal clips)
+- **Partial video analysis for:** Gašper Černe (4 goal clips with video)
+- **Profile + goal list only for:** El Hadji Ndiaye (5 goals listed, video blocked), Muhammed Suso (9 goals listed, video blocked)
+- **Video restriction:** CSM Ceahlăul subscription covers Slovenian and Dutch leagues but NOT Czech or Estonian league video content
 - **Transfermarkt data scraped for:** All 5 players (profiles, match-by-match stats, contract info)
 - **Scouting criteria applied:** Flavius's 6 assessment dimensions (separation, double movement, body shape, finishing, movement, hold-up)
-- **Screenshots captured and saved** for Bajraj analysis
+- **Image analysis via AI:** Screenshots analyzed for body shape, movement, finishing technique
 
 ## Files in this report
-- `bajraj-report.md` — Full scouting report with video analysis
-- `vanderleij-report.md` — Statistical analysis (video pending)
-- `suso-report.md` — Not recommended
-- `cerne-report.md` — Backup option
-- `ndiaye-report.md` — Strong alternative
+
+### Scouting Reports
+- `bajraj-report.md` — Full scouting report with video analysis ✅
+- `vanderleij-report.md` — Full scouting report with video analysis ✅
+- `cerne-report.md` — Partial video analysis, backup option ✅
+- `ndiaye-report.md` — Profile data, strong alternative ✅
+- `suso-report.md` — Not recommended ✅
+- `striker-shortlist-summary.md` — This file
+
+### Screenshots (in `public/targets/`)
+**Bajraj:**
 - `bajraj-profile.png` — Wyscout profile screenshot
 - `bajraj-goal1-ilirija.png` — Goal clip: vs Ilirija 39:16
 - `bajraj-goal4-header-jesenice.png` — Goal clip: Header vs Jesenice 8:52
 - `bajraj-goal9-early-dravinja.png` — Goal clip: Early goal vs Dravinja 0:53
 - `bajraj-stats.png` — Full match-by-match statistics table
 
+**Van der Leij:**
+- `vanderleij-profile.png` — Wyscout overview (stats, heat map, match list)
+- `vanderleij-goal1-toposs.png` — Goal clip: vs TOP Oss 79:18 (Right Foot)
+- `vanderleij-goal3-utrechtii.png` — Goal clip: vs Utrecht II 19:00 (celebration)
+- `vanderleij-goal5-hsc21-cup.png` — Goal clip: vs HSC '21 42:16 (Left Foot, KNVB Beker)
+
+**Černe:**
+- `cerne-profile.png` — Wyscout overview (stats, heat map, match list)
+- `cerne-goal1-bilje.png` — Goal clip: vs Bilje 20:32 (Left Foot, set-piece)
+
+**Ndiaye:**
+- `ndiaye-profile.png` — Wyscout overview (stats, heat map, physical data)
+- `ndiaye-goals-restricted.png` — Goal list visible but video blocked
+
+**Suso:**
+- `suso-profile.png` — Wyscout overview (zero Pardubice apps confirmed)
+- `suso-goals-restricted.png` — Goal list (all Estonian) with video blocked
+
 ---
-*Compiled: 17 February 2026 | FC Bacău Scouting Department | For: Romanian Football Federation Demo*
-*Wyscout Account: CSM Ceahlăul (office@csmceahlaul.ro)*
+*Compiled: 17 February 2026 | Updated: 17 February 2026 (full Wyscout video review completed for all 5 players)*
+*FC Bacău Scouting Department | Wyscout Account: CSM Ceahlăul (office@csmceahlaul.ro)*
+*⚠️ Subscription limitation: Czech/Estonian league video content requires upgraded Wyscout subscription*

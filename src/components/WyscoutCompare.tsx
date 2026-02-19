@@ -13,12 +13,18 @@ interface RadarMetric {
   gp: number;
 }
 
+interface TemplateData {
+  radar: RadarMetric[];
+  allround: RadarMetric[];
+}
+
 interface PercentileWyscoutData {
   hasPercentiles: true;
   pg: string;
   comp: string;
   radar: RadarMetric[];
   allround: RadarMetric[];
+  templates?: Record<string, TemplateData>;
 }
 
 type CompareMode = 'league' | 'global';
@@ -59,6 +65,7 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
   const [data2, setData2] = useState<PercentileWyscoutData | null>(null);
   const [loading, setLoading] = useState(true);
   const [compareMode, setCompareMode] = useState<CompareMode>('league');
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
 
   useEffect(() => {
     setLoading(true);
@@ -85,7 +92,19 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
 
   // Use player 1's position for template, fallback to player 2
   const primaryData = data1 || data2;
-  const posLabel = primaryData ? (PG_LABELS[primaryData.pg] || primaryData.pg) : '';
+  const activePg = selectedTemplate || primaryData?.pg || '';
+  const posLabel = PG_LABELS[activePg] || activePg;
+
+  // Resolve effective radar/allround based on selected template
+  const resolveData = (d: PercentileWyscoutData): { radar: RadarMetric[]; allround: RadarMetric[] } => {
+    if (selectedTemplate && d.templates && d.templates[selectedTemplate]) {
+      return d.templates[selectedTemplate];
+    }
+    return { radar: d.radar, allround: d.allround };
+  };
+
+  const effective1 = data1 ? resolveData(data1) : null;
+  const effective2 = data2 ? resolveData(data2) : null;
 
   // Supplement sparse radars: ensure at least 3 meaningful data points each
   const supplementRadar = (primary: RadarMetric[], pool: RadarMetric[]): RadarMetric[] => {
@@ -109,8 +128,8 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
   // Build comparison radar: use UNION of metrics from both players (not just shared)
   const buildOverlayRadar = (metrics1: RadarMetric[], metrics2: RadarMetric[]) => {
     // Supplement each side individually first
-    const allPool1 = data1 ? [...data1.radar, ...data1.allround] : [];
-    const allPool2 = data2 ? [...data2.radar, ...data2.allround] : [];
+    const allPool1 = effective1 ? [...effective1.radar, ...effective1.allround] : [];
+    const allPool2 = effective2 ? [...effective2.radar, ...effective2.allround] : [];
     const sup1 = supplementRadar(metrics1, allPool1.filter(m => !metrics1.some(r => r.key === m.key)));
     const sup2 = supplementRadar(metrics2, allPool2.filter(m => !metrics2.some(r => r.key === m.key)));
 
@@ -146,24 +165,24 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
   };
 
   // Position radar comparison
-  const posRadar = data1 && data2
-    ? buildOverlayRadar(data1.radar, data2.radar)
+  const posRadar = effective1 && effective2
+    ? buildOverlayRadar(effective1.radar, effective2.radar)
     : null;
 
   // All-round radar comparison
-  const allRadar = data1 && data2
-    ? buildOverlayRadar(data1.allround, data2.allround)
+  const allRadar = effective1 && effective2
+    ? buildOverlayRadar(effective1.allround, effective2.allround)
     : null;
 
   // Build all metric keys for bar comparison
   const allMetrics = new Map<string, { m1: RadarMetric | null; m2: RadarMetric | null }>();
-  if (data1) {
-    for (const m of [...data1.radar, ...data1.allround]) {
+  if (effective1) {
+    for (const m of [...effective1.radar, ...effective1.allround]) {
       if (!allMetrics.has(m.key)) allMetrics.set(m.key, { m1: m, m2: null });
     }
   }
-  if (data2) {
-    for (const m of [...data2.radar, ...data2.allround]) {
+  if (effective2) {
+    for (const m of [...effective2.radar, ...effective2.allround]) {
       const existing = allMetrics.get(m.key);
       if (existing) {
         existing.m2 = m;
@@ -188,8 +207,8 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
         <div className="h-px flex-1 bg-gradient-to-r from-transparent via-blue-800/50 to-transparent" />
       </div>
 
-      {/* Toggle */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+      {/* Toggle + Template Selector */}
+      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-4 space-y-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <span className="text-sm text-zinc-400">{compareModeLabel}</span>
           <div className="flex bg-zinc-800 rounded-lg p-0.5">
@@ -215,6 +234,33 @@ export function WyscoutCompare({ player1Id, player2Id, player1Name, player2Name 
             </button>
           </div>
         </div>
+
+        {/* Position Template Selector */}
+        {primaryData?.templates && (
+          <div className="flex items-center gap-2 pt-1 border-t border-zinc-800">
+            <span className="text-xs text-zinc-500">Template:</span>
+            <select
+              value={activePg}
+              onChange={(e) => setSelectedTemplate(e.target.value === primaryData?.pg ? '' : e.target.value)}
+              className="bg-zinc-800 border border-zinc-700 rounded-md px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            >
+              {Object.keys(primaryData!.templates!).map((g) => (
+                <option key={g} value={g}>
+                  {g} — {PG_LABELS[g] || g}
+                  {g === primaryData?.pg ? ' (natural)' : ''}
+                </option>
+              ))}
+            </select>
+            {selectedTemplate && selectedTemplate !== primaryData?.pg && (
+              <button
+                onClick={() => setSelectedTemplate('')}
+                className="text-xs text-zinc-500 hover:text-white underline"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Radar Charts */}

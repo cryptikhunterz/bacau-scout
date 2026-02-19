@@ -252,11 +252,17 @@ export default function ScoutingReportsPage() {
   const [reports, setReports] = useState<ReportData[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const isAdmin = session?.user?.role === 'admin';
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       redirect('/login');
     }
-  }, [status]);
+    // Film room / AI analysis is admin-only
+    if (status === 'authenticated' && !isAdmin) {
+      redirect('/');
+    }
+  }, [status, isAdmin]);
 
   useEffect(() => {
     fetch('/api/scouting-reports')

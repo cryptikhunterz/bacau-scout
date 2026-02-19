@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { getPotentialColor, POTENTIAL_LABELS, PlayerGrade } from '@/lib/grades';
 import { GradingForm } from '@/components/GradingForm';
-import { RadarChart } from '@/components/RadarChart';
 import { WyscoutRadars } from '@/components/WyscoutRadars';
 import { WyscoutStats } from '@/components/WyscoutStats';
 import { getPositionTemplate, resolvePositionCategory } from '@/lib/positionAttributes';
@@ -404,6 +403,7 @@ export default function ReportViewPage({ params }: { params: Promise<{ playerId:
         </div>
 
         {/* Wyscout Advanced Metrics (above scout evaluation) */}
+        <WyscoutRadars playerId={playerId} />
         <WyscoutStats playerId={playerId} />
 
         {/* Scout evaluation radars removed — Wyscout radars above are sufficient */}

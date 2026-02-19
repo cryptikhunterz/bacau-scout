@@ -49,23 +49,102 @@
 
 **Analysis:** Černe has a better combined G+A per 90 (1.29 vs 1.04) than Bajraj, but in significantly fewer minutes and mostly as a substitute. Bajraj is the clear starter-quality player.
 
+## Wyscout Analysis ✅ VIDEO REVIEWED
+**Platform:** Wyscout (Hudl) — Full video clips available
+**Date Reviewed:** 17/02/2026
+
+### Wyscout Player Stats (2025/26)
+| Metric | Value |
+|--------|-------|
+| Matches Played | 12 (2. SNL) |
+| Minutes | 556' |
+| Goals | 5 |
+| Goals per match | 0.4 |
+| Min per match | 46.3 |
+| Foot | **Left** |
+| Yellow Cards | 1 |
+| Red Cards | 0 |
+| Contract expires | **30/06/2025** ⚠️ |
+| Agent | No agency |
+
+### Wyscout Goal Log (4+ clips visible, "View older clips" available)
+| # | Foot | Minute | Match | Score | Date |
+|---|------|--------|-------|-------|------|
+| 1 | Left | 20:32 | Brinje-Grosuplje vs Bilje | 3-0 | 14/11/2025 |
+| 2 | Right | 51:58 | Brinje-Grosuplje vs Bilje | 3-0 | 14/11/2025 |
+| 3 | Head | 45:17 | Brinje-Grosuplje vs Bistrica | 2-0 | 02/11/2025 |
+| 4 | Left | 48:55 | Brinje-Grosuplje vs Bistrica | 2-0 | 02/11/2025 |
+
+**Foot distribution:** 2 Left, 1 Right, 1 Header → **mostly left-footed but can use right + head**
+**Brace habit:** 2 braces in 4 visible goals — scores in pairs when he's on
+
+### Video Observations
+
+**Goal 1 vs Bilje (20:32, Left Foot):**
+- Set-piece situation — corner kick or deep delivery into the box
+- Černe positioned himself in the **6-yard box** among a cluster of ~10 players
+- Got a left-foot finish (possibly toe-poke/prod) from close range in traffic
+- Shows **predatory instinct** — willingness to be in the danger zone
+- Anticipation of second ball/knockdown from set-piece delivery
+
+**Goal 2 vs Bilje (51:58, Right Foot):**
+- Scored with his weaker right foot in the same game
+- Shows he's not one-dimensional despite being left-footed
+
+**Goal 3 vs Bistrica (45:17, Header):**
+- Headed goal right before half-time — good timing
+- Shows aerial ability
+
+**Goal 4 vs Bistrica (48:55, Left Foot):**
+- Scored 3 minutes into second half after heading the first
+- Two quick goals = predatory instinct when confidence is high
+
+### Key Wyscout Discovery: ⚠️ CONTRACT EXPIRES 30/06/2025
+- Wyscout shows contract expiry as **30/06/2025** — this means he may already be **out of contract** or on an extension
+- If out of contract → **FREE TRANSFER** opportunity
+- This needs urgent verification
+
+### Previous Matches (Wyscout)
+| Date | Match | Comp | Result | Position | Minutes |
+|------|-------|------|--------|----------|---------|
+| 21/11/2025 | Brinje-Grosuplje vs Beltinci | 2. SNL | 1-0 | SS | 88' |
+| 14/11/2025 | Brinje-Grosuplje vs Bilje | 2. SNL | 3-0 | CF | 83' |
+| 09/11/2025 | Nafta vs Brinje-Grosuplje | 2. SNL | 1-1 | SS | 85' |
+
+**Note:** Recent matches show 83-88 minutes = getting **more starting time**
+
 ## Scouting Assessment (Flavius Criteria)
 
-### Finishing Technique — GOOD
-- 5 goals from limited minutes suggests clinical finishing
-- Goals concentrated in specific matches (not spread evenly)
+### Finishing Technique — ⭐⭐⭐⭐ (4/5) GOOD
+- 5 goals from limited minutes = clinical finisher
+- Scores with left foot, right foot, AND headers — versatile
+- Braces in consecutive appearances show consistency when given starts
+- Set-piece danger — positions well in the 6-yard box
 
-### Movement Patterns — PROMISING
-- Coming off the bench and scoring suggests good impact movement
-- Finds space quickly when introduced
+### Movement Patterns — ⭐⭐⭐ (3/5) PROMISING
+- Positions well inside the box for set-pieces
+- Arriving late to dangerous positions
+- Limited open-play footage to fully assess off-ball movement
+- Coming off bench and scoring = good immediate engagement
 
-### Hold-Up Play — UNKNOWN
+### Separation Ability — ⭐⭐⭐ (3/5) MODERATE
+- Finds space in congested set-piece situations
+- Limited evidence of space creation in open play
+- 2. SNL defending is not a high bar
+
+### Hold-Up Play — ⭐⭐ (2/5) UNKNOWN/LIMITED
 - Limited minutes make assessment difficult
+- No hold-up play visible in goal clips
 
-### ⚠️ Red Flag: Playing Time
-- Average of 46.6 minutes per game suggests he's not trusted for 90 minutes
+### Body Shape — ⭐⭐⭐ (3/5) MODERATE
+- Left-footed primary, but can finish with right and head
+- Opens body to create angles in the box
+- Low centre of gravity observed in set-piece goals
+
+### ⚠️ Red Flag: Playing Time (IMPROVING)
+- Average of 46.3 minutes per game but **recent matches show 83-88 min starts**
 - Previously couldn't make the NK Domžale 1. SNL squad at all
-- Dropped to 2. SNL for playing time at age 21
+- Appears to be earning more trust at Brinje → trajectory is positive
 
 ## Strengths
 1. **Age** — 21, good development years ahead
@@ -104,4 +183,6 @@
 **Total Annual Cost:** €24,000 – €42,000
 
 ---
-*Report compiled: 17/02/2026 | Source: Transfermarkt, Wyscout (limited) | Analyst: FC Bacău Scouting Department*
+*Report compiled: 17/02/2026 | Updated: 17/02/2026 (Wyscout video analysis added)*
+*Sources: Transfermarkt, Wyscout (Hudl) — 4+ goal clips reviewed | Analyst: FC Bacău Scouting Department*
+*Screenshots: cerne-profile.png, cerne-goal1-bilje.png*

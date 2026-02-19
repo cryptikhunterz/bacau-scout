@@ -50,31 +50,88 @@
 - Alternatively, wait until December 2026 when he's free — but that's too late for this window
 - A mid-season or summer 2026 move would require agreement from both Zlín and Opava
 
+## Wyscout Analysis ⚠️ PARTIAL — VIDEO RESTRICTED
+**Platform:** Wyscout (Hudl) — Player profile accessible, video clips RESTRICTED
+**Date Reviewed:** 17/02/2026
+**Issue:** CSM Ceahlăul subscription does NOT cover Czech Chance National Liga video content. Goal list data captured but clips show "You don't have permission to view this clip."
+
+### Wyscout Player Stats (2025/26)
+| Metric | Value |
+|--------|-------|
+| Matches Played | 9 (Chance National Liga) |
+| Minutes | 763' |
+| Min per match | 84.8 |
+| Goals | 5 |
+| Goals per match | 0.6 |
+| Foot | **Right** |
+| Height | **190cm / 6'3"** |
+| Weight | 77kg / 169lbs |
+| Yellow Cards | 2 |
+| Red Cards | 1 |
+| Contract expires | **31/12/2026** |
+| Owner | **Zlín** (on loan at Opava) |
+| Agent | No agency (Wyscout) / Daniel Chrysostome (TM) |
+
+### Wyscout Goal Log (5 goals listed — video blocked)
+| # | Foot | Minute | Match | Score | Date |
+|---|------|--------|-------|-------|------|
+| 1 | Right | 29:12 | Opava vs Ústí nad Labem | 3-3 | 17/10/2025 |
+| 2 | Right | 39:46 | Opava vs Ústí nad Labem | 3-3 | 17/10/2025 |
+| 3 | Head | 64:53 | Opava vs Ústí nad Labem | 3-3 | 17/10/2025 |
+| 4 | Head | 22:51 | Opava vs Sparta Praha II | 4-0 | 27/09/2025 |
+| 5 | Right | 42:03 | Opava vs Baník Ostrava II | 1-0 | 15/09/2025 |
+
+**Foot distribution:** 3 Right Foot, 2 Headers
+**Key patterns:**
+- **HAT-TRICK vs Ústí nad Labem (3-3):** 2 right foot + 1 header in one match — his 3 goals were the team's only goals in a 3-3 draw
+- **Aerial threat confirmed:** 2 of 5 goals with head — 190cm frame is a genuine weapon
+- **Consistent timing:** Goals spread across 1st half (29', 39', 42') and 2nd half (22', 64')
+
+### Previous Matches (Wyscout)
+| Date | Match | Comp | Result | Position | Minutes | Note |
+|------|-------|------|--------|----------|---------|------|
+| 01/11/2025 | Opava vs Táborsko | ChNL | 2-2 | CF | 41' | Received red card |
+| 21/10/2025 | Zbrojovka Brno vs Opava | ChNL | 0-0 | CF | 90' | — |
+| 17/10/2025 | Opava vs Ústí nad Labem | ChNL | 3-3 | CF | 90' | **Hat-trick** |
+
+### Wyscout Heat Map Observations
+- Primary positioning in **central forward zones** — classic number 9
+- Secondary heat in **wide right areas** — confirms versatility to drift right
+- Strong presence in **both penalty boxes** — suggests defensive set-piece involvement too
+
 ## Scouting Assessment (Flavius Criteria)
 
-### Separation Ability — LIKELY GOOD
-- 190cm frame gives him a physical advantage in lower leagues
+### Separation Ability — ⭐⭐⭐ (3/5) MODERATE (video not reviewed)
+- 190cm frame gives physical advantage in lower leagues
 - 5 goals in 9 starts shows he can find space
+- Limited footage to confirm movement quality in open play
 
-### Double Movement — UNKNOWN (no video reviewed)
-- Czech 2nd division defenders are physically capable; his goals suggest movement quality
+### Double Movement — ⭐⭐⭐ (3/5) MODERATE (inferred from data)
+- Hat-trick shows ability to find different scoring positions within same match
+- Goals from both feet and head suggest varied finishing positions
 
-### Body Shape — STRONG PHYSICAL PROFILE
-- 190cm / 6'3" right-footed
+### Body Shape — ⭐⭐⭐⭐ (4/5) STRONG PHYSICAL PROFILE
+- **190cm / 6'3", 77kg** — imposing centre-forward frame
+- Right-footed primary, capable in the air
 - Versatile — can play CF, RW, Second Striker
-- Size suggests good hold-up and aerial presence
+- Size-to-weight ratio suggests athletic rather than just tall
 
-### Finishing Technique — GOOD
-- Hat-trick shows composure (3 goals in one match = different finishing types)
+### Finishing Technique — ⭐⭐⭐⭐ (4/5) GOOD
+- Hat-trick confirmed via Wyscout: right foot × 2 + header in same match
+- 5 goals in 763 minutes = 1 goal per 152 minutes
+- Scores in both halves, from different situations
 - Late winner vs Baník Ostrava B (90+2') shows penalty box instinct
 
-### Movement Patterns — GOOD
-- Versatile positional play (CF, RW, SS) suggests intelligent movement
-- Scores in different areas of the pitch
+### Movement Patterns — ⭐⭐⭐⭐ (4/5) GOOD
+- Versatile positional play (CF/RW/SS) suggests intelligent movement
+- CF in every match this season — coach trusts him centrally
+- Heat map shows central + right drift pattern
+- 84.8 min/match average — full 90 trusted
 
-### Hold-Up Play — LIKELY STRONG
+### Hold-Up Play — ⭐⭐⭐⭐ (4/5) LIKELY STRONG
 - 190cm, right-footed CF — natural hold-up player profile
-- Starts most games and plays 84+ minutes — trusted by coaches
+- Starts virtually every game and plays near-full 90 — trusted by coaches
+- Video needed to confirm but physical profile strongly suggests capability
 
 ## Strengths
 1. **Physical profile** — 190cm, strong, imposing centre-forward
@@ -87,13 +144,13 @@
 8. **Reasonable price** — €200k market value, Zlín contract ending soon
 
 ## Weaknesses
-1. **Red card/discipline** — recorded suspension, potential temperament issue
-2. **On loan** — complicated transfer structure (Zlín + Opava)
-3. **Senegalese passport** — non-EU, requires work permit/foreign slot
+1. **Red card/discipline** — red card at 41' vs Táborsko (01/11/2025); 2 yellows + 1 red in 9 games = discipline concern
+2. **On loan** — complicated transfer structure (Zlín owns, Opava loans)
+3. **Senegalese passport** — non-EU, requires work permit/foreign slot in Romania
 4. **Age** — 26 is prime but not young; no resale value
-5. **Career trajectory** — still in 2nd division at 26; hasn't broken through to top flight
-6. **Only 5 goals in 9 starts** — good but not exceptional
-7. **No Wyscout video reviewed** — need to confirm on film
+5. **Career trajectory** — still in 2nd division at 26; hasn't broken through to Czech top flight
+6. **Wyscout video RESTRICTED** — subscription doesn't cover Czech CNL; cannot confirm technical qualities on film
+7. **Agent discrepancy** — "No agency" on Wyscout vs "Daniel Chrysostome" on Transfermarkt
 
 ## Verdict: STRONG OPTION — Second Priority After Bajraj
 
@@ -120,5 +177,7 @@ Ndiaye is a **reliable, physical centre-forward** with proven output in the Czec
 **Total Annual Cost:** €36,000 – €60,000 salary + fee
 
 ---
-*Report compiled: 17/02/2026 | Source: Transfermarkt | Analyst: FC Bacău Scouting Department*
-*Note: Wyscout video review required — Czech 2nd division should have coverage*
+*Report compiled: 17/02/2026 | Updated: 17/02/2026 (Wyscout profile + goal list added, video restricted)*
+*Sources: Transfermarkt, Wyscout (Hudl) — profile + 5 goal entries (video blocked by subscription) | Analyst: FC Bacău Scouting Department*
+*Screenshots: ndiaye-profile.png, ndiaye-goals-restricted.png*
+*⚠️ VIDEO NOT REVIEWED — CSM Ceahlăul Wyscout subscription does not cover Czech Chance National Liga video content. Need upgraded subscription or alternative video source.*
