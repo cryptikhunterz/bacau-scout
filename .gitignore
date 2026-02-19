@@ -46,5 +46,3 @@ next-env.d.ts
 # Wyscout video clips (too large for git)
 wyscout-clips/**/*.mp4
 /data/
-public/wyscout-percentiles.json
-public/players.json
