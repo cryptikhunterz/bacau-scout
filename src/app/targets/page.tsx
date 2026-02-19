@@ -1031,6 +1031,41 @@ function ScreenshotGallery({ screenshots }: { screenshots: string[] }) {
     'cb-nelopes-interception-vs-metaloglobus-12min.png': 'Interception vs Metaloglobus 12\'',
     'cb-nelopes-defending-duel-vs-metaloglobus-48min.png': 'Defending Duel vs Metaloglobus 48\'',
     'cb-nelopes-aerial-duel-vs-metaloglobus-34min.png': 'Aerial Duel vs Metaloglobus 34\'',
+    // CB Liga II screenshots
+    'cb-apro-interception-vs-asatgmures-6min.png': 'Interception vs ASA Tg Mureș 6\'',
+    'cb-apro-defduels-vs-asatgmures-19min.png': 'Defending Duel vs ASA Tg Mureș 19\'',
+    'cb-apro-aerial-vs-asatgmures-49min.png': 'Aerial Duel vs ASA Tg Mureș 49\'',
+    'cb-manea-interception-vs-scolarresita-42min.png': 'Interception vs Școlar Reșița 42\'',
+    'cb-manea-defduels-vs-dinamo-22min.png': 'Defending Duel vs Dinamo 22\'',
+    'cb-manea-defduels-vs-scolarresita-44min.png': 'Defending Duel vs Școlar Reșița 44\'',
+    'cb-manea-aerial-vs-scolarresita-66min.png': 'Aerial Duel vs Școlar Reșița 66\'',
+    'cb-manea-goal-vs-dumbravita-17min.png': 'Goal vs Dumbrăvița 17\'',
+    'cb-panaite-interception-vs-arges-30min.png': 'Interception vs Argeș 30\'',
+    'cb-panaite-defduels-vs-arges-13min.png': 'Defending Duel vs Argeș 13\'',
+    'cb-panaite-aerial-vs-arges-13min.png': 'Aerial Duel vs Argeș 13\'',
+    'cb-panaite-goal-vs-csmsatumare-16min.png': 'Goal vs CSM Satu Mare 16\'',
+    'cb-panaite-passing-vs-arges-4min.png': 'Passing vs Argeș 4\'',
+    'cb-baraitaru-interception-vs-metaloglobus-54min.png': 'Interception vs Metaloglobus 54\'',
+    'cb-baraitaru-defduels-vs-metaloglobus-7min.png': 'Defending Duel vs Metaloglobus 7\'',
+    'cb-baraitaru-aerial-vs-csmsatumare-32min.png': 'Aerial Duel vs CSM Satu Mare 32\'',
+    'cb-baraitaru-goal-vs-csmsatumare-67min.png': 'Goal vs CSM Satu Mare 67\'',
+    'cb-butnarasu-interception-vs-arges-87min.png': 'Interception vs Argeș 87\'',
+    'cb-butnarasu-interception-vs-voluntari-31min.png': 'Interception vs Voluntari 31\'',
+    'cb-butnarasu-defduels-vs-arges-87min.png': 'Defending Duel vs Argeș 87\'',
+    'cb-butnarasu-aerial-vs-slatina-26min.png': 'Aerial Duel vs Slatina 26\'',
+    'cb-butnarasu-goal-header-vs-selimbar-12min.png': 'Header Goal vs Șelimbăr 12\'',
+    // CB Abroad screenshots
+    'cb-motoc-defduels-vs-catania-00min.png': 'Defending Duel vs Catania (Serie C)',
+    'cb-motoc-interception-vs-catania-05min.png': 'Interception vs Catania 5\' (Serie C)',
+    'cb-motoc-aerial-vs-catania-14min.png': 'Aerial Duel vs Catania 14\' (Serie C)',
+    'cb-motoc-goal-vs-giugliano-09min.png': 'Header Goal vs Giugliano 9\' (Serie C)',
+    'cb-motoc-overview-trapani.png': 'Wyscout Profile — Trapani',
+    'cb-dutu-overview-latina.png': 'Wyscout Profile — Latina',
+    'cb-dumbravanu-defduels-vs-campulung-55min.png': 'Defending Duel vs Câmpulung 55\'',
+    'cb-dumbravanu-interception-vs-campulung-09min.png': 'Interception vs Câmpulung 9\'',
+    'cb-dumbravanu-aerial-vs-campulung-16min.png': 'Aerial Duel vs Câmpulung 16\'',
+    'cb-dumbravanu-overview-voluntari.png': 'Wyscout Profile — Voluntari',
+    'cb-potop-overview-albinoleffe.png': 'Wyscout Profile — AlbinoLeffe',
   };
 
   return (
@@ -1869,6 +1904,11 @@ function CBPlayerCard({ target }: { target: TargetPlayer & { cbMetrics: CBMetric
               <h4 className="text-xs font-semibold text-zinc-500 uppercase mb-1">Notes</h4>
               <p className="text-sm text-zinc-500 leading-relaxed italic">{target.notes}</p>
             </div>
+          )}
+
+          {/* ── Screenshots gallery ── */}
+          {target.screenshots.length > 0 && (
+            <ScreenshotGallery screenshots={target.screenshots} />
           )}
         </div>
       )}
