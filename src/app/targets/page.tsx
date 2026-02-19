@@ -1739,6 +1739,11 @@ function DMPlayerCard({ target }: { target: TargetPlayer & { dmMetrics: DMMetric
               <p className="text-sm text-zinc-500 leading-relaxed italic">{target.notes}</p>
             </div>
           )}
+
+          {/* ── Screenshots gallery ── */}
+          {target.screenshots.length > 0 && (
+            <ScreenshotGallery screenshots={target.screenshots} />
+          )}
         </div>
       )}
     </div>
